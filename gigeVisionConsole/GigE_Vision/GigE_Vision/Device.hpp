@@ -24,16 +24,17 @@ public:
 		return num_streams;
 	}
 
-	void ShowStreams()
+	std::vector<std::string> ShowStreams()
 	{
-		std::cout << "Streams: " << std::endl;
+		std::vector<std::string> streams;
 		for (uint32_t i = 0; i < GetNumStreams(); i++)
 		{
 			Buffer dDSID(20);
 			auto err = DevGetDataStreamID(hDevice, i, dDSID.Convert<char>(), dDSID.Size());
-			std::cout << i << ") " << dDSID.Convert<char>();
+			streams.push_back(dDSID.Convert<char>());
 			elog(err, "DEV_Handler::ShowStreams");
 		}
+		return streams;
 	}
 
 	GenTL::DS_HANDLE GetStream(uint32_t num)

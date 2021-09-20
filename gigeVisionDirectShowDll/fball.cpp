@@ -168,10 +168,11 @@ CBallStream::CBallStream(HRESULT *phr,
     ASSERT(phr);
     CAutoLock cAutoLock(&m_cSharedState);
 
-    gige.Init("TLSimu.cti");
-    gige.useInterface(0);
-    gige.useDevice(1);
-    gige.cameraInit();
+    Configurator config;
+    config.height = m_iImageHeight;
+    config.width = m_iImageWidth;
+
+    gige.configuration(config);
     gige.acquirerPreparing();
     gige.startAcquisition();
     gige.waitNext();

@@ -19,6 +19,7 @@
 #include "Interface.hpp"
 #include "Device.hpp"
 #include "Camera.hpp"
+#include "Configurator.h"
 
 #include "GenTL.h"
 #include "GenICam.h"
@@ -29,6 +30,17 @@ class GigeManager
 public:
 
 	GigeManager(){}
+
+	void configuration(const Configurator& config)
+	{
+		Init(config.ctiFile);
+		useInterface(config.interfaceIndex);
+		useDevice(config.deviceIndex);
+		useStream(config.streamIndex);
+		cameraInit();
+		camera.SetHeight(config.height);
+		camera.SetWidth(config.width);
+	}
 
 	void Init(std::string cti)
 	{
@@ -43,7 +55,6 @@ public:
 	{
 		return tl_handler.ShowInterfaces();
 	}
-
 	void useInterface(int int_num)
 	{
 		if_handler.setInterfaces(tl_handler.GetInterface(int_num));
@@ -54,11 +65,18 @@ public:
 	{
 		return if_handler.ShowDevices();
 	}
-
 	void useDevice(int dev_num)
 	{
 		dev_handler.setDevice(if_handler.GetDevice(dev_num));
-		hDS = dev_handler.GetStream(0);
+	}
+
+	std::vector<std::string> Streams()
+	{
+		return dev_handler.ShowStreams();
+	}
+	void useStream(int stream_num)
+	{
+		hDS = dev_handler.GetStream(stream_num);
 		p.UsePort(dev_handler.GetPort());
 	}
 
@@ -66,16 +84,17 @@ public:
 	{
 		camera.LoadXML(Port::GetXML(dev_handler.GetPort()));
 		camera.Connect(static_cast<IPort*>(&p));
+	}
 
-		//other init
+	void cameraConfig()
+	{
 		camera.SetWidth(8);
 		camera.SetHeight(8);
-
-		payloadSize = camera.PayloadSize();
 	}
 
 	void acquirerPreparing()
 	{
+		payloadSize = camera.PayloadSize();
 		image = Buffer(payloadSize);
 		imageAcq.AnnounceBuffers(hDS, payloadSize);
 		imageAcq.StartAcquisition(hDS);
@@ -109,6 +128,11 @@ public:
 		next = true;
 	}
 
+	void stopAcquisition()
+	{
+		stopAcq = true;
+	}
+
 private:
 
 	void asyncAcquisition()
@@ -124,6 +148,7 @@ private:
 		Buffer data_buffer(64);
 		while (true)
 		{
+			if (manager.stopAcq) break;
 			if (!manager.next) continue;
 			auto err = EventGetData(manager.hEvent, data_buffer.Convert<void>(), data_buffer.Size(), 10000);
 			if (err == 0)
@@ -153,6 +178,7 @@ private:
 
 	bool next = false;
 	bool is_ready = false;
+	bool stopAcq = false;
 	Buffer image;
 
 	GenTL::EVENT_HANDLE hEvent = nullptr;
