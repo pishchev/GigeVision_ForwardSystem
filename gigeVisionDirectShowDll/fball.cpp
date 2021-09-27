@@ -179,7 +179,7 @@ CBallStream::CBallStream(HRESULT *phr,
 
     payloadSize = gige.imageSize();
 
-    image = new unsigned char[payloadSize];
+    img = Buffer(payloadSize);
 
     m_Ball = new CBall(m_iImageWidth, m_iImageHeight);
     if(m_Ball == NULL)
@@ -218,24 +218,22 @@ HRESULT CBallStream::FillBuffer(IMediaSample *pms)
     pms->GetPointer(&pData);
     lDataLen = pms->GetSize();
 
-    unsigned char* imagec = image;
+    unsigned char* imagec = img.Convert<unsigned char>();
 
     ZeroMemory(pData, lDataLen);
     {
         CAutoLock cAutoLockShared(&m_cSharedState);
       
-        bool im_f = gige.getImage(image, payloadSize);
-
+        bool im_f = gige.getImage(img.Convert<unsigned char>(), payloadSize);
         for(int row = 0; row < m_iImageHeight; row++)
         {
             for(int col = 0; col < m_iImageWidth; col++)
             {
-                // For each byte fill its value from BallPixel[]
                 for(int i = 0; i < 4; i++)
                 {  
                     if(i < 3)
                     {
-                        *pData = *imagec; 
+                        *pData = *imagec;
                         imagec++;
                     }
                     else
@@ -245,11 +243,8 @@ HRESULT CBallStream::FillBuffer(IMediaSample *pms)
                     pData++;
                 }
             }
-
-            gige.waitNext();
-
-        //pBall += m_iAvailableWidth * iPixelSize;
         }
+        gige.waitNext();
 
         // The current time is the sample's start
         CRefTime rtStart = m_rtSampleTime;

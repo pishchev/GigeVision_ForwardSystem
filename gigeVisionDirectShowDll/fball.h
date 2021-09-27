@@ -84,7 +84,7 @@ private:
 
     int payloadSize = 0;
 
-    unsigned char* image = nullptr;
+    Buffer img;
 
     BYTE m_BallPixel[4];                // Represents one coloured ball
     int m_iPixelSize;                   // The pixel size in bytes

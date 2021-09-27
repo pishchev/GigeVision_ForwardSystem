@@ -4,6 +4,7 @@
 #include "Port.hpp"
 #include "GenTL.h"
 #include "GenICam.h"
+#include "Configurator.h"
 
 using namespace GENAPI_NAMESPACE;
 using namespace GENICAM_NAMESPACE;
@@ -29,6 +30,15 @@ public:
 			ptrAcquisitionStart->Execute();
 		}
 	}
+
+	void StopAcquisition()
+	{
+		CCommandPtr ptrAcquisitionStop = cam._GetNode("AcquisitionStop");
+		if (IsWritable(ptrAcquisitionStop))
+		{
+			ptrAcquisitionStop->Execute();
+		}
+	}
 	
 	int64_t SetWidthMin()
 	{
@@ -50,24 +60,28 @@ public:
 		return ptrHeight->GetValue();
 	}
 
-	int64_t SetHeight(size_t h)
+	bool SetHeight(CameraConfigInt config)
 	{
+		if (!config._active) return false;
 		CIntegerPtr ptrHeight = cam._GetNode("Height");
 		if (IsWritable(ptrHeight))
 		{
-			*ptrHeight = h;
+			*ptrHeight = config._value;
+			return true;
 		}
-		return ptrHeight->GetValue();
+		return false;
 	}
 
-	int64_t SetWidth(size_t w)
+	bool SetWidth(CameraConfigInt config)
 	{
+		if (!config._active) return false;
 		CIntegerPtr ptrWidth = cam._GetNode("Width");
 		if (IsWritable(ptrWidth))
 		{
-			*ptrWidth = w;
+			*ptrWidth = config._value;
+			return true;
 		}
-		return ptrWidth->GetValue();
+		return false;
 	}
 
 	int64_t PayloadSize()

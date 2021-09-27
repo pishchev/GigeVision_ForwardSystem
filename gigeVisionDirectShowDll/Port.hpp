@@ -73,7 +73,7 @@ GENICAM_INTERFACE GENAPI_DECL_ABSTRACT Port : public GENAPI_NAMESPACE::IPort
 
 		Buffer read_port_buffer(*info2.Convert<uint64_t>());
 		elog(GCReadPort(port, addres, read_port_buffer.Convert<void>(), read_port_buffer.Size()), "GCReadPort");
-		//print_as<char>(read_port_buffer); //вывод XML
+		//std::cout<< read_port_buffer.Convert<char>() <<std::endl; //вывод XML
 
 		return GENICAM_NAMESPACE::gcstring(read_port_buffer.Convert<char>());
 	}

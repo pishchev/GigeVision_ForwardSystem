@@ -30,6 +30,10 @@ class GigeManager
 public:
 
 	GigeManager(){}
+	~GigeManager()
+	{
+		stopAcquisition();
+	}
 
 	void configuration(const Configurator& config)
 	{
@@ -38,6 +42,7 @@ public:
 		useDevice(config.deviceIndex);
 		useStream(config.streamIndex);
 		cameraInit();
+
 		camera.SetHeight(config.height);
 		camera.SetWidth(config.width);
 	}
@@ -65,7 +70,7 @@ public:
 	{
 		return if_handler.ShowDevices();
 	}
-	void useDevice(int dev_num)
+	void useDevice(uint32_t dev_num)
 	{
 		dev_handler.setDevice(if_handler.GetDevice(dev_num));
 	}
@@ -74,7 +79,7 @@ public:
 	{
 		return dev_handler.ShowStreams();
 	}
-	void useStream(int stream_num)
+	void useStream(uint32_t stream_num)
 	{
 		hDS = dev_handler.GetStream(stream_num);
 		p.UsePort(dev_handler.GetPort());
@@ -84,12 +89,6 @@ public:
 	{
 		camera.LoadXML(Port::GetXML(dev_handler.GetPort()));
 		camera.Connect(static_cast<IPort*>(&p));
-	}
-
-	void cameraConfig()
-	{
-		camera.SetWidth(8);
-		camera.SetHeight(8);
 	}
 
 	void acquirerPreparing()
@@ -131,6 +130,7 @@ public:
 	void stopAcquisition()
 	{
 		stopAcq = true;
+		camera.StopAcquisition();
 	}
 
 private:

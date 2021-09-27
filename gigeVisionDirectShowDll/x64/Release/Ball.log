@@ -1,10 +1,9 @@
-﻿  fball.cpp
+﻿  ball.cpp
+  fball.cpp
   Notice: Using GenICam with untested compiler, version 1929 detected!
   Following versions were tested: 1400, 1500, 1600, 1700, 1800, 1900-1916.
-D:\Repository\Gige\GigeForward\gigeVisionDirectShowDll\GigeManager.hpp(37,1): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-D:\Repository\Gige\GigeForward\gigeVisionDirectShowDll\GigeManager.hpp(38,1): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
-D:\Repository\Gige\GigeForward\gigeVisionDirectShowDll\GigeManager.hpp(39,1): warning C4267: аргумент: преобразование из "size_t" в "int"; возможна потеря данных
 D:\Repository\Gige\GigeForward\gigeVisionDirectShowDll\fball.cpp(180,35): warning C4267: =: преобразование из "size_t" в "int"; возможна потеря данных
+  Создание кода...
 D:\Repository\Gige\GigeForward\gigeVisionDirectShowDll\Port.hpp(56): warning C4715: Port::GetAccessMode: значение возвращается не при всех путях выполнения
      Создается библиотека x64\Release\Ball.lib и объект x64\Release\Ball.exp
 LINK : warning LNK4098: библиотека по умолчанию "LIBCMT" конфликтует с использованием других библиотек; используйте /NODEFAULTLIB:library

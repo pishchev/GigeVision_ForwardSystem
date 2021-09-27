@@ -1,6 +1,28 @@
 #pragma once
 #include <iostream>
 
+struct CameraConfigInt
+{
+  CameraConfigInt()
+  {
+    _value = 0;
+    _active = false;
+  }
+  CameraConfigInt(int value)
+  {
+    _value = value;
+    _active = true;
+  }
+  CameraConfigInt& operator=(int value)
+  {
+    _value = value;
+    _active = true;
+    return *this;
+  }
+  int _value;
+  bool _active;
+};
+
 class Configurator
 {
 public:
@@ -16,10 +38,10 @@ public:
   }
 
   std::string ctiFile;
-  size_t interfaceIndex;
-  size_t deviceIndex;
-  size_t streamIndex;
+  uint32_t interfaceIndex;
+  uint32_t deviceIndex; 
+  uint32_t streamIndex;
 
-  size_t width;
-  size_t height;
+  CameraConfigInt width;
+  CameraConfigInt height;
 };

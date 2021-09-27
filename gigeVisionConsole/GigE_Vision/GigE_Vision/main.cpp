@@ -11,12 +11,13 @@ int main()
 	gige.startAcquisition();
 
 	size_t payloadSize = gige.imageSize();
-	unsigned char* image = new unsigned char[payloadSize];
+	Buffer img(payloadSize);
+	unsigned char* image = img.Convert<unsigned char>();
 
 	while(true)
 	{
 		gige.waitNext();
-		if (gige.getImage(image, payloadSize))
+		if (gige.getImage(img.Convert<unsigned char>(), payloadSize))
 		{
 			for (int i = 0; i < payloadSize; i++)
 			{
@@ -24,8 +25,8 @@ int main()
 			}
 		}
 		std::cout << std::endl;
-		system("pause");
-		
+		system("pause");	
 	}
+	gige.stopAcquisition();
 	return 0;
 } 
