@@ -1,0 +1,16 @@
+HKCR
+{
+	NoRemove CLSID
+	{
+		ForceRemove {e5fae7b4-cf25-4915-bb33-b61b182459fb} = s 'Previewer class'
+		{
+			ForceRemove Programmable
+			LocalServer32 = s '%MODULE%'
+			{
+				val ServerExecutable = s '%MODULE_RAW%'
+			}
+			TypeLib = s '{d6744a0b-28a2-4840-99cc-8656a3337006}'
+			Version = s '1.0'
+		}
+	}
+}

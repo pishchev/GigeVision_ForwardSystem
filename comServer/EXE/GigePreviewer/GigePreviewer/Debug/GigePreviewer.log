@@ -1,0 +1,57 @@
+﻿  Processing .\GigePreviewer.idl
+  GigePreviewer.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\oaidl.idl
+  oaidl.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\objidl.idl
+  objidl.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\unknwn.idl
+  unknwn.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\shared\wtypes.idl
+  wtypes.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\shared\wtypesbase.idl
+  wtypesbase.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\shared\basetsd.h
+  basetsd.h
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\shared\guiddef.h
+  guiddef.h
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\ocidl.idl
+  ocidl.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\oleidl.idl
+  oleidl.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\servprov.idl
+  servprov.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\urlmon.idl
+  urlmon.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\msxml.idl
+  msxml.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\shobjidl.idl
+  shobjidl.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\docobj.idl
+  docobj.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\shtypes.idl
+  shtypes.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\comcat.idl
+  comcat.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\propidl.idl
+  propidl.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\prsht.idl
+  prsht.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\propsys.idl
+  propsys.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\StructuredQueryCondition.idl
+  StructuredQueryCondition.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\ObjectArray.idl
+  ObjectArray.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\shobjidl_core.idl
+  shobjidl_core.idl
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\oaidl.acf
+  oaidl.acf
+  Processing D:\Windows Kits\10\Include\10.0.19041.0\um\ocidl.acf
+  ocidl.acf
+  pch.cpp
+  GigePreviewer.cpp
+  Previewer.cpp
+  Создание кода...
+  GigePreviewer_i.c
+  xdlldata.c
+  GigePreviewer.vcxproj -> D:\Repository\Gige\GigeForward\comServer\EXE\GigePreviewer\Debug\GigePreviewer.exe

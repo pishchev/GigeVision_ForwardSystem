@@ -1,0 +1,39 @@
+﻿// GigePreviewer.idl: источник языка IDL для GigePreviewer
+//
+
+// Этот файл будет обработан средством MIDL для
+// создание библиотеки типов ($handlersafeidlname$.tlb) и кода маршалирования.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(0bac97ac-03f6-4153-9fc7-23e994f3d4be),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface IPreviewer : IDispatch
+{
+	[propget, id(1)] HRESULT Radius([out, retval] DOUBLE* pVal);
+	[propput, id(1)] HRESULT Radius([in] DOUBLE newVal);
+	[id(2)] HRESULT GetArea([out] DOUBLE* pArea);
+};
+[
+	uuid(d6744a0b-28a2-4840-99cc-8656a3337006),
+	version(1.0),
+]
+library GigePreviewerLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(e5fae7b4-cf25-4915-bb33-b61b182459fb)
+	]
+	coclass Previewer
+	{
+		[default] interface IPreviewer;
+	};
+};
+
+import "shobjidl.idl";
