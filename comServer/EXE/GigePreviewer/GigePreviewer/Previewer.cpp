@@ -8,25 +8,32 @@
 
 
 
-STDMETHODIMP CPreviewer::get_Radius(DOUBLE* pVal)
+
+STDMETHODIMP CPreviewer::StartAcquisition()
 {
   // TODO: Добавьте сюда код реализации
-  *pVal = _rad;
+  gige.configuration(config);
+  gige.acquirerPreparing();
+  gige.startAcquisition();
+  payloadSize = gige.imageSize();
+
+  gige.waitNext();
   return S_OK;
 }
 
 
-STDMETHODIMP CPreviewer::put_Radius(DOUBLE newVal)
+STDMETHODIMP CPreviewer::GetPayloadSize(BYTE* oPayloadSize)
 {
   // TODO: Добавьте сюда код реализации
-  _rad = newVal;
+  *oPayloadSize = payloadSize;
   return S_OK;
 }
 
 
-STDMETHODIMP CPreviewer::GetArea(DOUBLE* pArea)
+STDMETHODIMP CPreviewer::GetImage(BYTE* oImage)
 {
   // TODO: Добавьте сюда код реализации
-  *pArea = 3.14 * _rad * _rad;
-  return S_OK;
+  auto res = gige.getImage(oImage, payloadSize);
+  gige.waitNext();
+  return res ? S_OK : S_FALSE;
 }

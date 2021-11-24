@@ -16,9 +16,9 @@ import "ocidl.idl";
 ]
 interface IPreviewer : IDispatch
 {
-	[propget, id(1)] HRESULT Radius([out, retval] DOUBLE* pVal);
-	[propput, id(1)] HRESULT Radius([in] DOUBLE newVal);
-	[id(2)] HRESULT GetArea([out] DOUBLE* pArea);
+	[id(3)] HRESULT StartAcquisition();
+	[id(4)] HRESULT GetPayloadSize([out] BYTE* oPayloadSize);
+	[id(5)] HRESULT GetImage([out] BYTE* oImage);
 };
 [
 	uuid(d6744a0b-28a2-4840-99cc-8656a3337006),

@@ -10,17 +10,33 @@ int main() {
   CoInitializeEx(nullptr, COINIT::COINIT_MULTITHREADED);
 
   IPreviewer* pPrev;
-  
+
   HRESULT hr = CoCreateInstance(CLSID_Previewer, nullptr, CLSCTX_LOCAL_SERVER, IID_IPreviewer, (LPVOID*)&pPrev);
   if (SUCCEEDED(hr)) {
     pPrev->AddRef();
-    pPrev->put_Radius(5);
-    double rad, area;
 
-    pPrev->get_Radius(&rad);
-    pPrev->GetArea(&area);
-    std::cout << "Radius: " << rad << " | Area: " << area << std::endl;
+    pPrev->StartAcquisition();
+    BYTE payloadSize;
+    pPrev->GetPayloadSize(&payloadSize);
 
+    std::cout << "Payload size: " << (int)payloadSize << std::endl;
+
+    unsigned char* image = new unsigned char[(int)payloadSize];
+    for (int i = 0; i < payloadSize; i++)
+    {
+      std::cout << ' ' << (int)(image[i]);
+    }
+
+    for (int i = 0; i < 3; i++) {
+      std::cout << std::endl << std::endl;
+      std::cout << pPrev->GetImage(image) << std::endl;
+      for (int i = 0; i < payloadSize; i++)
+      {
+        std::cout << ' ' << (int)(image[i]);
+      }
+    }
+
+    delete[] image;
     pPrev->Release();
   }
   else {

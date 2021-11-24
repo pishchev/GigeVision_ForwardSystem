@@ -7,8 +7,8 @@
 /* at Tue Jan 19 10:14:07 2038
  */
 /* Compiler settings for GigePreviewer.idl:
-    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0622 
-    protocol : dce , ms_ext, c_ext, robust
+    Oicf, W1, Zp8, env=Win64 (32b run), target_arch=AMD64 8.01.0622 
+    protocol : all , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
     VC __declspec() decoration level: 
          __declspec(uuid()), __declspec(selectany), __declspec(novtable)
@@ -88,14 +88,13 @@ EXTERN_C const IID IID_IPreviewer;
     IPreviewer : public IDispatch
     {
     public:
-        virtual /* [id][propget] */ HRESULT STDMETHODCALLTYPE get_Radius( 
-            /* [retval][out] */ DOUBLE *pVal) = 0;
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE StartAcquisition( void) = 0;
         
-        virtual /* [id][propput] */ HRESULT STDMETHODCALLTYPE put_Radius( 
-            /* [in] */ DOUBLE newVal) = 0;
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE GetPayloadSize( 
+            /* [out] */ BYTE *oPayloadSize) = 0;
         
-        virtual /* [id] */ HRESULT STDMETHODCALLTYPE GetArea( 
-            /* [out] */ DOUBLE *pArea) = 0;
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE GetImage( 
+            /* [out] */ BYTE *oImage) = 0;
         
     };
     
@@ -155,17 +154,16 @@ EXTERN_C const IID IID_IPreviewer;
             /* [annotation][out] */ 
             _Out_opt_  UINT *puArgErr);
         
-        /* [id][propget] */ HRESULT ( STDMETHODCALLTYPE *get_Radius )( 
-            IPreviewer * This,
-            /* [retval][out] */ DOUBLE *pVal);
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *StartAcquisition )( 
+            IPreviewer * This);
         
-        /* [id][propput] */ HRESULT ( STDMETHODCALLTYPE *put_Radius )( 
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *GetPayloadSize )( 
             IPreviewer * This,
-            /* [in] */ DOUBLE newVal);
+            /* [out] */ BYTE *oPayloadSize);
         
-        /* [id] */ HRESULT ( STDMETHODCALLTYPE *GetArea )( 
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *GetImage )( 
             IPreviewer * This,
-            /* [out] */ DOUBLE *pArea);
+            /* [out] */ BYTE *oImage);
         
         END_INTERFACE
     } IPreviewerVtbl;
@@ -203,14 +201,14 @@ EXTERN_C const IID IID_IPreviewer;
     ( (This)->lpVtbl -> Invoke(This,dispIdMember,riid,lcid,wFlags,pDispParams,pVarResult,pExcepInfo,puArgErr) ) 
 
 
-#define IPreviewer_get_Radius(This,pVal)	\
-    ( (This)->lpVtbl -> get_Radius(This,pVal) ) 
+#define IPreviewer_StartAcquisition(This)	\
+    ( (This)->lpVtbl -> StartAcquisition(This) ) 
 
-#define IPreviewer_put_Radius(This,newVal)	\
-    ( (This)->lpVtbl -> put_Radius(This,newVal) ) 
+#define IPreviewer_GetPayloadSize(This,oPayloadSize)	\
+    ( (This)->lpVtbl -> GetPayloadSize(This,oPayloadSize) ) 
 
-#define IPreviewer_GetArea(This,pArea)	\
-    ( (This)->lpVtbl -> GetArea(This,pArea) ) 
+#define IPreviewer_GetImage(This,oImage)	\
+    ( (This)->lpVtbl -> GetImage(This,oImage) ) 
 
 #endif /* COBJMACROS */
 
