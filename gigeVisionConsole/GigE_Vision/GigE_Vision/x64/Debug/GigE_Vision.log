@@ -1,0 +1,5 @@
+﻿  main.cpp
+  Notice: Using GenICam with untested compiler, version 1929 detected!
+  Following versions were tested: 1400, 1500, 1600, 1700, 1800, 1900-1916.
+D:\Repository\Gige\GigeForward\gigeVisionConsole\GigE_Vision\GigE_Vision\Port.hpp(56): warning C4715: Port::GetAccessMode: значение возвращается не при всех путях выполнения
+LINK : fatal error LNK1104: не удается открыть файл "GCBase_MDd_VC141_v3_3.lib"
