@@ -33,8 +33,8 @@ public:
     deviceIndex = 1;
     streamIndex = 0;
 
-    width = 8;
-    height = 8;
+    width = 640;
+    height = 640;
   }
 
   std::string ctiFile;

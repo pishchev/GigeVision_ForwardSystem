@@ -14,9 +14,9 @@ import "ocidl.idl";
 ]
 interface IPreviewer : IUnknown
 {
-	HRESULT GetImage([in] short iLen, [out, size_is(iLen)] BYTE* oImage);
+	HRESULT GetImage([in] LONG iLen, [out, size_is(iLen)] BYTE* oImage);
 	HRESULT StartAquisition();
-	HRESULT GetPayloadSize([out] BYTE* oPayloadSize);
+	HRESULT GetPayloadSize([out] LONG* oPayloadSize);
 };
 [
 	uuid(91122f49-007b-4c2c-bd1e-9eec38eae568),

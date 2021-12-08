@@ -89,13 +89,13 @@ EXTERN_C const IID IID_IPreviewer;
     {
     public:
         virtual HRESULT STDMETHODCALLTYPE GetImage( 
-            /* [in] */ short iLen,
+            /* [in] */ LONG iLen,
             /* [size_is][out] */ BYTE *oImage) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE StartAquisition( void) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE GetPayloadSize( 
-            /* [out] */ BYTE *oPayloadSize) = 0;
+            /* [out] */ LONG *oPayloadSize) = 0;
         
     };
     
@@ -120,7 +120,7 @@ EXTERN_C const IID IID_IPreviewer;
         
         HRESULT ( STDMETHODCALLTYPE *GetImage )( 
             IPreviewer * This,
-            /* [in] */ short iLen,
+            /* [in] */ LONG iLen,
             /* [size_is][out] */ BYTE *oImage);
         
         HRESULT ( STDMETHODCALLTYPE *StartAquisition )( 
@@ -128,7 +128,7 @@ EXTERN_C const IID IID_IPreviewer;
         
         HRESULT ( STDMETHODCALLTYPE *GetPayloadSize )( 
             IPreviewer * This,
-            /* [out] */ BYTE *oPayloadSize);
+            /* [out] */ LONG *oPayloadSize);
         
         END_INTERFACE
     } IPreviewerVtbl;

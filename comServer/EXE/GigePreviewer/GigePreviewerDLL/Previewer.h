@@ -61,7 +61,7 @@ public:
 
 
 
-	STDMETHOD(GetImage)(short iLen, BYTE* oImage);
+	STDMETHOD(GetImage)(LONG iLen, BYTE* oImage);
 
 private:
 	GigeManager gige;
@@ -69,7 +69,7 @@ private:
 	size_t payloadSize;
 public:
 	STDMETHOD(StartAquisition)();
-	STDMETHOD(GetPayloadSize)(BYTE* oPayloadSize);
+	STDMETHOD(GetPayloadSize)(LONG* oPayloadSize);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Previewer), CPreviewer)

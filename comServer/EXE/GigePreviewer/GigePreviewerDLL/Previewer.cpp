@@ -8,7 +8,7 @@
 
 
 
-STDMETHODIMP CPreviewer::GetImage(short iLen, BYTE* oImage)
+STDMETHODIMP CPreviewer::GetImage(LONG iLen, BYTE* oImage)
 {
   auto res = gige.getImage(oImage, payloadSize);
   gige.waitNext();
@@ -28,7 +28,7 @@ STDMETHODIMP CPreviewer::StartAquisition()
 }
 
 
-STDMETHODIMP CPreviewer::GetPayloadSize(BYTE* oPayloadSize)
+STDMETHODIMP CPreviewer::GetPayloadSize(LONG* oPayloadSize)
 {
   *oPayloadSize = payloadSize;
   return S_OK;

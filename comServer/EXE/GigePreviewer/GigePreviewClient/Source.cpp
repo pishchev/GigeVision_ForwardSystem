@@ -17,7 +17,7 @@ int main() {
 
     pPrev->StartAquisition();
 
-    BYTE payloadSize = 0;
+    LONG payloadSize = 0;
     pPrev->GetPayloadSize(&payloadSize);
     std::cout << "PayloadSize " << (int)payloadSize << std::endl;
 

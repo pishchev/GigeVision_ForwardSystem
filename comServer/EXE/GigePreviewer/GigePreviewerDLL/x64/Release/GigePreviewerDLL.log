@@ -54,7 +54,7 @@
   Previewer.cpp
   Notice: Using GenICam with untested compiler, version 1929 detected!
   Following versions were tested: 1400, 1500, 1600, 1700, 1800, 1900-1916.
-D:\Repository\Gige\GigeForward\comServer\EXE\GigePreviewer\GigePreviewerDLL\Previewer.cpp(33,30): warning C4267: =: преобразование из "size_t" в "BYTE"; возможна потеря данных
+D:\Repository\Gige\GigeForward\comServer\EXE\GigePreviewer\GigePreviewerDLL\Previewer.cpp(33,30): warning C4267: =: преобразование из "size_t" в "LONG"; возможна потеря данных
   Создание кода...
 D:\Repository\Gige\GigeForward\comServer\EXE\GigePreviewer\GigePreviewerDLL\Port.hpp(56): warning C4715: Port::GetAccessMode: значение возвращается не при всех путях выполнения
   GigePreviewerDLL_i.c
