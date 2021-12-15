@@ -35,19 +35,7 @@ public:
 		stopAcquisition();
 	}
 
-	void configuration(const Configurator& config)
-	{
-		Init(config.ctiFile);
-		useInterface(config.interfaceIndex);
-		useDevice(config.deviceIndex);
-		useStream(config.streamIndex);
-		cameraInit();
-
-		camera.SetHeight(config.height);
-		camera.SetWidth(config.width);
-	}
-
-	void Init(std::string cti)
+	void init(std::string cti)
 	{
 		Init_Lib(cti);
 		GCInitLib();
@@ -56,28 +44,43 @@ public:
 		tl_handler.UpdateInterfaceList();
 	}
 
-	std::vector<std::string> Interfaces()
+	//работа с интерфейсами
+	uint32_t getIntefacesSize()
 	{
-		return tl_handler.ShowInterfaces();
+		return tl_handler.GetNumInterfaces();
 	}
-	void useInterface(int int_num)
+	std::string getInterfaceName(uint32_t index)
+	{
+		return tl_handler.GetInterfaceName(index);
+	}
+	void useInterface(uint32_t int_num)
 	{
 		if_handler.setInterfaces(tl_handler.GetInterface(int_num));
 		if_handler.UpdateDeviceList();
 	}
 
-	std::vector<std::string> Devices()
+	//работа с девайсами
+	uint32_t getDevicesSize()
 	{
-		return if_handler.ShowDevices();
+		return if_handler.GetNumDevices();
+	}
+	std::string getDeviceName(uint32_t index)
+	{
+		return if_handler.GetDeviceName(index);
 	}
 	void useDevice(uint32_t dev_num)
 	{
 		dev_handler.setDevice(if_handler.GetDevice(dev_num));
 	}
 
-	std::vector<std::string> Streams()
+	//работа со стримами
+	uint32_t getStreamsSize()
 	{
-		return dev_handler.ShowStreams();
+		return dev_handler.GetNumStreams();
+	}
+	std::string getStreamName(uint32_t index)
+	{
+		return dev_handler.GetStreamName(index);
 	}
 	void useStream(uint32_t stream_num)
 	{
@@ -89,6 +92,19 @@ public:
 	{
 		camera.LoadXML(Port::GetXML(dev_handler.GetPort()));
 		camera.Connect(static_cast<IPort*>(&p));
+	}
+
+	bool GetIntNode(std::string node, int64_t& value)
+	{
+		return camera.GetIntNode(node, value);
+	}
+	bool SetIntNode(std::string node, int64_t value)
+	{
+		return camera.SetIntNode(node, value);
+	}
+	bool GetEnumStrNode(std::string node, std::string& value)
+	{
+		return camera.GetEnumStrNode(node, value);
 	}
 
 	void acquirerPreparing()
@@ -106,12 +122,17 @@ public:
 		elog(GCRegisterEvent(hDS, GenTL::EVENT_NEW_BUFFER, &hEvent), "GCRegisterEvent");
 		asyncAcquisition();
 	}
+	void stopAcquisition()
+	{
+		stopAcq = true;
+		camera.StopAcquisition();
+	}
+
 
 	size_t imageSize()
 	{
 		return payloadSize;
 	}
-	
 	bool getImage(unsigned char* buffer , size_t size)
 	{
 		if (!(payloadSize>=static_cast<int64_t>(size)) || !is_ready)
@@ -121,17 +142,11 @@ public:
 		memcpy(buffer, image.Convert<void>(), sizeof(unsigned char) * size);
 		return true;
 	}
-
 	void waitNext()
 	{
 		next = true;
 	}
 
-	void stopAcquisition()
-	{
-		stopAcq = true;
-		camera.StopAcquisition();
-	}
 
 private:
 
@@ -140,7 +155,6 @@ private:
 		std::thread thr(asyncCapture, std::ref(*this));
 		thr.detach();
 	}
-
 	static void asyncCapture(GigeManager& manager)
 	{
 		int type = GenTL::INFO_DATATYPE_STRING;

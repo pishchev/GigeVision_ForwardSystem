@@ -37,6 +37,14 @@ public:
 		return streams;
 	}
 
+	std::string GetStreamName(uint32_t index)
+	{
+		Buffer dDSID(20);
+		auto err = DevGetDataStreamID(hDevice, index, dDSID.Convert<char>(), dDSID.Size());
+		elog(err, "DEV_Handler::ShowStreams");
+		return dDSID.Convert<char>();
+	}
+
 	GenTL::DS_HANDLE GetStream(uint32_t num)
 	{
 		Buffer dDSID(20);

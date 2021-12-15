@@ -6,6 +6,7 @@
 #include "framework.h"
 #include "PreviewWindow.h"
 #include "ChildView.h"
+#include "GigeProprtyDlg.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -33,6 +34,9 @@ CChildView::~CChildView()
 
 BEGIN_MESSAGE_MAP(CChildView, CWnd)
 	ON_WM_PAINT()
+	ON_WM_LBUTTONDBLCLK()
+	ON_WM_TIMER()
+	ON_WM_CREATE()
 END_MESSAGE_MAP()
 
 
@@ -81,9 +85,39 @@ void CChildView::OnPaint()
 	HDC hdc = winDC->GetSafeHdc();
 	SetDIBitsToDevice(hdc, 0, 0, 640, 640, 0, 0, 0, 640, _image, &bitmapInfo, DIB_RGB_COLORS);
 
-	Invalidate(0);
+	//Invalidate(0);
 	// TODO: Добавьте код обработки сообщений
 	
 	// Не вызывайте CWnd::OnPaint() для сообщений рисования
 }
 
+
+
+void CChildView::OnLButtonDblClk(UINT nFlags, CPoint point)
+{
+	// TODO: добавьте свой код обработчика сообщений или вызов стандартного
+	CGigeProprtyDlg dlg(this);
+	if (IDOK == dlg.DoModal()) {
+		//_prev = dlg.xxx();
+	}
+
+	CWnd::OnLButtonDblClk(nFlags, point);
+}
+
+
+void CChildView::OnTimer(UINT_PTR nIDEvent)
+{
+	Invalidate(FALSE);
+	CWnd::OnTimer(nIDEvent);
+}
+
+
+int CChildView::OnCreate(LPCREATESTRUCT lpCreateStruct)
+{
+	if (CWnd::OnCreate(lpCreateStruct) == -1)
+		return -1;
+
+	// TODO:  Добавьте специализированный код создания
+	SetTimer(101, 100, NULL);
+	return 0;
+}

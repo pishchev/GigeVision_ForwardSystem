@@ -7,7 +7,6 @@
 
 #include "GigePreviewerDLL_i.h"
 
-
 #include "GigeManager.hpp"
 
 

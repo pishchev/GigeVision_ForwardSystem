@@ -30,17 +30,11 @@ public:
 		return num_devices;
 	}
 
-	std::vector<std::string> ShowDevices()
-	{
-		std::vector<std::string> devices;
-		for (uint32_t i = 0; i < GetNumDevices(); i++)
-		{
-			Buffer buffer(20);
-			auto err = IFGetDeviceID(hIF, i, buffer.Convert<char>(), buffer.Size());
-			devices.push_back(buffer.Convert<char>());
-			elog(err, "IF_Handler::ShowDevices");
-		}
-		return devices;
+	std::string GetDeviceName(uint32_t index) {
+		Buffer buffer(20);
+		auto err = IFGetDeviceID(hIF, index, buffer.Convert<char>(), buffer.Size());
+		elog(err, "IF_Handler::ShowDevices");
+		return buffer.Convert<char>();
 	}
 
 	GenTL::DEV_HANDLE GetDevice(uint32_t num)

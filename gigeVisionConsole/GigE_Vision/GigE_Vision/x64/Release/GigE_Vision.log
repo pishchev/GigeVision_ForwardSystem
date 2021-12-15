@@ -1,9 +1,0 @@
-﻿  main.cpp
-  Notice: Using GenICam with untested compiler, version 1929 detected!
-  Following versions were tested: 1400, 1500, 1600, 1700, 1800, 1900-1916.
-  Создание кода
-  3 of 348 functions ( 0.9%) were compiled, the rest were copied from previous compilation.
-    0 functions were new in current compilation
-    0 functions had inline decision re-evaluated but remain unchanged
-  Создание кода завершено
-  GigE_Vision.vcxproj -> D:\Repository\Gige\GigeForward\gigeVisionConsole\GigE_Vision\x64\Release\GigE_Vision.exe

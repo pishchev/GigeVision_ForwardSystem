@@ -39,46 +39,35 @@ public:
 			ptrAcquisitionStop->Execute();
 		}
 	}
-	
-	int64_t SetWidthMin()
-	{
-		CIntegerPtr ptrWidth = cam._GetNode("Width");
-		if (IsWritable(ptrWidth))
-		{
-			*ptrWidth = ptrWidth->GetMin();
-		}
-		return ptrWidth->GetValue();
-	}
 
-	int64_t SetHeightMin()
+	bool SetIntNode(std::string node, int64_t value)
 	{
-		CIntegerPtr ptrHeight = cam._GetNode("Height");
-		if (IsWritable(ptrHeight))
+		CIntegerPtr ptrNode = cam._GetNode(node.data());
+		if (IsWritable(ptrNode))
 		{
-			*ptrHeight = ptrHeight->GetMin();
-		}
-		return ptrHeight->GetValue();
-	}
-
-	bool SetHeight(CameraConfigInt config)
-	{
-		if (!config._active) return false;
-		CIntegerPtr ptrHeight = cam._GetNode("Height");
-		if (IsWritable(ptrHeight))
-		{
-			*ptrHeight = config._value;
+			*ptrNode = value;
 			return true;
 		}
 		return false;
 	}
 
-	bool SetWidth(CameraConfigInt config)
+	bool GetIntNode(std::string node, int64_t& value)
 	{
-		if (!config._active) return false;
-		CIntegerPtr ptrWidth = cam._GetNode("Width");
-		if (IsWritable(ptrWidth))
+		CIntegerPtr ptrNode = cam._GetNode(node.data());
+		if (IsReadable(ptrNode))
 		{
-			*ptrWidth = config._value;
+			value = ptrNode->GetValue();
+			return true;
+		}
+		return false;
+	}
+
+	bool GetEnumStrNode(std::string node, std::string& value)
+	{
+		CEnumerationPtr ptrNode = cam._GetNode("PixelFormat");
+		if (IsReadable(ptrNode))
+		{
+			value = ptrNode->GetCurrentEntry()->GetSymbolic();
 			return true;
 		}
 		return false;
@@ -86,12 +75,9 @@ public:
 
 	int64_t PayloadSize()
 	{
-		CIntegerPtr ptrPayloadSize = cam._GetNode("PayloadSize");
-		if (IsReadable(ptrPayloadSize))
-		{
-			return ptrPayloadSize->GetValue();
-		}
-		return -1;
+		int64_t payloadSize = 0;
+		GetIntNode("PayloadSize", payloadSize);
+		return payloadSize;
 	}
 
 	gcstring PixelFormat()

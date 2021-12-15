@@ -4,9 +4,44 @@
 int main()
 {
 	GigeManager gige;
-	Configurator config;
 
-	gige.configuration(config);
+	//выбираем динамическую библиотеку
+	gige.init("TLSimu.cti");
+
+	//интерфейсы
+	for (uint32_t i = 0; i < gige.getIntefacesSize(); i++) {
+		std::cout << i << ")" << gige.getInterfaceName(i) << std::endl;
+	}
+	uint32_t interf = 0;
+	std::cin >> interf;
+	gige.useInterface(interf);
+
+	//девайсы
+	for (uint32_t i = 0; i < gige.getDevicesSize(); i++) {
+		std::cout << i << ")" << gige.getDeviceName(i) << std::endl;
+	}
+	uint32_t device = 0;
+	std::cin >> device;
+	gige.useDevice(device);
+
+	//стримы
+	for (uint32_t i = 0; i < gige.getStreamsSize(); i++) {
+		std::cout << i << ")" << gige.getStreamName(i) << std::endl;
+	}
+	uint32_t stream = 0;
+	std::cin >> stream;
+	gige.useStream(stream);
+
+
+	gige.cameraInit();
+
+	gige.SetIntNode("Height", 8);
+	gige.SetIntNode("Width", 8);
+
+	std::string pixelFormat;
+	gige.GetEnumStrNode("PixelFormat", pixelFormat);
+	std::cout << "PixelFormat: " << pixelFormat << std::endl;
+
 	gige.acquirerPreparing();
 	gige.startAcquisition();
 

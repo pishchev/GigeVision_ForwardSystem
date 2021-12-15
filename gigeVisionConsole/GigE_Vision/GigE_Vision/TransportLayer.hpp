@@ -34,18 +34,12 @@ public:
 		return num_interfaces;
 	}
 
-	std::vector<std::string> ShowInterfaces()
+	std::string GetInterfaceName(uint32_t index)
 	{
-		std::vector<std::string> interfaces;
-		uint32_t num_interfaces = GetNumInterfaces();
-		for (uint32_t i = 0; i < num_interfaces; i++)
-		{
-			Buffer buffer(20);
-			auto err = TLGetInterfaceID(hTL, i, buffer.Convert<char>(), buffer.Size());
-			interfaces.push_back(buffer.Convert<char>());
-			elog(err, "TL_Handler::ShowInterfaces");
-		}
-		return interfaces;
+		Buffer buffer(20);
+		auto err = TLGetInterfaceID(hTL, index, buffer.Convert<char>(), buffer.Size());
+		elog(err, "TL_Handler::ShowInterfaces");
+		return buffer.Convert<char>();
 	}
 
 	GenTL::IF_HANDLE GetInterface(uint32_t num)

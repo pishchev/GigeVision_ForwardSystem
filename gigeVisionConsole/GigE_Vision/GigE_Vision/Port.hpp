@@ -52,7 +52,8 @@ GENICAM_INTERFACE GENAPI_DECL_ABSTRACT Port : public GENAPI_NAMESPACE::IPort
 		if (*read.Convert<bool8_t>())																return GENAPI_NAMESPACE::EAccessMode::RO;
 		if (*write.Convert<bool8_t>())															return GENAPI_NAMESPACE::EAccessMode::WO;
 		if (*na.Convert<bool8_t>())																	return GENAPI_NAMESPACE::EAccessMode::NA;
-		if (*ni.Convert<bool8_t>())																	return GENAPI_NAMESPACE::EAccessMode::NI;
+
+		return GENAPI_NAMESPACE::EAccessMode::NI;
 	}
 
 	static GENICAM_NAMESPACE::gcstring GetXML(GenTL::PORT_HANDLE port)

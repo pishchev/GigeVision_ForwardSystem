@@ -5,14 +5,16 @@
 #define IDS_PROJNAME                    100
 #define IDR_GIGEPREVIEWERDLL            101
 #define IDR_PREVIEWER                   106
+#define IDD_GIGEPROPERTY                107
+#define IDC_EDIT1                       201
 
 // Next default values for new objects
 // 
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
-#define _APS_NEXT_RESOURCE_VALUE        201
+#define _APS_NEXT_RESOURCE_VALUE        202
 #define _APS_NEXT_COMMAND_VALUE         32768
-#define _APS_NEXT_CONTROL_VALUE         201
-#define _APS_NEXT_SYMED_VALUE           107
+#define _APS_NEXT_CONTROL_VALUE         202
+#define _APS_NEXT_SYMED_VALUE           108
 #endif
 #endif
