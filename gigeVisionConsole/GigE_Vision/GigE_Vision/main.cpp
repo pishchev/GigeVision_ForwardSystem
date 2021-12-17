@@ -4,39 +4,74 @@
 int main()
 {
 	GigeManager gige;
+	
+	uint32_t useConfig;
+	std::cout << "Use config: ";
+	std::cin >> useConfig;
 
-	//выбираем динамическую библиотеку
-	gige.init("TLSimu.cti");
+	if (!useConfig)
+	{
+		//выбираем динамическую библиотеку
+		std::string lib = "TLSimu.cti";
+		//std::cout << "Lib: ";
+		//std::cin >> lib;
+		gige.useLib(lib);
 
-	//интерфейсы
-	for (uint32_t i = 0; i < gige.getIntefacesSize(); i++) {
-		std::cout << i << ")" << gige.getInterfaceName(i) << std::endl;
+		//интерфейсы
+		for (uint32_t i = 0; i < gige.getIntefacesSize(); i++) {
+			std::cout << i << ")" << gige.getInterfaceName(i) << std::endl;
+		}
+		uint32_t interf;
+		std::cout << "Interface: ";
+		std::cin >> interf;
+		gige.useInterface(interf);
+
+		//девайсы
+		for (uint32_t i = 0; i < gige.getDevicesSize(); i++) {
+			std::cout << i << ")" << gige.getDeviceName(i) << std::endl;
+		}
+		uint32_t device;
+		std::cout << "Device: ";
+		std::cin >> device;
+		gige.useDevice(device);
+
+		//стримы
+		for (uint32_t i = 0; i < gige.getStreamsSize(); i++) {
+			std::cout << i << ")" << gige.getStreamName(i) << std::endl;
+		}
+		uint32_t stream;
+		std::cout << "Stream: ";
+		std::cin >> stream;
+		gige.useStream(stream);
+
+		gige.cameraInit();
+
+		int64_t height = 8;
+		std::cout << "Height: ";
+		std::cin >> height;
+		gige.SetIntNode("Height", height);
+
+		int64_t width = 8;
+		std::cout << "Width: ";
+		std::cin >> width;
+		gige.SetIntNode("Width", width);
 	}
-	uint32_t interf = 0;
-	std::cin >> interf;
-	gige.useInterface(interf);
-
-	//девайсы
-	for (uint32_t i = 0; i < gige.getDevicesSize(); i++) {
-		std::cout << i << ")" << gige.getDeviceName(i) << std::endl;
+	else 
+	{
+		std::string config = "config.txt";
+		std::cout << "Configurator: ";
+		std::cin >> config;
+		gige.useConfigurator(config);
 	}
-	uint32_t device = 0;
-	std::cin >> device;
-	gige.useDevice(device);
 
-	//стримы
-	for (uint32_t i = 0; i < gige.getStreamsSize(); i++) {
-		std::cout << i << ")" << gige.getStreamName(i) << std::endl;
-	}
-	uint32_t stream = 0;
-	std::cin >> stream;
-	gige.useStream(stream);
+	gige.SaveConfig("config.txt");
+	Configurator conf;
+	conf.ReadConfig("config.txt");
+	conf.PrintConfig();
 
-
-	gige.cameraInit();
-
-	gige.SetIntNode("Height", 8);
-	gige.SetIntNode("Width", 8);
+	int64_t payloadSize;
+	gige.GetIntNode("PayloadSize", payloadSize);
+	std::cout << "\n\n\nPayloadSize: " << payloadSize << std::endl;
 
 	std::string pixelFormat;
 	gige.GetEnumStrNode("PixelFormat", pixelFormat);
@@ -45,7 +80,6 @@ int main()
 	gige.acquirerPreparing();
 	gige.startAcquisition();
 
-	size_t payloadSize = gige.imageSize();
 	Buffer img(payloadSize);
 	unsigned char* image = img.Convert<unsigned char>();
 
@@ -62,6 +96,7 @@ int main()
 		std::cout << std::endl;
 		system("pause");	
 	}
+	
 	gige.stopAcquisition();
 	return 0;
 } 

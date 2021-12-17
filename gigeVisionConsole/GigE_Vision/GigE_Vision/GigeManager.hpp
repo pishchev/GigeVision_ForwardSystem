@@ -35,8 +35,25 @@ public:
 		stopAcquisition();
 	}
 
-	void init(std::string cti)
+	void useConfigurator(std::string configFile)
 	{
+		config.ReadConfig(configFile);
+		useLib(config.lib);
+		useInterface(config.intface);
+		useDevice(config.device);
+		useStream(config.stream);
+
+		cameraInit();
+
+		for (auto param = config.parameters.begin(); param != config.parameters.end(); ++param)
+			SetIntNode(param->first, param->second);
+	}
+
+
+	void useLib(std::string cti)
+	{
+		config.lib = cti;
+
 		Init_Lib(cti);
 		GCInitLib();
 
@@ -55,8 +72,20 @@ public:
 	}
 	void useInterface(uint32_t int_num)
 	{
+		config.intface = getInterfaceName(int_num);
+
 		if_handler.setInterfaces(tl_handler.GetInterface(int_num));
 		if_handler.UpdateDeviceList();
+	}
+	void useInterface(std::string intface)
+	{
+		for (uint32_t i = 0; i < getIntefacesSize(); i++)
+			if (intface == getInterfaceName(i)) {
+				config.intface = intface;
+				if_handler.setInterfaces(tl_handler.GetInterface(i));
+				if_handler.UpdateDeviceList();
+				break;
+			}
 	}
 
 	//работа с девайсами
@@ -70,7 +99,17 @@ public:
 	}
 	void useDevice(uint32_t dev_num)
 	{
+		config.device = getDeviceName(dev_num);
+
 		dev_handler.setDevice(if_handler.GetDevice(dev_num));
+	}
+	void useDevice(std::string device)
+	{
+		for (uint32_t i = 0; i < getDevicesSize(); i++)
+			if (device == getDeviceName(i)) {
+				config.device = device;
+				dev_handler.setDevice(if_handler.GetDevice(i));
+			}
 	}
 
 	//работа со стримами
@@ -84,8 +123,18 @@ public:
 	}
 	void useStream(uint32_t stream_num)
 	{
+		config.stream = getStreamName(stream_num);
+
 		hDS = dev_handler.GetStream(stream_num);
 		p.UsePort(dev_handler.GetPort());
+	}
+	void useStream(std::string stream) {
+		for (uint32_t i = 0; i < getStreamsSize(); i++)
+			if (stream == getStreamName(i)) {
+				config.stream = stream;
+				hDS = dev_handler.GetStream(i);
+				p.UsePort(dev_handler.GetPort());
+			}
 	}
 
 	void cameraInit()
@@ -100,12 +149,20 @@ public:
 	}
 	bool SetIntNode(std::string node, int64_t value)
 	{
+		config.parameters[node] = value;
+
 		return camera.SetIntNode(node, value);
 	}
 	bool GetEnumStrNode(std::string node, std::string& value)
 	{
 		return camera.GetEnumStrNode(node, value);
 	}
+
+	void SaveConfig(std::string fileName)
+	{
+		config.SaveConfig(fileName);
+	}
+
 
 	void acquirerPreparing()
 	{
@@ -115,7 +172,6 @@ public:
 		imageAcq.StartAcquisition(hDS);
 		ds_buffers = imageAcq.GetBuffers();
 	}
-
 	void startAcquisition()
 	{
 		camera.StartAcquisition();
@@ -147,9 +203,8 @@ public:
 		next = true;
 	}
 
-
 private:
-
+	//захват изображений
 	void asyncAcquisition()
 	{
 		std::thread thr(asyncCapture, std::ref(*this));
@@ -180,6 +235,8 @@ private:
 			}
 		}
 	}
+
+	Configurator config;
 
 	TransportLayer tl_handler;
 	Interface if_handler;
