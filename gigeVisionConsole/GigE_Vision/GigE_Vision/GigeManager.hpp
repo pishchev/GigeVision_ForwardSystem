@@ -141,6 +141,29 @@ public:
 	{
 		camera.LoadXML(Port::GetXML(dev_handler.GetPort()));
 		camera.Connect(static_cast<IPort*>(&p));
+		camera.GetNodes();
+	}
+
+	//парсинг узлов
+	size_t getNodesSize()
+	{
+		return camera.GetNodesSize();
+	}
+	std::string getNodeName(uint32_t index)
+	{
+		return camera.getNodeName(index);
+	}
+	uint32_t getNodeVisibility(uint32_t index)
+	{
+		return camera.getNodeVisibility(index);
+	}
+	uint32_t getNodeAccess(uint32_t index)
+	{
+		return camera.getNodeAccess(index);
+	}
+	uint32_t getNodeType(uint32_t index)
+	{
+		return camera.getNodeType(index);
 	}
 
 	bool GetIntNode(std::string node, int64_t& value)
@@ -163,7 +186,6 @@ public:
 		config.SaveConfig(fileName);
 	}
 
-
 	void acquirerPreparing()
 	{
 		payloadSize = camera.PayloadSize();
@@ -183,7 +205,6 @@ public:
 		stopAcq = true;
 		camera.StopAcquisition();
 	}
-
 
 	size_t imageSize()
 	{

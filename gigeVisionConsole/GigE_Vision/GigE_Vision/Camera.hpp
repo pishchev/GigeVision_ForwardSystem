@@ -40,6 +40,54 @@ public:
 		}
 	}
 
+	void GetNodes()
+	{
+		cam._GetNodes(nodes);
+
+		std::sort(nodes.begin(), nodes.end(), [](const INode* node1, const INode* node2)
+		{
+			if (node1->GetVisibility() != node2->GetVisibility())
+				return node1->GetVisibility() < node2->GetVisibility();
+			if (node1->GetAccessMode() != node2->GetAccessMode())
+				return node1->GetAccessMode() > node2->GetAccessMode();
+			if (node1->GetPrincipalInterfaceType() != node2->GetPrincipalInterfaceType())
+				return node1->GetPrincipalInterfaceType() < node2->GetPrincipalInterfaceType();
+			return false;
+		});
+
+		/*
+		for (auto node = nodes.begin(); node != nodes.end(); ++node)
+		{
+			const auto nd = *node;
+			std::cout << "Name: " << std::setw(50) << std::left << nd->GetName() 
+				<< "Visibility: " << std::setw(2) << std::left << nd->GetVisibility()
+				<< "AccessMode: " << std::setw(2) << std::left << nd->GetAccessMode()
+				<< "InterfaceType: " << std::setw(2) << std::left << nd->GetPrincipalInterfaceType()
+				<< std::endl;
+		}*/
+	}
+
+	size_t GetNodesSize()
+	{
+		return nodes.size();
+	}
+	std::string getNodeName(uint32_t index)
+	{
+		return nodes[index]->GetName().c_str();
+	}
+	uint32_t getNodeVisibility(uint32_t index)
+	{
+		return nodes[index]->GetVisibility();
+	}
+	uint32_t getNodeAccess(uint32_t index)
+	{
+		return nodes[index]->GetAccessMode();
+	}
+	uint32_t getNodeType(uint32_t index)
+	{
+		return nodes[index]->GetPrincipalInterfaceType();
+	}
+
 	bool SetIntNode(std::string node, int64_t value)
 	{
 		CIntegerPtr ptrNode = cam._GetNode(node.data());
@@ -64,7 +112,7 @@ public:
 
 	bool GetEnumStrNode(std::string node, std::string& value)
 	{
-		CEnumerationPtr ptrNode = cam._GetNode("PixelFormat");
+		CEnumerationPtr ptrNode = cam._GetNode(node.data());
 		if (IsReadable(ptrNode))
 		{
 			value = ptrNode->GetCurrentEntry()->GetSymbolic();
@@ -80,16 +128,7 @@ public:
 		return payloadSize;
 	}
 
-	gcstring PixelFormat()
-	{
-		CEnumerationPtr ptrPixelFormat = cam._GetNode("PixelFormat");
-		if (IsReadable(ptrPixelFormat))
-		{
-			return ptrPixelFormat->GetCurrentEntry()->GetSymbolic();
-		}
-		return "Not readable node:(";
-	}
-
 private:
 	CNodeMapRef cam;
+	NodeList_t nodes;
 };

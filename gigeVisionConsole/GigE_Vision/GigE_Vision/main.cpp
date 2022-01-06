@@ -1,4 +1,5 @@
 #include <iostream>
+#include <iomanip>
 #include "GigeManager.hpp"
 
 int main()
@@ -59,9 +60,24 @@ int main()
 	else 
 	{
 		std::string config = "config.txt";
-		std::cout << "Configurator: ";
-		std::cin >> config;
+		//std::cout << "Configurator: ";
+		//std::cin >> config;
 		gige.useConfigurator(config);
+	}
+
+	//узлы
+	size_t nodesSize = gige.getNodesSize();
+	std::cout << std::setw(8) << std::right << "Name"
+		<< std::setw(51) << std::right << "Visibility"
+		<< std::setw(20) << std::right << "AccessMode"
+		<< std::setw(18) << std::right << "Type" << std::endl;
+
+	for (uint32_t i = 0; i < nodesSize; i++)
+	{
+		std::cout << std::setw(3) << std::right << i << ")" << std::setw(50) << std::left << gige.getNodeName(i)
+			<< std::setw(20) << std::left << gige.getNodeVisibility(i)
+			<< std::setw(20) << std::left << gige.getNodeAccess(i)
+			<< std::setw(20) << std::left << gige.getNodeType(i) << std::endl;
 	}
 
 	gige.SaveConfig("config.txt");
@@ -77,6 +93,13 @@ int main()
 	gige.GetEnumStrNode("PixelFormat", pixelFormat);
 	std::cout << "PixelFormat: " << pixelFormat << std::endl;
 
+	std::string triggerSource;
+	gige.GetEnumStrNode("TriggerSource", triggerSource);
+	std::cout << "TriggerSource: " << triggerSource << std::endl;
+
+
+
+	// захват изображения
 	gige.acquirerPreparing();
 	gige.startAcquisition();
 
