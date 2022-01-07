@@ -121,6 +121,17 @@ public:
 		return false;
 	}
 
+	bool GetStrNode(std::string node, std::string& value)
+	{
+		CStringPtr ptrNode = cam._GetNode(node.data());
+		if (IsReadable(ptrNode))
+		{
+			value = ptrNode->GetValue();
+			return true;
+		}
+		return false;
+	}
+
 	int64_t PayloadSize()
 	{
 		int64_t payloadSize = 0;

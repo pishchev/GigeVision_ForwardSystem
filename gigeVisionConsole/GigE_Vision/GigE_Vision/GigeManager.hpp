@@ -180,6 +180,10 @@ public:
 	{
 		return camera.GetEnumStrNode(node, value);
 	}
+	bool GetStrNode(std::string node, std::string& value)
+	{
+		return camera.GetStrNode(node, value);
+	}
 
 	void SaveConfig(std::string fileName)
 	{

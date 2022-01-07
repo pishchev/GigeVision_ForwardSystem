@@ -68,16 +68,38 @@ int main()
 	//узлы
 	size_t nodesSize = gige.getNodesSize();
 	std::cout << std::setw(8) << std::right << "Name"
-		<< std::setw(51) << std::right << "Visibility"
-		<< std::setw(20) << std::right << "AccessMode"
-		<< std::setw(18) << std::right << "Type" << std::endl;
+		<< std::setw(47) << std::right << "V"
+		<< std::setw(5) << std::right << "AM"
+		<< std::setw(5) << std::right << "T"
+		<< std::setw(6) << std::right << "Val" << std::endl;
 
 	for (uint32_t i = 0; i < nodesSize; i++)
 	{
 		std::cout << std::setw(3) << std::right << i << ")" << std::setw(50) << std::left << gige.getNodeName(i)
-			<< std::setw(20) << std::left << gige.getNodeVisibility(i)
-			<< std::setw(20) << std::left << gige.getNodeAccess(i)
-			<< std::setw(20) << std::left << gige.getNodeType(i) << std::endl;
+			<< std::setw(5) << std::left << gige.getNodeVisibility(i)
+			<< std::setw(5) << std::left << gige.getNodeAccess(i)
+			<< std::setw(5) << std::left << gige.getNodeType(i);
+
+		if (gige.getNodeType(i) == 2)
+		{
+			int64_t val;
+			gige.GetIntNode(gige.getNodeName(i), val);
+			std::cout << val;
+		}
+		else if (gige.getNodeType(i) == 9) 
+		{
+			std::string val;
+			gige.GetEnumStrNode(gige.getNodeName(i), val);
+			std::cout << val;
+		}
+		else if (gige.getNodeType(i) == 6)
+		{
+			std::string val;
+			gige.GetStrNode(gige.getNodeName(i), val);
+			std::cout << val;
+		}
+
+		std::cout << std::endl;
 	}
 
 	gige.SaveConfig("config.txt");
@@ -85,24 +107,13 @@ int main()
 	conf.ReadConfig("config.txt");
 	conf.PrintConfig();
 
-	int64_t payloadSize;
-	gige.GetIntNode("PayloadSize", payloadSize);
-	std::cout << "\n\n\nPayloadSize: " << payloadSize << std::endl;
-
-	std::string pixelFormat;
-	gige.GetEnumStrNode("PixelFormat", pixelFormat);
-	std::cout << "PixelFormat: " << pixelFormat << std::endl;
-
-	std::string triggerSource;
-	gige.GetEnumStrNode("TriggerSource", triggerSource);
-	std::cout << "TriggerSource: " << triggerSource << std::endl;
-
-
 
 	// захват изображения
 	gige.acquirerPreparing();
 	gige.startAcquisition();
 
+	int64_t payloadSize;
+	gige.GetIntNode("PayloadSize", payloadSize);
 	Buffer img(payloadSize);
 	unsigned char* image = img.Convert<unsigned char>();
 
