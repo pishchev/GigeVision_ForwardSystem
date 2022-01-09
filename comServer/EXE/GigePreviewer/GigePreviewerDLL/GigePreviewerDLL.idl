@@ -14,9 +14,20 @@ import "ocidl.idl";
 ]
 interface IPreviewer : IUnknown
 {
-	HRESULT GetImage([in] LONG iLen, [out, size_is(iLen)] BYTE* oImage);
-	HRESULT StartAquisition();
-	HRESULT GetPayloadSize([out] LONG* oPayloadSize);
+	HRESULT useLibrary([in, size_is(20)] CHAR* libFile);
+
+	HRESULT getInterfacesSize([out] BYTE* oInterfacesSize);
+	HRESULT getInterfaceName([out, size_is(50)] CHAR* oName, [in] BYTE iIndex);
+	HRESULT setInterface([in, size_is(50)] CHAR* iInterface);
+
+	HRESULT getDevicesSize([out] BYTE* oDevicesSize);
+	HRESULT getDeviceName([out, size_is(50)] CHAR* oName, [in] BYTE iIndex);
+	HRESULT setDevice([in, size_is(50)] CHAR* iDevice);
+
+	HRESULT getStreamsSize([out] BYTE* oStreamsSize);
+	HRESULT getStreamName([out, size_is(50)] CHAR* oName, [in] BYTE iIndex);
+	HRESULT setStream([in, size_is(50)] CHAR* iStream);
+	HRESULT cameraInit();
 };
 [
 	uuid(91122f49-007b-4c2c-bd1e-9eec38eae568),

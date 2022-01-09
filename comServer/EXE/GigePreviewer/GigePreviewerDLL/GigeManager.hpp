@@ -35,20 +35,25 @@ public:
 		stopAcquisition();
 	}
 
-	void configuration(const Configurator& config)
+	void useConfigurator(std::string configFile)
 	{
-		Init(config.ctiFile);
-		useInterface(config.interfaceIndex);
-		useDevice(config.deviceIndex);
-		useStream(config.streamIndex);
+		config.ReadConfig(configFile);
+		useLib(config.lib);
+		useInterface(config.intface);
+		useDevice(config.device);
+		useStream(config.stream);
+
 		cameraInit();
 
-		camera.SetHeight(config.height);
-		camera.SetWidth(config.width);
+		for (auto param = config.parameters.begin(); param != config.parameters.end(); ++param)
+			SetIntNode(param->first, param->second);
 	}
 
-	void Init(std::string cti)
+
+	void useLib(std::string cti)
 	{
+		config.lib = cti;
+
 		Init_Lib(cti);
 		GCInitLib();
 
@@ -56,39 +61,133 @@ public:
 		tl_handler.UpdateInterfaceList();
 	}
 
-	std::vector<std::string> Interfaces()
+	//работа с интерфейсами
+	uint32_t getIntefacesSize()
 	{
-		return tl_handler.ShowInterfaces();
+		return tl_handler.GetNumInterfaces();
 	}
-	void useInterface(int int_num)
+	std::string getInterfaceName(uint32_t index)
 	{
+		return tl_handler.GetInterfaceName(index);
+	}
+	void useInterface(uint32_t int_num)
+	{
+		config.intface = getInterfaceName(int_num);
+
 		if_handler.setInterfaces(tl_handler.GetInterface(int_num));
 		if_handler.UpdateDeviceList();
 	}
-
-	std::vector<std::string> Devices()
+	void useInterface(std::string intface)
 	{
-		return if_handler.ShowDevices();
+		for (uint32_t i = 0; i < getIntefacesSize(); i++)
+			if (intface == getInterfaceName(i)) {
+				config.intface = intface;
+				if_handler.setInterfaces(tl_handler.GetInterface(i));
+				if_handler.UpdateDeviceList();
+				break;
+			}
+	}
+
+	//работа с девайсами
+	uint32_t getDevicesSize()
+	{
+		return if_handler.GetNumDevices();
+	}
+	std::string getDeviceName(uint32_t index)
+	{
+		return if_handler.GetDeviceName(index);
 	}
 	void useDevice(uint32_t dev_num)
 	{
+		config.device = getDeviceName(dev_num);
+
 		dev_handler.setDevice(if_handler.GetDevice(dev_num));
 	}
-
-	std::vector<std::string> Streams()
+	void useDevice(std::string device)
 	{
-		return dev_handler.ShowStreams();
+		for (uint32_t i = 0; i < getDevicesSize(); i++)
+			if (device == getDeviceName(i)) {
+				config.device = device;
+				dev_handler.setDevice(if_handler.GetDevice(i));
+			}
+	}
+
+	//работа со стримами
+	uint32_t getStreamsSize()
+	{
+		return dev_handler.GetNumStreams();
+	}
+	std::string getStreamName(uint32_t index)
+	{
+		return dev_handler.GetStreamName(index);
 	}
 	void useStream(uint32_t stream_num)
 	{
+		config.stream = getStreamName(stream_num);
+
 		hDS = dev_handler.GetStream(stream_num);
 		p.UsePort(dev_handler.GetPort());
+	}
+	void useStream(std::string stream) {
+		for (uint32_t i = 0; i < getStreamsSize(); i++)
+			if (stream == getStreamName(i)) {
+				config.stream = stream;
+				hDS = dev_handler.GetStream(i);
+				p.UsePort(dev_handler.GetPort());
+			}
 	}
 
 	void cameraInit()
 	{
 		camera.LoadXML(Port::GetXML(dev_handler.GetPort()));
 		camera.Connect(static_cast<IPort*>(&p));
+		camera.GetNodes();
+	}
+
+	//парсинг узлов
+	size_t getNodesSize()
+	{
+		return camera.GetNodesSize();
+	}
+	std::string getNodeName(uint32_t index)
+	{
+		return camera.getNodeName(index);
+	}
+	uint32_t getNodeVisibility(uint32_t index)
+	{
+		return camera.getNodeVisibility(index);
+	}
+	uint32_t getNodeAccess(uint32_t index)
+	{
+		return camera.getNodeAccess(index);
+	}
+	uint32_t getNodeType(uint32_t index)
+	{
+		return camera.getNodeType(index);
+	}
+
+	bool GetIntNode(std::string node, int64_t& value)
+	{
+		return camera.GetIntNode(node, value);
+	}
+	bool SetIntNode(std::string node, int64_t value)
+	{
+		config.parameters[node] = value;
+
+		return camera.SetIntNode(node, value);
+	}
+	bool GetEnumStrNode(std::string node, std::string& value)
+	{
+		return camera.GetEnumStrNode(node, value);
+	}
+	bool GetStrNode(std::string node, std::string& value)
+	{
+		return camera.GetStrNode(node, value);
+	}
+
+	void SaveConfig(std::string fileName)
+	{
+		config.SaveConfig(fileName);
 	}
 
 	void acquirerPreparing()
@@ -99,19 +198,22 @@ public:
 		imageAcq.StartAcquisition(hDS);
 		ds_buffers = imageAcq.GetBuffers();
 	}
-
 	void startAcquisition()
 	{
 		camera.StartAcquisition();
 		elog(GCRegisterEvent(hDS, GenTL::EVENT_NEW_BUFFER, &hEvent), "GCRegisterEvent");
 		asyncAcquisition();
 	}
+	void stopAcquisition()
+	{
+		stopAcq = true;
+		camera.StopAcquisition();
+	}
 
 	size_t imageSize()
 	{
 		return payloadSize;
 	}
-	
 	bool getImage(unsigned char* buffer , size_t size)
 	{
 		if (!(payloadSize>=static_cast<int64_t>(size)) || !is_ready)
@@ -121,26 +223,18 @@ public:
 		memcpy(buffer, image.Convert<void>(), sizeof(unsigned char) * size);
 		return true;
 	}
-
 	void waitNext()
 	{
 		next = true;
 	}
 
-	void stopAcquisition()
-	{
-		stopAcq = true;
-		camera.StopAcquisition();
-	}
-
 private:
-
+	//захват изображений
 	void asyncAcquisition()
 	{
 		std::thread thr(asyncCapture, std::ref(*this));
 		thr.detach();
 	}
-
 	static void asyncCapture(GigeManager& manager)
 	{
 		int type = GenTL::INFO_DATATYPE_STRING;
@@ -166,6 +260,8 @@ private:
 			}
 		}
 	}
+
+	Configurator config;
 
 	TransportLayer tl_handler;
 	Interface if_handler;

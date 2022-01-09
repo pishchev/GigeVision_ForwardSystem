@@ -1,47 +1,80 @@
 #pragma once
 #include <iostream>
+#include <string>
+#include <map>
+#include <fstream>
 
-struct CameraConfigInt
-{
-  CameraConfigInt()
-  {
-    _value = 0;
-    _active = false;
-  }
-  CameraConfigInt(int value)
-  {
-    _value = value;
-    _active = true;
-  }
-  CameraConfigInt& operator=(int value)
-  {
-    _value = value;
-    _active = true;
-    return *this;
-  }
-  int _value;
-  bool _active;
-};
+typedef std::map<std::string, int64_t> IntNodes;
 
 class Configurator
 {
 public:
-  Configurator()
+  
+  bool ReadConfig(std::string fileName)
   {
-    ctiFile = "TLSimu.cti";
-    interfaceIndex = 0;
-    deviceIndex = 1;
-    streamIndex = 0;
+    std::ifstream fd(fileName);
+    if (!fd.is_open())
+      return false;
 
-    width = 640;
-    height = 640;
+    std::string word;
+    std::cout << std::endl;
+    while (fd >> word)
+    {
+      if (word == "Lib")
+        fd >> lib;
+      else if (word == "Interface")
+        fd >> intface;
+      else if (word == "Device")
+        fd >> device;
+      else if (word == "Stream")
+        fd >> stream;
+      else {
+        std::string param;
+        fd >> param;
+        parameters[word] = std::stoi(param);
+      }
+    }
+
+    fd.close();
+    return true;
   }
 
-  std::string ctiFile;
-  uint32_t interfaceIndex;
-  uint32_t deviceIndex; 
-  uint32_t streamIndex;
+  //console debug
+  void PrintConfig()
+  {
+    std::cout << "Configuration: " << std::endl;
 
-  CameraConfigInt width;
-  CameraConfigInt height;
+    std::cout << "Lib: " << lib << std::endl;
+    std::cout << "Interface: " << intface << std::endl;
+    std::cout << "Device: " << device << std::endl;
+    std::cout << "Stream: " << stream << std::endl;
+
+    for (auto it = parameters.begin(); it != parameters.end(); ++it) {
+      std::cout << it->first << ": " << it->second << std::endl;
+    }
+  }
+
+  void SaveConfig(std::string fileName)
+  {
+    std::ofstream fd;
+    fd.open(fileName, 'w');
+
+    fd << "Lib " << lib << std::endl;
+    fd << "Interface " << intface << std::endl;
+    fd << "Device " << device << std::endl;
+    fd << "Stream " << stream << std::endl;
+
+    for (auto it = parameters.begin(); it != parameters.end(); ++it) {
+      fd << it->first << " " << it->second << std::endl;
+    }
+
+    fd.close();
+  }
+
+  std::string lib;
+  std::string intface;
+  std::string device;
+  std::string stream;
+
+  IntNodes parameters;
 };

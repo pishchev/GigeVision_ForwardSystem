@@ -2,7 +2,8 @@
 
 #pragma once
 #include "resource.h"       // основные символы
-
+#include <comdef.h>
+#include <string>
 
 
 #include "GigePreviewerDLL_i.h"
@@ -56,19 +57,23 @@ END_COM_MAP()
 
 	CComPtr<IUnknown> m_pUnkMarshaler;
 
-public:
-
-
-
-	STDMETHOD(GetImage)(LONG iLen, BYTE* oImage);
-
 private:
 	GigeManager gige;
-	Configurator config;
-	size_t payloadSize;
 public:
-	STDMETHOD(StartAquisition)();
-	STDMETHOD(GetPayloadSize)(LONG* oPayloadSize);
+	STDMETHOD(useLibrary)(CHAR* libFile);
+
+	STDMETHOD(getInterfacesSize)(BYTE* oInterfacesSize);
+	STDMETHOD(getInterfaceName)(CHAR* oName, BYTE iIndex);
+	STDMETHOD(setInterface)(CHAR* iInterface);
+
+	STDMETHOD(getDevicesSize)(BYTE* oDevicesSize);
+	STDMETHOD(getDeviceName)(CHAR* oName, BYTE iIndex);
+	STDMETHOD(setDevice)(CHAR* iDevice);
+
+	STDMETHOD(getStreamsSize)(BYTE* oStreamsSize);
+	STDMETHOD(getStreamName)(CHAR* oName, BYTE iIndex);
+	STDMETHOD(setStream)(CHAR* iStream);
+	STDMETHOD(cameraInit)();
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Previewer), CPreviewer)

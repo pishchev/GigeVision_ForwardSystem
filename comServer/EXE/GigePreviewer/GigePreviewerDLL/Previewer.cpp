@@ -7,29 +7,69 @@
 // CPreviewer
 
 
-
-STDMETHODIMP CPreviewer::GetImage(LONG iLen, BYTE* oImage)
+STDMETHODIMP CPreviewer::useLibrary(CHAR* libFile)
 {
-  auto res = gige.getImage(oImage, payloadSize);
-  gige.waitNext();
+  //std::string lib = _bstr_t(libFile);
+  gige.useLib(libFile);
   return S_OK;
 }
 
-
-STDMETHODIMP CPreviewer::StartAquisition()
+STDMETHODIMP CPreviewer::getInterfacesSize(BYTE* oInterfacesSize)
 {
-  gige.configuration(config);
-  gige.acquirerPreparing();
-  gige.startAcquisition();
-  payloadSize = gige.imageSize();
-
-  gige.waitNext();
+  *oInterfacesSize = gige.getIntefacesSize();
+  return S_OK;
+}
+STDMETHODIMP CPreviewer::getInterfaceName(CHAR* oName, BYTE iIndex)
+{
+  std::string name = gige.getInterfaceName((int)iIndex);
+  memcpy(oName, name.data(), name.size() * sizeof(char));
+  oName[name.size()] = '\0';
+  return S_OK;
+}
+STDMETHODIMP CPreviewer::setInterface(CHAR* iInterface)
+{
+  gige.useInterface(iInterface);
   return S_OK;
 }
 
-
-STDMETHODIMP CPreviewer::GetPayloadSize(LONG* oPayloadSize)
+STDMETHODIMP CPreviewer::getDevicesSize(BYTE* oDevicesSize)
 {
-  *oPayloadSize = payloadSize;
+  *oDevicesSize = gige.getDevicesSize();
+  return S_OK;
+}
+STDMETHODIMP CPreviewer::getDeviceName(CHAR* oName, BYTE iIndex)
+{
+  std::string name = gige.getDeviceName((int)iIndex);
+  memcpy(oName, name.data(), name.size() * sizeof(char));
+  oName[name.size()] = '\0';
+  return S_OK;
+}
+STDMETHODIMP CPreviewer::setDevice(CHAR* iDevice)
+{
+  gige.useDevice(iDevice);
+  return S_OK;
+}
+
+STDMETHODIMP CPreviewer::getStreamsSize(BYTE* oStreamsSize)
+{
+  *oStreamsSize = gige.getStreamsSize();
+  return S_OK;
+}
+STDMETHODIMP CPreviewer::getStreamName(CHAR* oName, BYTE iIndex)
+{
+  std::string name = gige.getStreamName((int)iIndex);
+  memcpy(oName, name.data(), name.size() * sizeof(char));
+  oName[name.size()] = '\0';
+  return S_OK;
+}
+STDMETHODIMP CPreviewer::setStream(CHAR* iStream)
+{
+  gige.useStream(iStream);
+  return S_OK;
+}
+
+STDMETHODIMP CPreviewer::cameraInit()
+{
+  gige.cameraInit();
   return S_OK;
 }

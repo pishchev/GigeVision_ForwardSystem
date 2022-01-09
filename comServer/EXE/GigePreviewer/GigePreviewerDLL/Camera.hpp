@@ -39,46 +39,94 @@ public:
 			ptrAcquisitionStop->Execute();
 		}
 	}
-	
-	int64_t SetWidthMin()
+
+	void GetNodes()
 	{
-		CIntegerPtr ptrWidth = cam._GetNode("Width");
-		if (IsWritable(ptrWidth))
+		cam._GetNodes(nodes);
+
+		std::sort(nodes.begin(), nodes.end(), [](const INode* node1, const INode* node2)
 		{
-			*ptrWidth = ptrWidth->GetMin();
-		}
-		return ptrWidth->GetValue();
+			if (node1->GetVisibility() != node2->GetVisibility())
+				return node1->GetVisibility() < node2->GetVisibility();
+			if (node1->GetAccessMode() != node2->GetAccessMode())
+				return node1->GetAccessMode() > node2->GetAccessMode();
+			if (node1->GetPrincipalInterfaceType() != node2->GetPrincipalInterfaceType())
+				return node1->GetPrincipalInterfaceType() < node2->GetPrincipalInterfaceType();
+			return false;
+		});
+
+		/*
+		for (auto node = nodes.begin(); node != nodes.end(); ++node)
+		{
+			const auto nd = *node;
+			std::cout << "Name: " << std::setw(50) << std::left << nd->GetName() 
+				<< "Visibility: " << std::setw(2) << std::left << nd->GetVisibility()
+				<< "AccessMode: " << std::setw(2) << std::left << nd->GetAccessMode()
+				<< "InterfaceType: " << std::setw(2) << std::left << nd->GetPrincipalInterfaceType()
+				<< std::endl;
+		}*/
 	}
 
-	int64_t SetHeightMin()
+	size_t GetNodesSize()
 	{
-		CIntegerPtr ptrHeight = cam._GetNode("Height");
-		if (IsWritable(ptrHeight))
-		{
-			*ptrHeight = ptrHeight->GetMin();
-		}
-		return ptrHeight->GetValue();
+		return nodes.size();
+	}
+	std::string getNodeName(uint32_t index)
+	{
+		return nodes[index]->GetName().c_str();
+	}
+	uint32_t getNodeVisibility(uint32_t index)
+	{
+		return nodes[index]->GetVisibility();
+	}
+	uint32_t getNodeAccess(uint32_t index)
+	{
+		return nodes[index]->GetAccessMode();
+	}
+	uint32_t getNodeType(uint32_t index)
+	{
+		return nodes[index]->GetPrincipalInterfaceType();
 	}
 
-	bool SetHeight(CameraConfigInt config)
+	bool SetIntNode(std::string node, int64_t value)
 	{
-		if (!config._active) return false;
-		CIntegerPtr ptrHeight = cam._GetNode("Height");
-		if (IsWritable(ptrHeight))
+		CIntegerPtr ptrNode = cam._GetNode(node.data());
+		if (IsWritable(ptrNode))
 		{
-			*ptrHeight = config._value;
+			*ptrNode = value;
 			return true;
 		}
 		return false;
 	}
 
-	bool SetWidth(CameraConfigInt config)
+	bool GetIntNode(std::string node, int64_t& value)
 	{
-		if (!config._active) return false;
-		CIntegerPtr ptrWidth = cam._GetNode("Width");
-		if (IsWritable(ptrWidth))
+		CIntegerPtr ptrNode = cam._GetNode(node.data());
+		if (IsReadable(ptrNode))
 		{
-			*ptrWidth = config._value;
+			value = ptrNode->GetValue();
+			return true;
+		}
+		return false;
+	}
+
+	bool GetEnumStrNode(std::string node, std::string& value)
+	{
+		CEnumerationPtr ptrNode = cam._GetNode(node.data());
+		if (IsReadable(ptrNode))
+		{
+			value = ptrNode->GetCurrentEntry()->GetSymbolic();
+			return true;
+		}
+		return false;
+	}
+
+	bool GetStrNode(std::string node, std::string& value)
+	{
+		CStringPtr ptrNode = cam._GetNode(node.data());
+		if (IsReadable(ptrNode))
+		{
+			value = ptrNode->GetValue();
 			return true;
 		}
 		return false;
@@ -86,24 +134,12 @@ public:
 
 	int64_t PayloadSize()
 	{
-		CIntegerPtr ptrPayloadSize = cam._GetNode("PayloadSize");
-		if (IsReadable(ptrPayloadSize))
-		{
-			return ptrPayloadSize->GetValue();
-		}
-		return -1;
-	}
-
-	gcstring PixelFormat()
-	{
-		CEnumerationPtr ptrPixelFormat = cam._GetNode("PixelFormat");
-		if (IsReadable(ptrPixelFormat))
-		{
-			return ptrPixelFormat->GetCurrentEntry()->GetSymbolic();
-		}
-		return "Not readable node:(";
+		int64_t payloadSize = 0;
+		GetIntNode("PayloadSize", payloadSize);
+		return payloadSize;
 	}
 
 private:
 	CNodeMapRef cam;
+	NodeList_t nodes;
 };

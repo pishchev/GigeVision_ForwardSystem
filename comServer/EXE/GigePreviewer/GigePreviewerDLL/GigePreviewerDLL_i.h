@@ -88,14 +88,40 @@ EXTERN_C const IID IID_IPreviewer;
     IPreviewer : public IUnknown
     {
     public:
-        virtual HRESULT STDMETHODCALLTYPE GetImage( 
-            /* [in] */ LONG iLen,
-            /* [size_is][out] */ BYTE *oImage) = 0;
+        virtual HRESULT STDMETHODCALLTYPE useLibrary( 
+            /* [size_is][in] */ CHAR *libFile) = 0;
         
-        virtual HRESULT STDMETHODCALLTYPE StartAquisition( void) = 0;
+        virtual HRESULT STDMETHODCALLTYPE getInterfacesSize( 
+            /* [out] */ BYTE *oInterfacesSize) = 0;
         
-        virtual HRESULT STDMETHODCALLTYPE GetPayloadSize( 
-            /* [out] */ LONG *oPayloadSize) = 0;
+        virtual HRESULT STDMETHODCALLTYPE getInterfaceName( 
+            /* [size_is][out] */ CHAR *oName,
+            /* [in] */ BYTE iIndex) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE setInterface( 
+            /* [size_is][in] */ CHAR *iInterface) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE getDevicesSize( 
+            /* [out] */ BYTE *oDevicesSize) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE getDeviceName( 
+            /* [size_is][out] */ CHAR *oName,
+            /* [in] */ BYTE iIndex) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE setDevice( 
+            /* [size_is][in] */ CHAR *iDevice) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE getStreamsSize( 
+            /* [out] */ BYTE *oStreamsSize) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE getStreamName( 
+            /* [size_is][out] */ CHAR *oName,
+            /* [in] */ BYTE iIndex) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE setStream( 
+            /* [size_is][in] */ CHAR *iStream) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE cameraInit( void) = 0;
         
     };
     
@@ -118,17 +144,51 @@ EXTERN_C const IID IID_IPreviewer;
         ULONG ( STDMETHODCALLTYPE *Release )( 
             IPreviewer * This);
         
-        HRESULT ( STDMETHODCALLTYPE *GetImage )( 
+        HRESULT ( STDMETHODCALLTYPE *useLibrary )( 
             IPreviewer * This,
-            /* [in] */ LONG iLen,
-            /* [size_is][out] */ BYTE *oImage);
+            /* [size_is][in] */ CHAR *libFile);
         
-        HRESULT ( STDMETHODCALLTYPE *StartAquisition )( 
+        HRESULT ( STDMETHODCALLTYPE *getInterfacesSize )( 
+            IPreviewer * This,
+            /* [out] */ BYTE *oInterfacesSize);
+        
+        HRESULT ( STDMETHODCALLTYPE *getInterfaceName )( 
+            IPreviewer * This,
+            /* [size_is][out] */ CHAR *oName,
+            /* [in] */ BYTE iIndex);
+        
+        HRESULT ( STDMETHODCALLTYPE *setInterface )( 
+            IPreviewer * This,
+            /* [size_is][in] */ CHAR *iInterface);
+        
+        HRESULT ( STDMETHODCALLTYPE *getDevicesSize )( 
+            IPreviewer * This,
+            /* [out] */ BYTE *oDevicesSize);
+        
+        HRESULT ( STDMETHODCALLTYPE *getDeviceName )( 
+            IPreviewer * This,
+            /* [size_is][out] */ CHAR *oName,
+            /* [in] */ BYTE iIndex);
+        
+        HRESULT ( STDMETHODCALLTYPE *setDevice )( 
+            IPreviewer * This,
+            /* [size_is][in] */ CHAR *iDevice);
+        
+        HRESULT ( STDMETHODCALLTYPE *getStreamsSize )( 
+            IPreviewer * This,
+            /* [out] */ BYTE *oStreamsSize);
+        
+        HRESULT ( STDMETHODCALLTYPE *getStreamName )( 
+            IPreviewer * This,
+            /* [size_is][out] */ CHAR *oName,
+            /* [in] */ BYTE iIndex);
+        
+        HRESULT ( STDMETHODCALLTYPE *setStream )( 
+            IPreviewer * This,
+            /* [size_is][in] */ CHAR *iStream);
+        
+        HRESULT ( STDMETHODCALLTYPE *cameraInit )( 
             IPreviewer * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetPayloadSize )( 
-            IPreviewer * This,
-            /* [out] */ LONG *oPayloadSize);
         
         END_INTERFACE
     } IPreviewerVtbl;
@@ -153,14 +213,38 @@ EXTERN_C const IID IID_IPreviewer;
     ( (This)->lpVtbl -> Release(This) ) 
 
 
-#define IPreviewer_GetImage(This,iLen,oImage)	\
-    ( (This)->lpVtbl -> GetImage(This,iLen,oImage) ) 
+#define IPreviewer_useLibrary(This,libFile)	\
+    ( (This)->lpVtbl -> useLibrary(This,libFile) ) 
 
-#define IPreviewer_StartAquisition(This)	\
-    ( (This)->lpVtbl -> StartAquisition(This) ) 
+#define IPreviewer_getInterfacesSize(This,oInterfacesSize)	\
+    ( (This)->lpVtbl -> getInterfacesSize(This,oInterfacesSize) ) 
 
-#define IPreviewer_GetPayloadSize(This,oPayloadSize)	\
-    ( (This)->lpVtbl -> GetPayloadSize(This,oPayloadSize) ) 
+#define IPreviewer_getInterfaceName(This,oName,iIndex)	\
+    ( (This)->lpVtbl -> getInterfaceName(This,oName,iIndex) ) 
+
+#define IPreviewer_setInterface(This,iInterface)	\
+    ( (This)->lpVtbl -> setInterface(This,iInterface) ) 
+
+#define IPreviewer_getDevicesSize(This,oDevicesSize)	\
+    ( (This)->lpVtbl -> getDevicesSize(This,oDevicesSize) ) 
+
+#define IPreviewer_getDeviceName(This,oName,iIndex)	\
+    ( (This)->lpVtbl -> getDeviceName(This,oName,iIndex) ) 
+
+#define IPreviewer_setDevice(This,iDevice)	\
+    ( (This)->lpVtbl -> setDevice(This,iDevice) ) 
+
+#define IPreviewer_getStreamsSize(This,oStreamsSize)	\
+    ( (This)->lpVtbl -> getStreamsSize(This,oStreamsSize) ) 
+
+#define IPreviewer_getStreamName(This,oName,iIndex)	\
+    ( (This)->lpVtbl -> getStreamName(This,oName,iIndex) ) 
+
+#define IPreviewer_setStream(This,iStream)	\
+    ( (This)->lpVtbl -> setStream(This,iStream) ) 
+
+#define IPreviewer_cameraInit(This)	\
+    ( (This)->lpVtbl -> cameraInit(This) ) 
 
 #endif /* COBJMACROS */
 
