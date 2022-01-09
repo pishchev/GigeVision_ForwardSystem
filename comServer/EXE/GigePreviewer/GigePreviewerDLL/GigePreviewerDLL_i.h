@@ -123,6 +123,53 @@ EXTERN_C const IID IID_IPreviewer;
         
         virtual HRESULT STDMETHODCALLTYPE cameraInit( void) = 0;
         
+        virtual HRESULT STDMETHODCALLTYPE useConfig( 
+            /* [size_is][in] */ CHAR *node) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE saveConfig( 
+            /* [size_is][in] */ CHAR *node) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE getNodesSize( 
+            /* [out] */ BYTE *size) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE getNodeName( 
+            /* [size_is][out] */ CHAR *oName,
+            /* [in] */ BYTE iIndex) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE getNodeVisibility( 
+            /* [out] */ BYTE *oVis,
+            /* [in] */ BYTE iIndex) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE getNodeAccessMode( 
+            /* [out] */ BYTE *oAm,
+            /* [in] */ BYTE iIndex) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE getNodeType( 
+            /* [out] */ BYTE *oType,
+            /* [in] */ BYTE iIndex) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE getIntNode( 
+            /* [size_is][in] */ CHAR *node,
+            /* [out] */ LONG *oVal) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE setIntNode( 
+            /* [size_is][in] */ CHAR *node,
+            /* [in] */ LONG iVal) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE getEnumStrNode( 
+            /* [size_is][in] */ CHAR *node,
+            /* [size_is][out] */ CHAR *oVal) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE getStrNode( 
+            /* [size_is][in] */ CHAR *node,
+            /* [size_is][out] */ CHAR *oVal) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE startAquisition( void) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE getImage( 
+            /* [size_is][out] */ BYTE *image,
+            /* [in] */ LONG len) = 0;
+        
     };
     
     
@@ -190,6 +237,66 @@ EXTERN_C const IID IID_IPreviewer;
         HRESULT ( STDMETHODCALLTYPE *cameraInit )( 
             IPreviewer * This);
         
+        HRESULT ( STDMETHODCALLTYPE *useConfig )( 
+            IPreviewer * This,
+            /* [size_is][in] */ CHAR *node);
+        
+        HRESULT ( STDMETHODCALLTYPE *saveConfig )( 
+            IPreviewer * This,
+            /* [size_is][in] */ CHAR *node);
+        
+        HRESULT ( STDMETHODCALLTYPE *getNodesSize )( 
+            IPreviewer * This,
+            /* [out] */ BYTE *size);
+        
+        HRESULT ( STDMETHODCALLTYPE *getNodeName )( 
+            IPreviewer * This,
+            /* [size_is][out] */ CHAR *oName,
+            /* [in] */ BYTE iIndex);
+        
+        HRESULT ( STDMETHODCALLTYPE *getNodeVisibility )( 
+            IPreviewer * This,
+            /* [out] */ BYTE *oVis,
+            /* [in] */ BYTE iIndex);
+        
+        HRESULT ( STDMETHODCALLTYPE *getNodeAccessMode )( 
+            IPreviewer * This,
+            /* [out] */ BYTE *oAm,
+            /* [in] */ BYTE iIndex);
+        
+        HRESULT ( STDMETHODCALLTYPE *getNodeType )( 
+            IPreviewer * This,
+            /* [out] */ BYTE *oType,
+            /* [in] */ BYTE iIndex);
+        
+        HRESULT ( STDMETHODCALLTYPE *getIntNode )( 
+            IPreviewer * This,
+            /* [size_is][in] */ CHAR *node,
+            /* [out] */ LONG *oVal);
+        
+        HRESULT ( STDMETHODCALLTYPE *setIntNode )( 
+            IPreviewer * This,
+            /* [size_is][in] */ CHAR *node,
+            /* [in] */ LONG iVal);
+        
+        HRESULT ( STDMETHODCALLTYPE *getEnumStrNode )( 
+            IPreviewer * This,
+            /* [size_is][in] */ CHAR *node,
+            /* [size_is][out] */ CHAR *oVal);
+        
+        HRESULT ( STDMETHODCALLTYPE *getStrNode )( 
+            IPreviewer * This,
+            /* [size_is][in] */ CHAR *node,
+            /* [size_is][out] */ CHAR *oVal);
+        
+        HRESULT ( STDMETHODCALLTYPE *startAquisition )( 
+            IPreviewer * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *getImage )( 
+            IPreviewer * This,
+            /* [size_is][out] */ BYTE *image,
+            /* [in] */ LONG len);
+        
         END_INTERFACE
     } IPreviewerVtbl;
 
@@ -245,6 +352,45 @@ EXTERN_C const IID IID_IPreviewer;
 
 #define IPreviewer_cameraInit(This)	\
     ( (This)->lpVtbl -> cameraInit(This) ) 
+
+#define IPreviewer_useConfig(This,node)	\
+    ( (This)->lpVtbl -> useConfig(This,node) ) 
+
+#define IPreviewer_saveConfig(This,node)	\
+    ( (This)->lpVtbl -> saveConfig(This,node) ) 
+
+#define IPreviewer_getNodesSize(This,size)	\
+    ( (This)->lpVtbl -> getNodesSize(This,size) ) 
+
+#define IPreviewer_getNodeName(This,oName,iIndex)	\
+    ( (This)->lpVtbl -> getNodeName(This,oName,iIndex) ) 
+
+#define IPreviewer_getNodeVisibility(This,oVis,iIndex)	\
+    ( (This)->lpVtbl -> getNodeVisibility(This,oVis,iIndex) ) 
+
+#define IPreviewer_getNodeAccessMode(This,oAm,iIndex)	\
+    ( (This)->lpVtbl -> getNodeAccessMode(This,oAm,iIndex) ) 
+
+#define IPreviewer_getNodeType(This,oType,iIndex)	\
+    ( (This)->lpVtbl -> getNodeType(This,oType,iIndex) ) 
+
+#define IPreviewer_getIntNode(This,node,oVal)	\
+    ( (This)->lpVtbl -> getIntNode(This,node,oVal) ) 
+
+#define IPreviewer_setIntNode(This,node,iVal)	\
+    ( (This)->lpVtbl -> setIntNode(This,node,iVal) ) 
+
+#define IPreviewer_getEnumStrNode(This,node,oVal)	\
+    ( (This)->lpVtbl -> getEnumStrNode(This,node,oVal) ) 
+
+#define IPreviewer_getStrNode(This,node,oVal)	\
+    ( (This)->lpVtbl -> getStrNode(This,node,oVal) ) 
+
+#define IPreviewer_startAquisition(This)	\
+    ( (This)->lpVtbl -> startAquisition(This) ) 
+
+#define IPreviewer_getImage(This,image,len)	\
+    ( (This)->lpVtbl -> getImage(This,image,len) ) 
 
 #endif /* COBJMACROS */
 

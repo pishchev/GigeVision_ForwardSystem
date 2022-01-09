@@ -73,7 +73,25 @@ public:
 	STDMETHOD(getStreamsSize)(BYTE* oStreamsSize);
 	STDMETHOD(getStreamName)(CHAR* oName, BYTE iIndex);
 	STDMETHOD(setStream)(CHAR* iStream);
+
 	STDMETHOD(cameraInit)();
+	STDMETHOD(useConfig)(CHAR* node);
+	STDMETHOD(saveConfig)(CHAR* node);
+
+	STDMETHOD(getNodesSize)(BYTE* size);
+	STDMETHOD(getNodeName)(CHAR* oName, BYTE iIndex);
+	STDMETHOD(getNodeVisibility)(BYTE* oVis, BYTE iIndex);
+	STDMETHOD(getNodeAccessMode)(BYTE* oAm, BYTE iIndex);
+	STDMETHOD(getNodeType)(BYTE* oType, BYTE iIndex);
+
+	STDMETHOD(getIntNode)(CHAR* node, LONG* oVal);
+	STDMETHOD(setIntNode)(CHAR* node, LONG iVal);
+
+	STDMETHOD(getEnumStrNode)(CHAR* node, CHAR* oVal);
+	STDMETHOD(getStrNode)(CHAR* node, CHAR* oVal);
+
+	STDMETHOD(startAquisition)();
+	STDMETHOD(getImage)(BYTE* image, LONG len);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(Previewer), CPreviewer)

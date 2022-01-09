@@ -27,7 +27,25 @@ interface IPreviewer : IUnknown
 	HRESULT getStreamsSize([out] BYTE* oStreamsSize);
 	HRESULT getStreamName([out, size_is(50)] CHAR* oName, [in] BYTE iIndex);
 	HRESULT setStream([in, size_is(50)] CHAR* iStream);
+
 	HRESULT cameraInit();
+	HRESULT useConfig([in, size_is(50)] CHAR* node);
+	HRESULT saveConfig([in, size_is(50)] CHAR* node);
+
+	HRESULT getNodesSize([out] BYTE* size);
+	HRESULT getNodeName([out, size_is(50)] CHAR* oName, [in] BYTE iIndex);
+	HRESULT getNodeVisibility([out] BYTE* oVis, [in] BYTE iIndex);
+	HRESULT getNodeAccessMode([out] BYTE* oAm, [in] BYTE iIndex);
+	HRESULT getNodeType([out] BYTE* oType, [in] BYTE iIndex);
+
+	HRESULT getIntNode([in, size_is(50)] CHAR* node, [out] LONG* oVal);
+	HRESULT setIntNode([in, size_is(50)] CHAR* node, [in] LONG iVal);
+
+	HRESULT getEnumStrNode([in, size_is(50)] CHAR* node, [out, size_is(50)] CHAR* oVal);
+	HRESULT getStrNode([in, size_is(50)] CHAR* node, [out, size_is(50)] CHAR* oVal);
+
+	HRESULT startAquisition();
+	HRESULT getImage([out, size_is(len)] BYTE* image, [in] LONG len);
 };
 [
 	uuid(91122f49-007b-4c2c-bd1e-9eec38eae568),
