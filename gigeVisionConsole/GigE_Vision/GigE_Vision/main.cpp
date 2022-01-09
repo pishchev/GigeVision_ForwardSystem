@@ -2,69 +2,62 @@
 #include <iomanip>
 #include "GigeManager.hpp"
 
-int main()
+void noConfig(GigeManager& gige) 
 {
-	GigeManager gige;
-	
-	uint32_t useConfig;
-	std::cout << "Use config: ";
-	std::cin >> useConfig;
+	//выбираем динамическую библиотеку
+	std::string lib = "TLSimu.cti";
+	//std::cout << "Lib: ";
+	//std::cin >> lib;
+	gige.useLib(lib);
 
-	if (!useConfig)
-	{
-		//выбираем динамическую библиотеку
-		std::string lib = "TLSimu.cti";
-		//std::cout << "Lib: ";
-		//std::cin >> lib;
-		gige.useLib(lib);
-
-		//интерфейсы
-		for (uint32_t i = 0; i < gige.getIntefacesSize(); i++) {
-			std::cout << i << ")" << gige.getInterfaceName(i) << std::endl;
-		}
-		uint32_t interf;
-		std::cout << "Interface: ";
-		std::cin >> interf;
-		gige.useInterface(interf);
-
-		//девайсы
-		for (uint32_t i = 0; i < gige.getDevicesSize(); i++) {
-			std::cout << i << ")" << gige.getDeviceName(i) << std::endl;
-		}
-		uint32_t device;
-		std::cout << "Device: ";
-		std::cin >> device;
-		gige.useDevice(device);
-
-		//стримы
-		for (uint32_t i = 0; i < gige.getStreamsSize(); i++) {
-			std::cout << i << ")" << gige.getStreamName(i) << std::endl;
-		}
-		uint32_t stream;
-		std::cout << "Stream: ";
-		std::cin >> stream;
-		gige.useStream(stream);
-
-		gige.cameraInit();
-
-		int64_t height = 8;
-		std::cout << "Height: ";
-		std::cin >> height;
-		gige.SetIntNode("Height", height);
-
-		int64_t width = 8;
-		std::cout << "Width: ";
-		std::cin >> width;
-		gige.SetIntNode("Width", width);
+	//интерфейсы
+	for (uint32_t i = 0; i < gige.getIntefacesSize(); i++) {
+		std::cout << i << ")" << gige.getInterfaceName(i) << std::endl;
 	}
-	else 
-	{
-		std::string config = "config.txt";
-		//std::cout << "Configurator: ";
-		//std::cin >> config;
-		gige.useConfigurator(config);
-	}
+	uint32_t interf;
+	std::cout << "Interface: ";
+	std::cin >> interf;
+	gige.useInterface(interf);
 
+	//девайсы
+	for (uint32_t i = 0; i < gige.getDevicesSize(); i++) {
+		std::cout << i << ")" << gige.getDeviceName(i) << std::endl;
+	}
+	uint32_t device;
+	std::cout << "Device: ";
+	std::cin >> device;
+	gige.useDevice(device);
+
+	//стримы
+	for (uint32_t i = 0; i < gige.getStreamsSize(); i++) {
+		std::cout << i << ")" << gige.getStreamName(i) << std::endl;
+	}
+	uint32_t stream;
+	std::cout << "Stream: ";
+	std::cin >> stream;
+	gige.useStream(stream);
+
+	gige.cameraInit();
+
+	int64_t height = 8;
+	std::cout << "Height: ";
+	std::cin >> height;
+	gige.SetIntNode("Height", height);
+
+	int64_t width = 8;
+	std::cout << "Width: ";
+	std::cin >> width;
+	gige.SetIntNode("Width", width);
+}
+void useConfig(GigeManager& gige)
+{
+	std::string config = "config.txt";
+	//std::cout << "Configurator: ";
+	//std::cin >> config;
+	gige.useConfigurator(config);
+}
+void showNodes(GigeManager& gige)
+{
 	//узлы
 	size_t nodesSize = gige.getNodesSize();
 	std::cout << std::setw(8) << std::right << "Name"
@@ -86,7 +79,7 @@ int main()
 			gige.GetIntNode(gige.getNodeName(i), val);
 			std::cout << val;
 		}
-		else if (gige.getNodeType(i) == 9) 
+		else if (gige.getNodeType(i) == 9)
 		{
 			std::string val;
 			gige.GetEnumStrNode(gige.getNodeName(i), val);
@@ -101,13 +94,15 @@ int main()
 
 		std::cout << std::endl;
 	}
-
-	gige.SaveConfig("config.txt");
+}
+void testShowConfig()
+{
 	Configurator conf;
 	conf.ReadConfig("config.txt");
 	conf.PrintConfig();
-
-
+}
+void gettingImage(GigeManager& gige)
+{
 	// захват изображения
 	gige.acquirerPreparing();
 	gige.startAcquisition();
@@ -117,7 +112,7 @@ int main()
 	Buffer img(payloadSize);
 	unsigned char* image = img.Convert<unsigned char>();
 
-	while(true)
+	while (true)
 	{
 		gige.waitNext();
 		if (gige.getImage(img.Convert<unsigned char>(), payloadSize))
@@ -128,9 +123,26 @@ int main()
 			}
 		}
 		std::cout << std::endl;
-		system("pause");	
+		system("pause");
 	}
-	
+
 	gige.stopAcquisition();
+}
+
+int main()
+{
+	GigeManager gige;
+	
+	uint32_t iUseConfig;
+	std::cout << "Use config: ";
+	std::cin >> iUseConfig;
+
+	iUseConfig ? useConfig(gige) : noConfig(gige);
+	showNodes(gige);
+
+	gige.SaveConfig("config.txt");
+	testShowConfig();
+
+	gettingImage(gige);
 	return 0;
 } 
