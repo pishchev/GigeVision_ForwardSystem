@@ -5,10 +5,7 @@
 
 #pragma once
 
-#include "../GigePreviewerDLL/GigePreviewerDLL_i.c"
-#include "../GigePreviewerDLL/GigePreviewerDLL_i.h"
-#include <objbase.h>
-#include <string>
+#include "GigeHelper.hpp"
 
 // Окно CChildView
 
@@ -20,8 +17,19 @@ public:
 
 // Атрибуты
 public:
-	size_t _r;
+	enum ImageType {
+		Mono,
+		RGB
+	};
+
+	ImageType _imType;
+
+	LONG _width;
+	LONG _height;
 	LONG _payloadSize;
+
+	LONG _bitsPerPixel;
+
 	BYTE* _image;
 	IPreviewer* _prev;
 // Операции
