@@ -18,19 +18,36 @@ CChildView::CChildView()
 {
 	HRESULT coIn = CoInitializeEx(nullptr, COINIT::COINIT_MULTITHREADED);
   HRESULT hr = CoCreateInstance(CLSID_Previewer, nullptr, CLSCTX_INPROC_SERVER, IID_IPreviewer, (LPVOID*)&_prev);
-	useConfig(_prev);
+	Init();
+}
 
-	_width = 1280;
-	_height = 1280;
+void CChildView::Init() 
+{
+	_isStarted = false;
+	_isSet = false;
+	Setting();
+}
 
-	setIntNode(_prev, "Width", _width);
-	setIntNode(_prev, "Height", _height);
+void CChildView::Setting()
+{
+	CGigeProprtyDlg dlg(this);
+	dlg._isSet = &_isSet;
+	dlg._prev = _prev;
+	if (IDOK == dlg.DoModal()) {
+
+	}
+}
+
+void CChildView::ApplySetting()
+{
+	_width = (LONG)getIntNode(_prev, "Width");
+	_height = (LONG)getIntNode(_prev, "Height");
 
 	_payloadSize = (LONG)getIntNode(_prev, "PayloadSize");
 	_bitsPerPixel = _payloadSize / (_width * _height);
 
 	_image = new BYTE[(int)_payloadSize];
-	_imType = _bitsPerPixel == 1 ? Mono : RGB;
+	_imType = _bitsPerPixel == 1 ? CChildView::Mono : CChildView::RGB;
 
 	_prev->startAquisition();
 }
@@ -66,6 +83,16 @@ BOOL CChildView::PreCreateWindow(CREATESTRUCT& cs)
 
 void CChildView::OnPaint() 
 {
+	if (!_isStarted)
+	{
+		if (_isSet) 
+		{
+			ApplySetting();
+			_isStarted = true;
+		}
+		return;
+	}
+
 	CPaintDC dc(this); // контекст устройства для рисования
 
 	CRect rect;
@@ -97,18 +124,6 @@ void CChildView::OnPaint()
 	// Не вызывайте CWnd::OnPaint() для сообщений рисования
 }
 
-
-
-void CChildView::OnLButtonDblClk(UINT nFlags, CPoint point)
-{
-	// TODO: добавьте свой код обработчика сообщений или вызов стандартного
-	CGigeProprtyDlg dlg(this);
-	if (IDOK == dlg.DoModal()) {
-		//_prev = dlg.xxx();
-	}
-
-	CWnd::OnLButtonDblClk(nFlags, point);
-}
 
 
 void CChildView::OnTimer(UINT_PTR nIDEvent)

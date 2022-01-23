@@ -72,10 +72,9 @@ static void noConfig(IPreviewer* pPrev)
   pPrev->cameraInit();
 }
 
-static void useConfig(IPreviewer* pPrev)
+static void useConfig(IPreviewer* pPrev, std::string iConfig)
 {
-  std::string cfg = "config.txt";
-  CHAR* conf = cfg.data();
+  CHAR* conf = iConfig.data();
   pPrev->useConfig(conf);
 }
 

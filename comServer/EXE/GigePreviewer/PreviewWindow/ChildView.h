@@ -32,8 +32,16 @@ public:
 
 	BYTE* _image;
 	IPreviewer* _prev;
+
+	bool _isStarted;
+	bool _isSet;
+
 // Операции
 public:
+
+	void Init();
+	void Setting();
+	void ApplySetting();
 
 // Переопределение
 	protected:
@@ -48,7 +56,6 @@ protected:
 	afx_msg void OnPaint();
 	DECLARE_MESSAGE_MAP()
 public:
-	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 };

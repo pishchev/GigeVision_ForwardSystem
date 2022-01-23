@@ -2,5 +2,5 @@ Lib TLSimu.cti
 Interface XX::InterfaceB
 Device TLSimuColor
 Stream DS0
-Height 8
-Width 8
+Height 640
+Width 640

@@ -1,5 +1,6 @@
 ﻿#pragma once
 
+#include "GigeHelper.hpp"
 
 // Диалоговое окно CGigeProprtyDlg
 
@@ -23,6 +24,10 @@ protected:
 public:
 	virtual BOOL OnInitDialog();
 	virtual void OnOK();
-private:
-	CComboBox m_InterfaceList;
+
+	afx_msg void OnBnClickedButton2();
+	bool* _isSet;
+	IPreviewer* _prev;
+	CString _configurator;
+	afx_msg void OnEnChangeEdit1();
 };

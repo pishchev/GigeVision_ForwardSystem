@@ -13,6 +13,7 @@ IMPLEMENT_DYNAMIC(CGigeProprtyDlg, CDialogEx)
 
 CGigeProprtyDlg::CGigeProprtyDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_CGigeProprtyDlg, pParent)
+	, _configurator(_T(""))
 {
 
 }
@@ -24,11 +25,13 @@ CGigeProprtyDlg::~CGigeProprtyDlg()
 void CGigeProprtyDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, IDC_INTERFACE_LIST, m_InterfaceList);
+	DDX_Text(pDX, IDC_EDIT1, _configurator);
 }
 
 
 BEGIN_MESSAGE_MAP(CGigeProprtyDlg, CDialogEx)
+	ON_BN_CLICKED(IDC_BUTTON2, &CGigeProprtyDlg::OnBnClickedButton2)
+	ON_EN_CHANGE(IDC_EDIT1, &CGigeProprtyDlg::OnEnChangeEdit1)
 END_MESSAGE_MAP()
 
 
@@ -39,20 +42,30 @@ BOOL CGigeProprtyDlg::OnInitDialog()
 {
 	CDialogEx::OnInitDialog();
 
-	// TODO:  Добавить дополнительную инициализацию
-	m_InterfaceList.AddString(_T("test1"));
-	m_InterfaceList.AddString(_T("test2"));
-	m_InterfaceList.AddString(_T("test3"));
-	m_InterfaceList.SetCurSel(2);
-
 	return TRUE;  // return TRUE unless you set the focus to a control
 								// Исключение: страница свойств OCX должна возвращать значение FALSE
 }
 
 
 void CGigeProprtyDlg::OnOK()
-{
-	// TODO: добавьте специализированный код или вызов базового класса
-
+{	
+	CT2A cnvtr(_configurator, CP_UTF8);
+	useConfig(_prev, std::string(cnvtr));
+	*_isSet = true;
 	CDialogEx::OnOK();
+}
+
+void CGigeProprtyDlg::OnBnClickedButton2()
+{
+
+}
+
+void CGigeProprtyDlg::OnEnChangeEdit1()
+{
+	// TODO:  Если это элемент управления RICHEDIT, то элемент управления не будет
+	// send this notification unless you override the CDialogEx::OnInitDialog()
+	// функция и вызов CRichEditCtrl().SetEventMask()
+	// with the ENM_CHANGE flag ORed into the mask.
+
+	GetDlgItemText(IDC_EDIT1, _configurator);
 }
