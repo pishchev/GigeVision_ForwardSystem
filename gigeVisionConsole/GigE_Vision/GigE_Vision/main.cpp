@@ -5,7 +5,7 @@
 void noConfig(GigeManager& gige) 
 {
 	//выбираем динамическую библиотеку
-	std::string lib = "TLSimu.cti";
+	std::string lib = "mvGenTLProducer.cti";
 	//std::cout << "Lib: ";
 	//std::cin >> lib;
 	gige.useLib(lib);

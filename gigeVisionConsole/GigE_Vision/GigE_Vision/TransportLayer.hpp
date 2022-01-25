@@ -21,8 +21,7 @@ public:
 
 	void UpdateInterfaceList()
 	{
-		bool8_t pbChanged = false;
-		auto err = TLUpdateInterfaceList(hTL, &pbChanged, GENTL_INFINITE);
+		auto err = TLUpdateInterfaceList(hTL, nullptr, GENTL_INFINITE);
 		elog(err, "TL_Handler::UpdateInterfaceList");
 	}
 
@@ -36,7 +35,7 @@ public:
 
 	std::string GetInterfaceName(uint32_t index)
 	{
-		Buffer buffer(20);
+		Buffer buffer(80);
 		auto err = TLGetInterfaceID(hTL, index, buffer.Convert<char>(), buffer.Size());
 		elog(err, "TL_Handler::ShowInterfaces");
 		return buffer.Convert<char>();
@@ -44,7 +43,7 @@ public:
 
 	GenTL::IF_HANDLE GetInterface(uint32_t num)
 	{
-		Buffer buffer(20);
+		Buffer buffer(80);
 		auto err = TLGetInterfaceID(hTL, num, buffer.Convert<char>(), buffer.Size());
 		elog(err, "TL_Handler::GetInterface");
 		GenTL::IF_HANDLE hIF = nullptr;

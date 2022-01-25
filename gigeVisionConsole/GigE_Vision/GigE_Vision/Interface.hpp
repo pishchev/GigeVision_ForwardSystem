@@ -18,7 +18,7 @@ public:
 	void UpdateDeviceList()
 	{
 		bool8_t pbChanged = false;
-		auto err = IFUpdateDeviceList(hIF, &pbChanged, 5);
+		auto err = IFUpdateDeviceList(hIF, &pbChanged, 1000);
 		elog(err, "IF_Handler::UpdateInterfaceList");
 	}
 
@@ -31,7 +31,7 @@ public:
 	}
 
 	std::string GetDeviceName(uint32_t index) {
-		Buffer buffer(20);
+		Buffer buffer(60);
 		auto err = IFGetDeviceID(hIF, index, buffer.Convert<char>(), buffer.Size());
 		elog(err, "IF_Handler::ShowDevices");
 		return buffer.Convert<char>();
@@ -39,7 +39,7 @@ public:
 
 	GenTL::DEV_HANDLE GetDevice(uint32_t num)
 	{
-		Buffer buffer(20);
+		Buffer buffer(60);
 		auto err = IFGetDeviceID(hIF, num, buffer.Convert<char>(), buffer.Size());
 		elog(err, "IF_Handler::GetDevice");
 		GenTL::DEV_HANDLE hDevice = nullptr;
