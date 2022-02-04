@@ -12,9 +12,9 @@ using namespace GENICAM_NAMESPACE;
 class Camera
 {
 public:
-	void LoadXML(gcstring xml_str)
+	void LoadXML(Buffer iBuffer)
 	{
-		cam._LoadXMLFromString(xml_str);
+		cam._LoadXMLFromZIPData(iBuffer.Convert<void>(), *iBuffer.Size());
 	}
 
 	void Connect(IPort* port)

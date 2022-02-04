@@ -56,26 +56,32 @@ GENICAM_INTERFACE GENAPI_DECL_ABSTRACT Port : public GENAPI_NAMESPACE::IPort
 		return GENAPI_NAMESPACE::EAccessMode::NI;
 	}
 
-	static GENICAM_NAMESPACE::gcstring GetXML(GenTL::PORT_HANDLE port)
+	static Buffer GetXML(GenTL::PORT_HANDLE port)
 	{
 		uint32_t num_urls = -1;
 
 		elog(GCGetNumPortURLs(port, &num_urls), "GCGetNumPortURLs");
 
 		Buffer info(40);
-		int32_t iInfoCmd = GenTL::INFO_DATATYPE_STRING;
-		elog(GCGetPortURLInfo(port, 0, GenTL::URL_INFO_FILE_REGISTER_ADDRESS, &iInfoCmd, info.Convert<void>(), info.Size()), "GCGetPortURLInfo");
+		int32_t iInfoCmd = GenTL::INFO_DATATYPE_STRINGLIST;
+		elog(GCGetPortURLInfo(port, 0, GenTL::URL_INFO_URL, &iInfoCmd, info.Convert<void>(), info.Size()), "GCGetPortURLInfo");
+		//std::cout << info.Convert<char>() << std::endl; //информация о формате;адресе;размере XML конфигуратора
 
-		uint64_t addres = *info.Convert<uint64_t>();
+		auto strHexToUint64_t = [](const std::string hex)->uint64_t {
+			std::stringstream stream;
+			uint64_t num;
+			stream << std::hex << hex;
+			stream >> num;
+			return num;
+		};
 
-		Buffer info2(40);
-		int32_t iInfoCmd2 = GenTL::INFO_DATATYPE_STRING;
-		elog(GCGetPortURLInfo(port, 0, GenTL::URL_INFO_FILE_SIZE, &iInfoCmd2, info2.Convert<void>(), info2.Size()), "GCGetPortURLInfo");
+		uint64_t addres = strHexToUint64_t("10424000");
+		uint64_t len = strHexToUint64_t("1D3B");
 
-		Buffer read_port_buffer(*info2.Convert<uint64_t>());
+		Buffer read_port_buffer(len);
 		elog(GCReadPort(port, addres, read_port_buffer.Convert<void>(), read_port_buffer.Size()), "GCReadPort");
-		//std::cout<< read_port_buffer.Convert<char>() <<std::endl; //вывод XML
 
-		return GENICAM_NAMESPACE::gcstring(read_port_buffer.Convert<char>());
+		return read_port_buffer;
 	}
 };
+

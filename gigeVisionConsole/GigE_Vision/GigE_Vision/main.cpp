@@ -5,7 +5,7 @@
 void noConfig(GigeManager& gige) 
 {
 	//выбираем динамическую библиотеку
-	std::string lib = "mvGenTLProducer.cti";
+	std::string lib = "bgapi2_gige.cti";
 	//std::cout << "Lib: ";
 	//std::cin >> lib;
 	gige.useLib(lib);
@@ -39,12 +39,12 @@ void noConfig(GigeManager& gige)
 
 	gige.cameraInit();
 
-	int64_t height = 8;
+	int64_t height = 256;
 	std::cout << "Height: ";
 	std::cin >> height;
 	gige.SetIntNode("Height", height);
 
-	int64_t width = 8;
+	int64_t width = 256;
 	std::cout << "Width: ";
 	std::cin >> width;
 	gige.SetIntNode("Width", width);
@@ -79,7 +79,7 @@ void showNodes(GigeManager& gige)
 			gige.GetIntNode(gige.getNodeName(i), val);
 			std::cout << val;
 		}
-		else if (gige.getNodeType(i) == 9)
+		else if (gige.getNodeType(i) == 9 && 0)
 		{
 			std::string val;
 			gige.GetEnumStrNode(gige.getNodeName(i), val);
