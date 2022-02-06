@@ -1,0 +1,8 @@
+﻿  main.cpp
+  Notice: Using GenICam with untested compiler, version 1929 detected!
+  Following versions were tested: 1400, 1500, 1600, 1700, 1800, 1900-1916.
+  Создание кода
+  Previous IPDB not found, fall back to full compilation.
+  All 687 functions were compiled because no usable IPDB/IOBJ from previous compilation was found.
+  Создание кода завершено
+  GigE_Vision.vcxproj -> D:\Repository\Gige\GigeForward\gigeVisionConsole\GigE_Vision\x64\Release\GigE_Vision.exe
