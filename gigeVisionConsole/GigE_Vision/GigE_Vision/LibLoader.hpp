@@ -28,6 +28,7 @@ static GenTL::PDevGetNumDataStreams DevGetNumDataStreams;
 static GenTL::PDevGetDataStreamID DevGetDataStreamID;
 static GenTL::PDevOpenDataStream DevOpenDataStream;
 static GenTL::PDevGetPort DevGetPort;
+static GenTL::PDevClose DevClose;
 
 static GenTL::PGCGetNumPortURLs GCGetNumPortURLs;
 static GenTL::PGCGetPortURLInfo GCGetPortURLInfo;
@@ -112,6 +113,9 @@ static void Init_Lib(std::string module_)
 
 	DevGetPort = (GenTL::PDevGetPort)GetProcAddress(gentl, "DevGetPort");
 	assert(DevGetPort != nullptr);
+
+	DevClose = (GenTL::PDevClose)GetProcAddress(gentl, "DevClose");
+	assert(DevClose != nullptr);
 
 	GCGetNumPortURLs = (GenTL::PGCGetNumPortURLs)GetProcAddress(gentl, "GCGetNumPortURLs");
 	assert(GCGetNumPortURLs != nullptr);

@@ -6,53 +6,49 @@
 class Interface
 {
 public:
-	Interface(GenTL::IF_HANDLE hIF) : hIF(hIF) {}
+	Interface(GenTL::IF_HANDLE iInterface) : _interfaceHandler(iInterface) {}
 
 	Interface(){}
 
-	void setInterfaces(GenTL::IF_HANDLE itf)
+	void SetInterfaces(GenTL::IF_HANDLE iInterface)
 	{
-		hIF = itf;
+		_interfaceHandler = iInterface;
 	}
 
 	void UpdateDeviceList()
 	{
-		bool8_t pbChanged = false;
-		auto err = IFUpdateDeviceList(hIF, &pbChanged, 1000);
-		elog(err, "IF_Handler::UpdateInterfaceList");
+		elog(IFUpdateDeviceList(_interfaceHandler, nullptr, 1000), "IF_Handler::UpdateInterfaceList");
 	}
 
 	uint32_t GetNumDevices()
 	{
-		uint32_t num_devices;
-		auto err = IFGetNumDevices(hIF, &num_devices);
-		elog(err, "IF_Handler::GetNumDevices");
-		return num_devices;
+		uint32_t numDevices;
+		elog(IFGetNumDevices(_interfaceHandler, &numDevices), "IF_Handler::GetNumDevices");
+		return numDevices;
 	}
 
-	std::string GetDeviceName(uint32_t index) {
+	std::string GetDeviceName(uint32_t iIndex) {
 		Buffer buffer(60);
-		auto err = IFGetDeviceID(hIF, index, buffer.Convert<char>(), buffer.Size());
-		elog(err, "IF_Handler::ShowDevices");
+		elog(IFGetDeviceID(_interfaceHandler, iIndex, buffer.Convert<char>(), buffer.Size()), "IF_Handler::ShowDevices");
 		return buffer.Convert<char>();
 	}
 
-	GenTL::DEV_HANDLE GetDevice(uint32_t num)
+	GenTL::DEV_HANDLE GetDevice(uint32_t iIndex)
 	{
 		Buffer buffer(60);
-		auto err = IFGetDeviceID(hIF, num, buffer.Convert<char>(), buffer.Size());
-		elog(err, "IF_Handler::GetDevice");
 		GenTL::DEV_HANDLE hDevice = nullptr;
-		err = IFOpenDevice(hIF, buffer.Convert<char>(), GenTL::DEVICE_ACCESS_EXCLUSIVE, &hDevice);
-		elog(err, "IF_Handler::GetDevice");
+
+		elog(IFGetDeviceID(_interfaceHandler, iIndex, buffer.Convert<char>(), buffer.Size()), "IF_Handler::GetDevice");
+		elog(IFOpenDevice(_interfaceHandler, buffer.Convert<char>(), GenTL::DEVICE_ACCESS_EXCLUSIVE, &hDevice), "IF_Handler::GetDevice");
+
 		return hDevice;
 	}
 
 	GenTL::IF_HANDLE GetInterface()
 	{
-		return hIF;
+		return _interfaceHandler;
 	}
 
 private:
-	GenTL::IF_HANDLE hIF = nullptr;
+	GenTL::IF_HANDLE _interfaceHandler = nullptr;
 };

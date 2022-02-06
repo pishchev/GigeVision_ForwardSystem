@@ -9,34 +9,31 @@
 #include "LibLoader.hpp"
 
 
-static void log(GenTL::GC_ERROR err, std::string oper)
+static void log(GenTL::GC_ERROR iError, std::string iOperation)
 {
 	Buffer buff(1000);
-	size_t err_size = 1000;
-	char* err_ch = new char[err_size];
 
-	auto log_error = GCGetLastError(&err, buff.Convert<char>(), buff.Size());
-
-	if (log_error != 0)
+	const auto logError = GCGetLastError(&iError, buff.Convert<char>(), buff.Size());
+	if (logError != 0)
 	{
-		std::cout << "Logging error! Error descriptor: " << log_error << std::endl;
+		std::cout << "Logging error! Error descriptor: " << logError << std::endl;
 		return;
 	}
 
-	std::cout << "log -> Operation " << oper << ". Status: " << buff.Convert<char>() << std::endl;
+	std::cout << "log -> Operation " << iOperation << ". Status: " << buff.Convert<char>() << std::endl;
 
-	if (err != 0)
+	if (iError != 0)
 	{
-		std::cout << "Error code: " << err << std::endl;
+		std::cout << "Error code: " << iError << std::endl;
 		system("pause");
 		exit(-1);
 	}
 }
 
-static void elog(GenTL::GC_ERROR err, std::string oper)
+static void elog(GenTL::GC_ERROR iError, std::string iOperation)
 {
-	if (err != 0)
-		log(err, oper);
+	if (iError != 0)
+		log(iError, iOperation);
 }
 
 

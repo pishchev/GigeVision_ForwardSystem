@@ -7,21 +7,23 @@ class Device
 {
 public:
 
-	Device(GenTL::DEV_HANDLE hDevice) : hDevice(hDevice) {}
-
-	Device() {}
-
-	void setDevice(GenTL::DEV_HANDLE dev)
+	Device(GenTL::DEV_HANDLE iDevice) : _deviceHandler(iDevice) {}
+	Device() = default;
+	~Device()
 	{
-		hDevice = dev;
+		elog(DevClose(_deviceHandler), "DevClose");
+	}
+
+	void SetDevice(GenTL::DEV_HANDLE iDevice)
+	{
+		_deviceHandler = iDevice;
 	}
 
 	uint32_t GetNumStreams()
 	{
-		uint32_t num_streams;
-		auto err = DevGetNumDataStreams(hDevice, &num_streams);
-		elog(err, "DEV_Handler::GetNumStreams");
-		return num_streams;
+		uint32_t numStreams;
+		elog(DevGetNumDataStreams(_deviceHandler, &numStreams), "DEV_Handler::GetNumStreams");
+		return numStreams;
 	}
 
 	std::vector<std::string> ShowStreams()
@@ -29,48 +31,44 @@ public:
 		std::vector<std::string> streams;
 		for (uint32_t i = 0; i < GetNumStreams(); i++)
 		{
-			Buffer dDSID(20);
-			auto err = DevGetDataStreamID(hDevice, i, dDSID.Convert<char>(), dDSID.Size());
-			streams.push_back(dDSID.Convert<char>());
-			elog(err, "DEV_Handler::ShowStreams");
+			Buffer dsIDs(20);
+			elog(DevGetDataStreamID(_deviceHandler, i, dsIDs.Convert<char>(), dsIDs.Size()), "DEV_Handler::ShowStreams");
+			streams.push_back(dsIDs.Convert<char>());
 		}
 		return streams;
 	}
 
-	std::string GetStreamName(uint32_t index)
+	std::string GetStreamName(uint32_t iIndex)
 	{
-		Buffer dDSID(20);
-		auto err = DevGetDataStreamID(hDevice, index, dDSID.Convert<char>(), dDSID.Size());
-		elog(err, "DEV_Handler::ShowStreams");
-		return dDSID.Convert<char>();
+		Buffer dsIDs(20);
+		elog(DevGetDataStreamID(_deviceHandler, iIndex, dsIDs.Convert<char>(), dsIDs.Size()), "DEV_Handler::ShowStreams");
+		return dsIDs.Convert<char>();
 	}
 
-	GenTL::DS_HANDLE GetStream(uint32_t num)
+	GenTL::DS_HANDLE GetStream(uint32_t iNum)
 	{
-		Buffer dDSID(20);
-		auto err = DevGetDataStreamID(hDevice, num, dDSID.Convert<char>(), dDSID.Size());
-		elog(err, "DEV_Handler::GetStream");
-		GenTL::DS_HANDLE hDS = nullptr;
-		err = DevOpenDataStream(hDevice, dDSID.Convert<char>(), &hDS);
-		elog(err, "DEV_Handler::GetStream");
-		return hDS;
+		Buffer dsIDs(20);
+		GenTL::DS_HANDLE ds = nullptr;
+
+		elog(DevGetDataStreamID(_deviceHandler, iNum, dsIDs.Convert<char>(), dsIDs.Size()), "DEV_Handler::GetStream");
+		elog(DevOpenDataStream(_deviceHandler, dsIDs.Convert<char>(), &ds), "DEV_Handler::GetStream");
+
+		return ds;
 	}
 
 	GenTL::PORT_HANDLE GetPort()
 	{
 		GenTL::PORT_HANDLE port = nullptr;
-
-		auto err = DevGetPort(hDevice, &port);
-		elog(err, "DEV_Handler::GetPort");
+		elog(DevGetPort(_deviceHandler, &port), "DEV_Handler::GetPort");
 		return port;
 	}
 
 	GenTL::DEV_HANDLE GetDevice()
 	{
-		return hDevice;
+		return _deviceHandler;
 	}
 
 
 private:
-	GenTL::DEV_HANDLE hDevice = nullptr;
+	GenTL::DEV_HANDLE _deviceHandler = nullptr;
 };

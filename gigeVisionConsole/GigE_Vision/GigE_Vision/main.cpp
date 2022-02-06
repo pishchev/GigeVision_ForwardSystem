@@ -2,64 +2,64 @@
 #include <iomanip>
 #include "GigeManager.hpp"
 
-void noConfig(GigeManager& gige) 
+void NoConfig(GigeManager& gige) 
 {
 	//выбираем динамическую библиотеку
 	std::string lib = "bgapi2_gige.cti";
 	//std::cout << "Lib: ";
 	//std::cin >> lib;
-	gige.useLib(lib);
+	gige.UseLib(lib);
 
 	//интерфейсы
-	for (uint32_t i = 0; i < gige.getIntefacesSize(); i++) {
-		std::cout << i << ")" << gige.getInterfaceName(i) << std::endl;
+	for (uint32_t i = 0; i < gige.GetIntefacesSize(); i++) {
+		std::cout << i << ")" << gige.GetInterfaceName(i) << std::endl;
 	}
 	uint32_t interf;
 	std::cout << "Interface: ";
 	std::cin >> interf;
-	gige.useInterface(interf);
+	gige.UseInterface(interf);
 
 	//девайсы
-	for (uint32_t i = 0; i < gige.getDevicesSize(); i++) {
-		std::cout << i << ")" << gige.getDeviceName(i) << std::endl;
+	for (uint32_t i = 0; i < gige.GetDevicesSize(); i++) {
+		std::cout << i << ")" << gige.GetDeviceName(i) << std::endl;
 	}
 	uint32_t device;
 	std::cout << "Device: ";
 	std::cin >> device;
-	gige.useDevice(device);
+	gige.UseDevice(device);
 
 	//стримы
-	for (uint32_t i = 0; i < gige.getStreamsSize(); i++) {
-		std::cout << i << ")" << gige.getStreamName(i) << std::endl;
+	for (uint32_t i = 0; i < gige.GetStreamsSize(); i++) {
+		std::cout << i << ")" << gige.GetStreamName(i) << std::endl;
 	}
 	uint32_t stream;
 	std::cout << "Stream: ";
 	std::cin >> stream;
-	gige.useStream(stream);
+	gige.UseStream(stream);
 
-	gige.cameraInit();
+	gige.CameraInit();
 
-	int64_t height = 256;
-	std::cout << "Height: ";
-	std::cin >> height;
-	gige.SetIntNode("Height", height);
-
-	int64_t width = 256;
-	std::cout << "Width: ";
-	std::cin >> width;
-	gige.SetIntNode("Width", width);
+	//int64_t height = 256;
+	//std::cout << "Height: ";
+	//std::cin >> height;
+	//gige.SetIntNode("Height", height);
+	//
+	//int64_t width = 256;
+	//std::cout << "Width: ";
+	//std::cin >> width;
+	//gige.SetIntNode("Width", width);
 }
-void useConfig(GigeManager& gige)
+void UseConfig(GigeManager& gige)
 {
 	std::string config = "config.txt";
 	//std::cout << "Configurator: ";
 	//std::cin >> config;
-	gige.useConfigurator(config);
+	gige.UseConfigurator(config);
 }
-void showNodes(GigeManager& gige)
+void ShowNodes(GigeManager& gige)
 {
 	//узлы
-	size_t nodesSize = gige.getNodesSize();
+	size_t nodesSize = gige.GetNodesSize();
 	std::cout << std::setw(8) << std::right << "Name"
 		<< std::setw(47) << std::right << "V"
 		<< std::setw(5) << std::right << "AM"
@@ -68,54 +68,54 @@ void showNodes(GigeManager& gige)
 
 	for (uint32_t i = 0; i < nodesSize; i++)
 	{
-		std::cout << std::setw(3) << std::right << i << ")" << std::setw(50) << std::left << gige.getNodeName(i)
-			<< std::setw(5) << std::left << gige.getNodeVisibility(i)
-			<< std::setw(5) << std::left << gige.getNodeAccess(i)
-			<< std::setw(5) << std::left << gige.getNodeType(i);
+		std::cout << std::setw(3) << std::right << i << ")" << std::setw(50) << std::left << gige.GetNodeName(i)
+			<< std::setw(5) << std::left << gige.GetNodeVisibility(i)
+			<< std::setw(5) << std::left << gige.GetNodeAccess(i)
+			<< std::setw(5) << std::left << gige.GetNodeType(i);
 
-		if (gige.getNodeType(i) == 2)
+		if (gige.GetNodeType(i) == 2)
 		{
 			int64_t val;
-			gige.GetIntNode(gige.getNodeName(i), val);
+			gige.GetIntNode(gige.GetNodeName(i), val);
 			std::cout << val;
 		}
-		else if (gige.getNodeType(i) == 9 && 0)
+		else if (gige.GetNodeType(i) == 9 && 0)
 		{
 			std::string val;
-			gige.GetEnumStrNode(gige.getNodeName(i), val);
+			gige.GetEnumStrNode(gige.GetNodeName(i), val);
 			std::cout << val;
 		}
-		else if (gige.getNodeType(i) == 6)
+		else if (gige.GetNodeType(i) == 6)
 		{
 			std::string val;
-			gige.GetStrNode(gige.getNodeName(i), val);
+			gige.GetStrNode(gige.GetNodeName(i), val);
 			std::cout << val;
 		}
 
 		std::cout << std::endl;
 	}
 }
-void testShowConfig()
+void TestShowConfig()
 {
 	Configurator conf;
 	conf.ReadConfig("config.txt");
 	conf.PrintConfig();
 }
-void gettingImage(GigeManager& gige)
+void GettingImage(GigeManager& gige)
 {
 	// захват изображения
-	gige.acquirerPreparing();
-	gige.startAcquisition();
+	gige.AcquirerPreparing();
+	gige.StartAcquisition();
 
 	int64_t payloadSize;
 	gige.GetIntNode("PayloadSize", payloadSize);
 	Buffer img(payloadSize);
 	unsigned char* image = img.Convert<unsigned char>();
 
-	while (true)
+	for (size_t i = 0; i < 5; ++i)
 	{
-		gige.waitNext();
-		if (gige.getImage(img.Convert<unsigned char>(), payloadSize))
+		gige.WaitNext();
+		if (gige.GetImage(img.Convert<unsigned char>(), payloadSize))
 		{
 			for (int i = 0; i < payloadSize; i++)
 			{
@@ -126,7 +126,7 @@ void gettingImage(GigeManager& gige)
 		system("pause");
 	}
 
-	gige.stopAcquisition();
+	gige.StopAcquisition();
 }
 
 int main()
@@ -137,12 +137,12 @@ int main()
 	std::cout << "Use config: ";
 	std::cin >> iUseConfig;
 
-	iUseConfig ? useConfig(gige) : noConfig(gige);
-	showNodes(gige);
+	iUseConfig ? UseConfig(gige) : NoConfig(gige);
+	ShowNodes(gige);
 
 	gige.SaveConfig("config.txt");
-	testShowConfig();
+	TestShowConfig();
 
-	gettingImage(gige);
+	GettingImage(gige);
 	return 0;
 } 

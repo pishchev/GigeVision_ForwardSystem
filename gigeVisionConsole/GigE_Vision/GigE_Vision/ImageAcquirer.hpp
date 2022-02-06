@@ -8,24 +8,19 @@
 class ImageAcquirer
 {
 public:
-	void AnnounceBuffers(GenTL::DS_HANDLE hDS , size_t payloadSize)
+	void AnnounceBuffers(GenTL::DS_HANDLE iStream , size_t iPayloadSize)
 	{
 		int type = 1;
-		Buffer num_buf_announce(20);
-		elog(DSGetInfo(hDS, GenTL::STREAM_INFO_BUF_ANNOUNCE_MIN, &type, num_buf_announce.Convert<char>(), num_buf_announce.Size()), "DSGetInfo");
-		size_t num_buf = *(num_buf_announce.Convert<size_t>());
+		Buffer numBuffers(20);
+		elog(DSGetInfo(iStream, GenTL::STREAM_INFO_BUF_ANNOUNCE_MIN, &type, numBuffers.Convert<char>(), numBuffers.Size()), "DSGetInfo");
 
-		ds_buffers = std::vector<GenTL::BUFFER_HANDLE>(num_buf, nullptr);
+		_buffers = std::vector<GenTL::BUFFER_HANDLE>(*(numBuffers.Convert<size_t>()), nullptr);
 
-		for (auto it = ds_buffers.begin(); it != ds_buffers.end(); ++it)
-		{
-			elog(DSAllocAndAnnounceBuffer(hDS, payloadSize, nullptr, &(*it)), "DSAllocAndAnnounceBuffer");
-		}
+		for (auto it = _buffers.begin(); it != _buffers.end(); ++it)
+			elog(DSAllocAndAnnounceBuffer(iStream, iPayloadSize, nullptr, &(*it)), "DSAllocAndAnnounceBuffer");
 
-		for (auto it = ds_buffers.begin(); it != ds_buffers.end(); ++it)
-		{
-			elog(DSQueueBuffer(hDS, *it), "DSQueueBuffer");
-		}
+		for (auto it = _buffers.begin(); it != _buffers.end(); ++it)
+			elog(DSQueueBuffer(iStream, *it), "DSQueueBuffer");
 	}
 
 	void StartAcquisition(GenTL::DS_HANDLE hDS)
@@ -35,9 +30,9 @@ public:
 
 	std::vector<GenTL::BUFFER_HANDLE> GetBuffers()
 	{
-		return ds_buffers;
+		return _buffers;
 	}
 
 private:
-	std::vector<GenTL::BUFFER_HANDLE> ds_buffers;
+	std::vector<GenTL::BUFFER_HANDLE> _buffers;
 };

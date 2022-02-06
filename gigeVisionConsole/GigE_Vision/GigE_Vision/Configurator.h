@@ -10,9 +10,9 @@ class Configurator
 {
 public:
   
-  bool ReadConfig(std::string fileName)
+  bool ReadConfig(std::string iFileName)
   {
-    std::ifstream fd(fileName);
+    std::ifstream fd(iFileName);
     if (!fd.is_open())
       return false;
 
@@ -21,17 +21,17 @@ public:
     while (fd >> word)
     {
       if (word == "Lib")
-        fd >> lib;
+        fd >> _lib;
       else if (word == "Interface")
-        fd >> intface;
+        fd >> _interface;
       else if (word == "Device")
-        fd >> device;
+        fd >> _device;
       else if (word == "Stream")
-        fd >> stream;
+        fd >> _stream;
       else {
         std::string param;
         fd >> param;
-        parameters[word] = std::stoi(param);
+        _parameters[word] = std::stoi(param);
       }
     }
 
@@ -44,37 +44,35 @@ public:
   {
     std::cout << "Configuration: " << std::endl;
 
-    std::cout << "Lib: " << lib << std::endl;
-    std::cout << "Interface: " << intface << std::endl;
-    std::cout << "Device: " << device << std::endl;
-    std::cout << "Stream: " << stream << std::endl;
+    std::cout << "Lib: " << _lib << std::endl;
+    std::cout << "Interface: " << _interface << std::endl;
+    std::cout << "Device: " << _device << std::endl;
+    std::cout << "Stream: " << _stream << std::endl;
 
-    for (auto it = parameters.begin(); it != parameters.end(); ++it) {
+    for (auto it = _parameters.begin(); it != _parameters.end(); ++it)
       std::cout << it->first << ": " << it->second << std::endl;
-    }
   }
 
-  void SaveConfig(std::string fileName)
+  void SaveConfig(std::string iFileName)
   {
     std::ofstream fd;
-    fd.open(fileName, 'w');
+    fd.open(iFileName, 'w');
 
-    fd << "Lib " << lib << std::endl;
-    fd << "Interface " << intface << std::endl;
-    fd << "Device " << device << std::endl;
-    fd << "Stream " << stream << std::endl;
+    fd << "Lib " << _lib << std::endl;
+    fd << "Interface " << _interface << std::endl;
+    fd << "Device " << _device << std::endl;
+    fd << "Stream " << _stream << std::endl;
 
-    for (auto it = parameters.begin(); it != parameters.end(); ++it) {
+    for (auto it = _parameters.begin(); it != _parameters.end(); ++it)
       fd << it->first << " " << it->second << std::endl;
-    }
 
     fd.close();
   }
 
-  std::string lib;
-  std::string intface;
-  std::string device;
-  std::string stream;
+  std::string _lib;
+  std::string _interface;
+  std::string _device;
+  std::string _stream;
 
-  IntNodes parameters;
+  IntNodes _parameters;
 };

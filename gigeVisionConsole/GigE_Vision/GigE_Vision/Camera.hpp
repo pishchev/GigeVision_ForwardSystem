@@ -12,121 +12,108 @@ using namespace GENICAM_NAMESPACE;
 class Camera
 {
 public:
-	void LoadXML(Buffer iBuffer)
+	void LoadXML(Buffer iBuffer, bool iIsZipped)
 	{
-		cam._LoadXMLFromZIPData(iBuffer.Convert<void>(), *iBuffer.Size());
+		if (iIsZipped)
+			_camera._LoadXMLFromZIPData(iBuffer.Convert<void>(), *iBuffer.Size());
+		else
+			_camera._LoadXMLFromString(iBuffer.Convert<char>());
 	}
 
-	void Connect(IPort* port)
+	void Connect(IPort* iPort)
 	{
-		cam._Connect(port);
+		_camera._Connect(iPort);
 	}
 
 	void StartAcquisition()
 	{
-		CCommandPtr ptrAcquisitionStart = cam._GetNode("AcquisitionStart");
+		CCommandPtr ptrAcquisitionStart = _camera._GetNode("AcquisitionStart");
 		if (IsWritable(ptrAcquisitionStart))
-		{
 			ptrAcquisitionStart->Execute();
-		}
 	}
 
 	void StopAcquisition()
 	{
-		CCommandPtr ptrAcquisitionStop = cam._GetNode("AcquisitionStop");
+		CCommandPtr ptrAcquisitionStop = _camera._GetNode("AcquisitionStop");
 		if (IsWritable(ptrAcquisitionStop))
-		{
 			ptrAcquisitionStop->Execute();
-		}
 	}
 
 	void GetNodes()
 	{
-		cam._GetNodes(nodes);
-
-		std::sort(nodes.begin(), nodes.end(), [](const INode* node1, const INode* node2)
+		_camera._GetNodes(_nodes);
+		std::sort(_nodes.begin(), _nodes.end(), [](const INode* iNode1, const INode* iNode2)
 		{
-			if (node1->GetVisibility() != node2->GetVisibility())
-				return node1->GetVisibility() < node2->GetVisibility();
-			if (node1->GetAccessMode() != node2->GetAccessMode())
-				return node1->GetAccessMode() > node2->GetAccessMode();
-			if (node1->GetPrincipalInterfaceType() != node2->GetPrincipalInterfaceType())
-				return node1->GetPrincipalInterfaceType() < node2->GetPrincipalInterfaceType();
+			if (iNode1->GetVisibility() != iNode2->GetVisibility())
+				return iNode1->GetVisibility() < iNode2->GetVisibility();
+			if (iNode1->GetAccessMode() != iNode2->GetAccessMode())
+				return iNode1->GetAccessMode() > iNode2->GetAccessMode();
+			if (iNode1->GetPrincipalInterfaceType() != iNode2->GetPrincipalInterfaceType())
+				return iNode1->GetPrincipalInterfaceType() < iNode2->GetPrincipalInterfaceType();
 			return false;
 		});
-
-		/*
-		for (auto node = nodes.begin(); node != nodes.end(); ++node)
-		{
-			const auto nd = *node;
-			std::cout << "Name: " << std::setw(50) << std::left << nd->GetName() 
-				<< "Visibility: " << std::setw(2) << std::left << nd->GetVisibility()
-				<< "AccessMode: " << std::setw(2) << std::left << nd->GetAccessMode()
-				<< "InterfaceType: " << std::setw(2) << std::left << nd->GetPrincipalInterfaceType()
-				<< std::endl;
-		}*/
 	}
 
 	size_t GetNodesSize()
 	{
-		return nodes.size();
+		return _nodes.size();
 	}
-	std::string getNodeName(uint32_t index)
+	std::string GetNodeName(uint32_t iIndex)
 	{
-		return nodes[index]->GetName().c_str();
+		return _nodes[iIndex]->GetName().c_str();
 	}
-	uint32_t getNodeVisibility(uint32_t index)
+	uint32_t GetNodeVisibility(uint32_t iIndex)
 	{
-		return nodes[index]->GetVisibility();
+		return _nodes[iIndex]->GetVisibility();
 	}
-	uint32_t getNodeAccess(uint32_t index)
+	uint32_t GetNodeAccess(uint32_t iIndex)
 	{
-		return nodes[index]->GetAccessMode();
+		return _nodes[iIndex]->GetAccessMode();
 	}
-	uint32_t getNodeType(uint32_t index)
+	uint32_t GetNodeType(uint32_t iIndex)
 	{
-		return nodes[index]->GetPrincipalInterfaceType();
+		return _nodes[iIndex]->GetPrincipalInterfaceType();
 	}
 
-	bool SetIntNode(std::string node, int64_t value)
+	bool SetIntNode(std::string iNode, int64_t iValue)
 	{
-		CIntegerPtr ptrNode = cam._GetNode(node.data());
+		CIntegerPtr ptrNode = _camera._GetNode(iNode.data());
 		if (IsWritable(ptrNode))
 		{
-			*ptrNode = value;
+			*ptrNode = iValue;
 			return true;
 		}
 		return false;
 	}
 
-	bool GetIntNode(std::string node, int64_t& value)
+	bool GetIntNode(std::string iNode, int64_t& oValue)
 	{
-		CIntegerPtr ptrNode = cam._GetNode(node.data());
+		CIntegerPtr ptrNode = _camera._GetNode(iNode.data());
 		if (IsReadable(ptrNode))
 		{
-			value = ptrNode->GetValue();
+			oValue = ptrNode->GetValue();
 			return true;
 		}
 		return false;
 	}
 
-	bool GetEnumStrNode(std::string node, std::string& value)
+	bool GetEnumStrNode(std::string iNode, std::string& oValue)
 	{
-		CEnumerationPtr ptrNode = cam._GetNode(node.data());
+		CEnumerationPtr ptrNode = _camera._GetNode(iNode.data());
 		if (IsReadable(ptrNode))
 		{
-			value = ptrNode->GetCurrentEntry()->GetSymbolic();
+			oValue = ptrNode->GetCurrentEntry()->GetSymbolic();
 			return true;
 		}
 		return false;
 	}
 
-	bool GetStrNode(std::string node, std::string& value)
+	bool GetStrNode(std::string iNode, std::string& oValue)
 	{
-		CStringPtr ptrNode = cam._GetNode(node.data());
+		CStringPtr ptrNode = _camera._GetNode(iNode.data());
 		if (IsReadable(ptrNode))
 		{
-			value = ptrNode->GetValue();
+			oValue = ptrNode->GetValue();
 			return true;
 		}
 		return false;
@@ -140,6 +127,6 @@ public:
 	}
 
 private:
-	CNodeMapRef cam;
-	NodeList_t nodes;
+	CNodeMapRef _camera;
+	NodeList_t _nodes;
 };

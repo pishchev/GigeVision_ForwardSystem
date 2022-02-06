@@ -9,54 +9,49 @@ public:
 
 	void Open()
 	{
-		auto err = TLOpen(&hTL);
-		elog(err, "TL_Handler::Open");
+		elog(TLOpen(&_transportHandler), "TL_Handler::Open");
 	}
 
 	~TransportLayer()
 	{
-		auto err = TLClose(hTL);
-		elog(err, "TL_Handler::Close");
+		elog(TLClose(_transportHandler), "TL_Handler::Close");
 	}
 
 	void UpdateInterfaceList()
 	{
-		auto err = TLUpdateInterfaceList(hTL, nullptr, GENTL_INFINITE);
-		elog(err, "TL_Handler::UpdateInterfaceList");
+		elog(TLUpdateInterfaceList(_transportHandler, nullptr, GENTL_INFINITE), "TL_Handler::UpdateInterfaceList");
 	}
 
 	uint32_t GetNumInterfaces()
 	{
-		uint32_t num_interfaces = 0;
-		auto err = TLGetNumInterfaces(hTL, &num_interfaces);
-		elog(err, "TL_Handler::GetNumInterfaces");
-		return num_interfaces;
+		uint32_t numIterfaces = 0;
+		elog(TLGetNumInterfaces(_transportHandler, &numIterfaces), "TL_Handler::GetNumInterfaces");
+		return numIterfaces;
 	}
 
-	std::string GetInterfaceName(uint32_t index)
+	std::string GetInterfaceName(uint32_t iIndex)
 	{
 		Buffer buffer(80);
-		auto err = TLGetInterfaceID(hTL, index, buffer.Convert<char>(), buffer.Size());
-		elog(err, "TL_Handler::ShowInterfaces");
+		elog(TLGetInterfaceID(_transportHandler, iIndex, buffer.Convert<char>(), buffer.Size()), "TL_Handler::ShowInterfaces");
 		return buffer.Convert<char>();
 	}
 
-	GenTL::IF_HANDLE GetInterface(uint32_t num)
+	GenTL::IF_HANDLE GetInterface(uint32_t iIndex)
 	{
 		Buffer buffer(80);
-		auto err = TLGetInterfaceID(hTL, num, buffer.Convert<char>(), buffer.Size());
-		elog(err, "TL_Handler::GetInterface");
-		GenTL::IF_HANDLE hIF = nullptr;
-		err = TLOpenInterface(hTL, buffer.Convert<char>(), &hIF);
-		elog(err, "TL_Handler::GetInterface");
-		return hIF;
+		GenTL::IF_HANDLE interfaceHandler = nullptr;
+
+		elog(TLGetInterfaceID(_transportHandler, iIndex, buffer.Convert<char>(), buffer.Size()), "TL_Handler::GetInterface");
+		elog(TLOpenInterface(_transportHandler, buffer.Convert<char>(), &interfaceHandler), "TL_Handler::GetInterface");
+
+		return interfaceHandler;
 	}
 
 	GenTL::TL_HANDLE GetTL()
 	{
-		return hTL;
+		return _transportHandler;
 	}
 
 private:
-	GenTL::TL_HANDLE hTL = nullptr;
+	GenTL::TL_HANDLE _transportHandler = nullptr;
 };
