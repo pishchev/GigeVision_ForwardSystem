@@ -5,7 +5,7 @@
 void NoConfig(GigeManager& gige) 
 {
 	//выбираем динамическую библиотеку
-	std::string lib = "bgapi2_gige.cti";
+	std::string lib = "TLSimu.cti";
 	//std::cout << "Lib: ";
 	//std::cin >> lib;
 	gige.UseLib(lib);
@@ -39,15 +39,15 @@ void NoConfig(GigeManager& gige)
 
 	gige.CameraInit();
 
-	//int64_t height = 256;
+	int64_t height = 8;
 	//std::cout << "Height: ";
 	//std::cin >> height;
-	//gige.SetIntNode("Height", height);
-	//
-	//int64_t width = 256;
+	gige.SetIntNode("Height", height);
+	
+	int64_t width = 8;
 	//std::cout << "Width: ";
 	//std::cin >> width;
-	//gige.SetIntNode("Width", width);
+	gige.SetIntNode("Width", width);
 }
 void UseConfig(GigeManager& gige)
 {

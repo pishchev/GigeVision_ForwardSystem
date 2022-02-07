@@ -14,8 +14,11 @@ public:
 
 	~TransportLayer()
 	{
-		//if (_transportHandler)
-		//	elog(TLClose(_transportHandler), "TL_Handler::Close");
+		if (_transportHandler)
+		{
+			//std::cout << "~TransportLayer" << std::endl;
+			//elog(TLClose(_transportHandler), "TL_Handler::Close");
+		}
 	}
 
 	void UpdateInterfaceList()

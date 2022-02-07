@@ -73,6 +73,39 @@ void CGigeConfiguratorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO3, _streamsComboBox);
 	DDX_Control(pDX, IDC_BUTTON2, _applyStream);
 	DDX_Control(pDX, STREAM_MESSAGE, _streamsMessage);
+	DDX_Control(pDX, IDC_EDIT2, _properties[0]);
+	DDX_Control(pDX, IDC_EDIT3, _properties[1]);
+	DDX_Control(pDX, IDC_EDIT4, _properties[2]);
+	DDX_Control(pDX, IDC_EDIT5, _properties[3]);
+	DDX_Control(pDX, IDC_EDIT6, _properties[4]);
+	DDX_Control(pDX, IDC_EDIT7, _properties[5]);
+	DDX_Control(pDX, IDC_EDIT8, _properties[6]);
+	DDX_Control(pDX, IDC_EDIT9, _properties[7]);
+	DDX_Control(pDX, IDC_EDIT10, _properties[8]);
+	DDX_Control(pDX, IDC_EDIT11, _properties[9]);
+	DDX_Control(pDX, IDC_EDIT12, _properties[10]);
+	DDX_Control(pDX, IDC_EDIT13, _properties[11]);
+	DDX_Control(pDX, IDC_EDIT14, _properties[12]);
+	DDX_Control(pDX, IDC_EDIT15, _properties[13]);
+	DDX_Control(pDX, IDC_EDIT16, _properties[14]);
+	DDX_Control(pDX, IDC_EDIT17, _properties[15]);
+	DDX_Control(pDX, IDC_EDIT18, _values[0]);
+	DDX_Control(pDX, IDC_EDIT19, _values[1]);
+	DDX_Control(pDX, IDC_EDIT20, _values[2]);
+	DDX_Control(pDX, IDC_EDIT21, _values[3]);
+	DDX_Control(pDX, IDC_EDIT22, _values[4]);
+	DDX_Control(pDX, IDC_EDIT23, _values[5]);
+	DDX_Control(pDX, IDC_EDIT24, _values[6]);
+	DDX_Control(pDX, IDC_EDIT25, _values[7]);
+	DDX_Control(pDX, IDC_EDIT26, _values[8]);
+	DDX_Control(pDX, IDC_EDIT27, _values[9]);
+	DDX_Control(pDX, IDC_EDIT28, _values[10]);
+	DDX_Control(pDX, IDC_EDIT29, _values[11]);
+	DDX_Control(pDX, IDC_EDIT30, _values[12]);
+	DDX_Control(pDX, IDC_EDIT31, _values[13]);
+	DDX_Control(pDX, IDC_EDIT32, _values[14]);
+	DDX_Control(pDX, IDC_EDIT33, _values[15]);
+	DDX_Control(pDX, IDC_SCROLLBAR1, _propertyScroll);
 }
 
 BEGIN_MESSAGE_MAP(CGigeConfiguratorDlg, CDialogEx)
@@ -183,7 +216,7 @@ void CGigeConfiguratorDlg::InitConfigurator()
 	_configLayout.push_back(&_startConfigButton);
 	_configLayout.push_back(&_noStartConfigButton);
 
-	_libFile.SetWindowTextW(_T("TLSimu.cti"));
+	_libFile.SetWindowTextW(_T("bgapi2_gige.cti"));
 	_libLayout.push_back(&_libMessage);
 	_libLayout.push_back(&_libFile);
 	_libLayout.push_back(&_applyLib);
@@ -200,6 +233,15 @@ void CGigeConfiguratorDlg::InitConfigurator()
 	_streamLayout.push_back(&_applyStream);
 	_streamLayout.push_back(&_streamsMessage);
 
+
+	for (size_t i = 0; i < 16; ++i)
+	{
+		_propertyLayout.push_back(&_properties[i]);
+		_propertyLayout.push_back(&_values[i]);
+	}
+	_propertyLayout.push_back(&_propertyScroll);
+
+
 	_stage = Stage::ConfigStage;
 	ShowConfigStage();
 }
@@ -210,6 +252,8 @@ void CGigeConfiguratorDlg::ShowConfigStage()
 
 	switch (_stage)
 	{
+	case Stage::PropertiesStage:
+		ShowLayout(_propertyLayout);
 	case Stage::StreamStage:
 		ShowLayout(_streamLayout);
 	case Stage::DeviceStage:
@@ -231,6 +275,7 @@ void CGigeConfiguratorDlg::HideAll()
 	HideLayout(_interfaceLayout);
 	HideLayout(_deviceLayout);
 	HideLayout(_streamLayout);
+	HideLayout(_propertyLayout);
 }
 
 void CGigeConfiguratorDlg::HideLayout(const std::vector<CWnd*>& iLayout)
@@ -331,4 +376,7 @@ void CGigeConfiguratorDlg::OnBnClickedStreamApply()
 {
 	const auto index = _streamsComboBox.GetCurSel();
 	_gigeManager.UseStream(index);
+
+	_stage = Stage::PropertiesStage;
+	ShowConfigStage();
 }

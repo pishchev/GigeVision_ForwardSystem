@@ -40,7 +40,8 @@ private:
 		LibStage,
 		InterfaceStage,
 		DeviceStage,
-		StreamStage
+		StreamStage,
+		PropertiesStage
 	};
 
 	void InitConfigurator();
@@ -88,4 +89,10 @@ public:
 	CButton _applyStream;
 	CStatic _streamsMessage;
 	std::vector<CWnd*> _streamLayout;
+
+
+	CEdit _properties[16];
+	CEdit _values[16];
+	CScrollBar _propertyScroll;
+	std::vector<CWnd*> _propertyLayout;
 };

@@ -32,8 +32,12 @@ public:
 	GigeManager(){}
 	~GigeManager()
 	{
-		//if (_port._portHandler)
-		//	StopAcquisition();
+		//StopAcquisition();
+		if (_stream) 
+		{
+			//std::cout << "~Stream" << std::endl;
+			//elog(DSClose(_stream), "DSClose");
+		}
 	}
 
 	void UseConfigurator(std::string iConfigFile)

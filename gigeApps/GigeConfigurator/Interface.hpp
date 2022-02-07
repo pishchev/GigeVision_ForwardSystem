@@ -9,6 +9,14 @@ public:
 	Interface(GenTL::IF_HANDLE iInterface) : _interfaceHandler(iInterface) {}
 
 	Interface(){}
+	~Interface()
+	{
+		if (_interfaceHandler)
+		{
+			//std::cout << "~Interface" << std::endl;
+			//elog(IFClose(_interfaceHandler), "IFClose");
+		}
+	}
 
 	void SetInterfaces(GenTL::IF_HANDLE iInterface)
 	{

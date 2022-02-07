@@ -23,6 +23,7 @@ static GenTL::PIFUpdateDeviceList IFUpdateDeviceList;
 static GenTL::PIFGetNumDevices IFGetNumDevices;
 static GenTL::PIFGetDeviceID IFGetDeviceID;
 static GenTL::PIFOpenDevice IFOpenDevice;
+static GenTL::PIFClose IFClose;
 
 static GenTL::PDevGetNumDataStreams DevGetNumDataStreams;
 static GenTL::PDevGetDataStreamID DevGetDataStreamID;
@@ -47,6 +48,7 @@ static GenTL::PDSAllocAndAnnounceBuffer DSAllocAndAnnounceBuffer;
 static GenTL::PGCGetPortInfo GCGetPortInfo;
 
 static GenTL::PDSStartAcquisition DSStartAcquisition;
+static GenTL::PDSClose DSClose;
 
 static GenTL::PDSQueueBuffer DSQueueBuffer;
 
@@ -102,6 +104,9 @@ static void Init_Lib(std::string module_)
 	IFOpenDevice = (GenTL::PIFOpenDevice)GetProcAddress(gentl, "IFOpenDevice");
 	assert(IFOpenDevice != nullptr);
 
+	IFClose = (GenTL::PIFClose)GetProcAddress(gentl, "IFClose");
+	assert(IFClose != nullptr);
+
 	DevGetNumDataStreams = (GenTL::PDevGetNumDataStreams)GetProcAddress(gentl, "DevGetNumDataStreams");
 	assert(DevGetNumDataStreams != nullptr);
 
@@ -146,6 +151,9 @@ static void Init_Lib(std::string module_)
 
 	DSStartAcquisition = (GenTL::PDSStartAcquisition)GetProcAddress(gentl, "DSStartAcquisition");
 	assert(DSStartAcquisition != nullptr);
+
+	DSClose = (GenTL::PDSClose)GetProcAddress(gentl, "DSClose");
+	assert(DSClose != nullptr);
 
 	DSQueueBuffer = (GenTL::PDSQueueBuffer)GetProcAddress(gentl, "DSQueueBuffer");
 	assert(DSQueueBuffer != nullptr);
