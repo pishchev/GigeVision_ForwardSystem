@@ -67,6 +67,12 @@ void CGigeConfiguratorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO1, _interfacesComboBox);
 	DDX_Control(pDX, IDC_BUTTON4, _applyInterface);
 	DDX_Control(pDX, INTERFACES_LIST_MESSAGE, _interfacesListMessage);
+	DDX_Control(pDX, DEVICES_MESSAGE, _devicesMessage);
+	DDX_Control(pDX, IDC_COMBO2, _devicesComboBox);
+	DDX_Control(pDX, IDC_BUTTON1, _applyDevice);
+	DDX_Control(pDX, IDC_COMBO3, _streamsComboBox);
+	DDX_Control(pDX, IDC_BUTTON2, _applyStream);
+	DDX_Control(pDX, STREAM_MESSAGE, _streamsMessage);
 }
 
 BEGIN_MESSAGE_MAP(CGigeConfiguratorDlg, CDialogEx)
@@ -77,6 +83,9 @@ BEGIN_MESSAGE_MAP(CGigeConfiguratorDlg, CDialogEx)
 	ON_BN_CLICKED(NO_START_CONFIG, &CGigeConfiguratorDlg::OnBnClickedNoStartConfig)
 	ON_WM_TIMER()
 	ON_BN_CLICKED(APPLY_LIB_FILE_, &CGigeConfiguratorDlg::OnBnClickedLibFile)
+	ON_BN_CLICKED(IDC_BUTTON1, &CGigeConfiguratorDlg::OnBnClickedDeviceApply)
+	ON_BN_CLICKED(IDC_BUTTON4, &CGigeConfiguratorDlg::OnBnClickedInterfaceApply)
+	ON_BN_CLICKED(IDC_BUTTON2, &CGigeConfiguratorDlg::OnBnClickedStreamApply)
 END_MESSAGE_MAP()
 
 
@@ -169,9 +178,7 @@ HCURSOR CGigeConfiguratorDlg::OnQueryDragIcon()
 
 void CGigeConfiguratorDlg::InitConfigurator()
 {
-	SetTimer(1, 500, 0);
-
-	_stage = Stage::ConfigStage;
+	SetTimer(1, 1000, 0);
 
 	_configLayout.push_back(&_startConfigButton);
 	_configLayout.push_back(&_noStartConfigButton);
@@ -185,14 +192,28 @@ void CGigeConfiguratorDlg::InitConfigurator()
 	_interfaceLayout.push_back(&_interfacesListMessage);
 	_interfaceLayout.push_back(&_applyInterface);
 
+	_deviceLayout.push_back(&_devicesComboBox);
+	_deviceLayout.push_back(&_devicesMessage);
+	_deviceLayout.push_back(&_applyDevice);
+
+	_streamLayout.push_back(&_streamsComboBox);
+	_streamLayout.push_back(&_applyStream);
+	_streamLayout.push_back(&_streamsMessage);
+
+	_stage = Stage::ConfigStage;
+	ShowConfigStage();
 }
 
-void CGigeConfiguratorDlg::Configurate()
+void CGigeConfiguratorDlg::ShowConfigStage()
 {
 	HideAll();
 
 	switch (_stage)
 	{
+	case Stage::StreamStage:
+		ShowLayout(_streamLayout);
+	case Stage::DeviceStage:
+		ShowLayout(_deviceLayout);
 	case Stage::InterfaceStage:
 		ShowLayout(_interfaceLayout);
 	case Stage::LibStage:
@@ -208,6 +229,8 @@ void CGigeConfiguratorDlg::HideAll()
 	HideLayout(_configLayout);
 	HideLayout(_libLayout);
 	HideLayout(_interfaceLayout);
+	HideLayout(_deviceLayout);
+	HideLayout(_streamLayout);
 }
 
 void CGigeConfiguratorDlg::HideLayout(const std::vector<CWnd*>& iLayout)
@@ -226,19 +249,20 @@ void CGigeConfiguratorDlg::ShowLayout(const std::vector<CWnd*>& iLayout)
 void CGigeConfiguratorDlg::OnBnClickedStartConfig()
 {
 	_stage = LibStage;
+	ShowConfigStage();
 }
 
 
 void CGigeConfiguratorDlg::OnBnClickedNoStartConfig()
 {
 	_stage = LibStage;
+	ShowConfigStage();
 }
 
 
 void CGigeConfiguratorDlg::OnTimer(UINT_PTR nIDEvent)
 {
 	// TODO: добавьте свой код обработчика сообщений или вызов стандартного
-	Configurate();
 	CDialogEx::OnTimer(nIDEvent);
 }
 
@@ -257,5 +281,54 @@ void CGigeConfiguratorDlg::OnBnClickedLibFile()
 		_interfacesComboBox.AddString(CA2T(iface.c_str()));
 	}
 
+	if (_gigeManager.GetIntefacesSize() != 0)
+		_interfacesComboBox.SetCurSel(0);
+
 	_stage = InterfaceStage;
+	ShowConfigStage();
+}
+
+
+void CGigeConfiguratorDlg::OnBnClickedDeviceApply()
+{
+	const auto index = _devicesComboBox.GetCurSel();
+	_gigeManager.UseDevice(index);
+
+	for (uint32_t i = 0; i < _gigeManager.GetStreamsSize(); i++)
+	{
+		std::string stream = _gigeManager.GetStreamName(i);
+		_streamsComboBox.AddString(CA2T(stream.c_str()));
+	}
+
+	if (_gigeManager.GetStreamsSize() != 0)
+		_streamsComboBox.SetCurSel(0);
+
+	_stage = Stage::StreamStage;
+	ShowConfigStage();
+}
+
+
+void CGigeConfiguratorDlg::OnBnClickedInterfaceApply()
+{
+	const auto index = _interfacesComboBox.GetCurSel();
+	_gigeManager.UseInterface(index);
+
+	for (uint32_t i = 0; i < _gigeManager.GetDevicesSize(); i++)
+	{
+		std::string dev = _gigeManager.GetDeviceName(i);
+		_devicesComboBox.AddString(CA2T(dev.c_str()));
+	}
+
+	if (_gigeManager.GetDevicesSize() != 0)
+		_devicesComboBox.SetCurSel(0);
+
+	_stage = Stage::DeviceStage;
+	ShowConfigStage();
+}
+
+
+void CGigeConfiguratorDlg::OnBnClickedStreamApply()
+{
+	const auto index = _streamsComboBox.GetCurSel();
+	_gigeManager.UseStream(index);
 }

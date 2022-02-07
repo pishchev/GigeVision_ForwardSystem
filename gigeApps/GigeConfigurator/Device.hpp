@@ -11,8 +11,8 @@ public:
 	Device() = default;
 	~Device()
 	{
-		if (_deviceHandler)
-			elog(DevClose(_deviceHandler), "DevClose");
+		//if (_deviceHandler)
+		//	elog(DevClose(_deviceHandler), "DevClose");
 	}
 
 	void SetDevice(GenTL::DEV_HANDLE iDevice)

@@ -32,8 +32,8 @@ public:
 	GigeManager(){}
 	~GigeManager()
 	{
-		if (_port._portHandler)
-			StopAcquisition();
+		//if (_port._portHandler)
+		//	StopAcquisition();
 	}
 
 	void UseConfigurator(std::string iConfigFile)

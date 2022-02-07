@@ -38,11 +38,13 @@ private:
 	{
 		ConfigStage,
 		LibStage,
-		InterfaceStage
+		InterfaceStage,
+		DeviceStage,
+		StreamStage
 	};
 
 	void InitConfigurator();
-	void Configurate();
+	void ShowConfigStage();
 	void HideAll();
 	void HideLayout(const std::vector<CWnd*>& iLayout);
 	void ShowLayout(const std::vector<CWnd*>& iLayout);
@@ -69,9 +71,21 @@ public:
 	CStatic _libMessage;
 	std::vector<CWnd*> _libLayout;
 
-
+	afx_msg void OnBnClickedInterfaceApply();
 	CComboBox _interfacesComboBox;
 	CButton _applyInterface;
 	CStatic _interfacesListMessage;
 	std::vector<CWnd*> _interfaceLayout;
+
+	afx_msg void OnBnClickedDeviceApply();
+	CStatic _devicesMessage;
+	CComboBox _devicesComboBox;
+	CButton _applyDevice;
+	std::vector<CWnd*> _deviceLayout;
+
+	afx_msg void OnBnClickedStreamApply();
+	CComboBox _streamsComboBox;
+	CButton _applyStream;
+	CStatic _streamsMessage;
+	std::vector<CWnd*> _streamLayout;
 };
