@@ -66,7 +66,8 @@ private:
 		InterfaceStage,
 		DeviceStage,
 		StreamStage,
-		PropertiesStage
+		PropertiesStage,
+		EditorStage
 	};
 
 	void InitConfigurator();
@@ -77,6 +78,7 @@ private:
 	void FillProperties(size_t iStartIndex);
 	void UpdateProperties();
 	void GetProperties();
+	void OpenEditor(size_t iPropertyIndex);
 
 	GigeManager _gigeManager;
 
@@ -87,7 +89,6 @@ private:
 public:
 	afx_msg void OnTimer(UINT_PTR nIDEvent);
 
-	afx_msg void OnBnClickedStartConfig();
 	afx_msg void OnBnClickedNoStartConfig();
 	CButton _startConfigButton;
 	CButton _noStartConfigButton;
@@ -122,4 +123,32 @@ public:
 	CScrollBar _propertyScroll;
 	std::vector<CWnd*> _propertyLayout;
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+
+	CStatic _editorMessage;
+	CEdit _editorPropertyName;
+	CEdit _editorPropertyValue;
+	CButton _applyEditor;
+	std::vector<CWnd*> _editorLayout;
+
+	CStatic _outputFileMessage;
+	CEdit _outputFile;
+	CButton _saveConfigButton;
+	afx_msg void OnBnClickedSave();
+
+	afx_msg void OnSetfocusEdit0();
+	afx_msg void OnSetfocusEdit1();
+	afx_msg void OnSetfocusEdit2();
+	afx_msg void OnSetfocusEdit3();
+	afx_msg void OnSetfocusEdit4();
+	afx_msg void OnSetfocusEdit5();
+	afx_msg void OnSetfocusEdit6();
+	afx_msg void OnSetfocusEdit7();
+	afx_msg void OnSetfocusEdit8();
+	afx_msg void OnSetfocusEdit9();
+	afx_msg void OnSetfocusEdit10();
+	afx_msg void OnSetfocusEdit11();
+	afx_msg void OnSetfocusEdit12();
+	afx_msg void OnSetfocusEdit13();
+	afx_msg void OnSetfocusEdit14();
+	afx_msg void OnSetfocusEdit15();
 };

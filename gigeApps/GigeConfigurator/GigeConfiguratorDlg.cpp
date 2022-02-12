@@ -59,7 +59,6 @@ CGigeConfiguratorDlg::CGigeConfiguratorDlg(CWnd* pParent /*=nullptr*/)
 void CGigeConfiguratorDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialogEx::DoDataExchange(pDX);
-	DDX_Control(pDX, STARTED_CONFIG, _startConfigButton);
 	DDX_Control(pDX, NO_START_CONFIG, _noStartConfigButton);
 	DDX_Control(pDX, EDIT_LIB_FILE, _libFile);
 	DDX_Control(pDX, APPLY_LIB_FILE_, _applyLib);
@@ -106,13 +105,19 @@ void CGigeConfiguratorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT32, _valueEdits[14]);
 	DDX_Control(pDX, IDC_EDIT33, _valueEdits[15]);
 	DDX_Control(pDX, IDC_SCROLLBAR1, _propertyScroll);
+	DDX_Control(pDX, EDITOR_MESSAGE, _editorMessage);
+	DDX_Control(pDX, IDC_EDIT34, _editorPropertyName);
+	DDX_Control(pDX, IDC_EDIT36, _editorPropertyValue);
+	DDX_Control(pDX, IDOK2, _applyEditor);
+	DDX_Control(pDX, _OUTPUTFILE_MESSAGE, _outputFileMessage);
+	DDX_Control(pDX, IDC_EDIT35, _outputFile);
+	DDX_Control(pDX, IDOK, _saveConfigButton);
 }
 
 BEGIN_MESSAGE_MAP(CGigeConfiguratorDlg, CDialogEx)
 	ON_WM_SYSCOMMAND()
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
-	ON_BN_CLICKED(STARTED_CONFIG, &CGigeConfiguratorDlg::OnBnClickedStartConfig)
 	ON_BN_CLICKED(NO_START_CONFIG, &CGigeConfiguratorDlg::OnBnClickedNoStartConfig)
 	ON_WM_TIMER()
 	ON_BN_CLICKED(APPLY_LIB_FILE_, &CGigeConfiguratorDlg::OnBnClickedLibFile)
@@ -120,6 +125,23 @@ BEGIN_MESSAGE_MAP(CGigeConfiguratorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON4, &CGigeConfiguratorDlg::OnBnClickedInterfaceApply)
 	ON_BN_CLICKED(IDC_BUTTON2, &CGigeConfiguratorDlg::OnBnClickedStreamApply)
 	ON_WM_VSCROLL()
+	ON_BN_CLICKED(IDOK, &CGigeConfiguratorDlg::OnBnClickedSave)
+	ON_EN_SETFOCUS(IDC_EDIT18, &CGigeConfiguratorDlg::OnSetfocusEdit0)
+	ON_EN_SETFOCUS(IDC_EDIT19, &CGigeConfiguratorDlg::OnSetfocusEdit1)
+	ON_EN_SETFOCUS(IDC_EDIT20, &CGigeConfiguratorDlg::OnSetfocusEdit2)
+	ON_EN_SETFOCUS(IDC_EDIT21, &CGigeConfiguratorDlg::OnSetfocusEdit3)
+	ON_EN_SETFOCUS(IDC_EDIT22, &CGigeConfiguratorDlg::OnSetfocusEdit4)
+	ON_EN_SETFOCUS(IDC_EDIT23, &CGigeConfiguratorDlg::OnSetfocusEdit5)
+	ON_EN_SETFOCUS(IDC_EDIT24, &CGigeConfiguratorDlg::OnSetfocusEdit6)
+	ON_EN_SETFOCUS(IDC_EDIT25, &CGigeConfiguratorDlg::OnSetfocusEdit7)
+	ON_EN_SETFOCUS(IDC_EDIT26, &CGigeConfiguratorDlg::OnSetfocusEdit8)
+	ON_EN_SETFOCUS(IDC_EDIT27, &CGigeConfiguratorDlg::OnSetfocusEdit9)
+	ON_EN_SETFOCUS(IDC_EDIT28, &CGigeConfiguratorDlg::OnSetfocusEdit10)
+	ON_EN_SETFOCUS(IDC_EDIT29, &CGigeConfiguratorDlg::OnSetfocusEdit11)
+	ON_EN_SETFOCUS(IDC_EDIT30, &CGigeConfiguratorDlg::OnSetfocusEdit12)
+	ON_EN_SETFOCUS(IDC_EDIT31, &CGigeConfiguratorDlg::OnSetfocusEdit13)
+	ON_EN_SETFOCUS(IDC_EDIT32, &CGigeConfiguratorDlg::OnSetfocusEdit14)
+	ON_EN_SETFOCUS(IDC_EDIT33, &CGigeConfiguratorDlg::OnSetfocusEdit15)
 END_MESSAGE_MAP()
 
 
@@ -232,7 +254,7 @@ void CGigeConfiguratorDlg::InitConfigurator()
 	_configLayout.push_back(&_startConfigButton);
 	_configLayout.push_back(&_noStartConfigButton);
 
-	_libFile.SetWindowTextW(_T("bgapi2_gige.cti"));
+	_libFile.SetWindowTextW(_T("TLSimu.cti"));
 	_libLayout.push_back(&_libMessage);
 	_libLayout.push_back(&_libFile);
 	_libLayout.push_back(&_applyLib);
@@ -256,7 +278,14 @@ void CGigeConfiguratorDlg::InitConfigurator()
 		_propertyLayout.push_back(&_valueEdits[i]);
 	}
 	_propertyLayout.push_back(&_propertyScroll);
+	_propertyLayout.push_back(&_outputFile);
+	_propertyLayout.push_back(&_outputFileMessage);
+	_propertyLayout.push_back(&_saveConfigButton);
 
+	_editorLayout.push_back(&_editorMessage);
+	_editorLayout.push_back(&_editorPropertyName);
+	_editorLayout.push_back(&_editorPropertyValue);
+	_editorLayout.push_back(&_applyEditor);
 
 	_stage = Stage::ConfigStage;
 	ShowConfigStage();
@@ -264,24 +293,13 @@ void CGigeConfiguratorDlg::InitConfigurator()
 
 void CGigeConfiguratorDlg::ShowConfigStage()
 {
-	HideAll();
-
-	switch (_stage)
-	{
-	case Stage::PropertiesStage:
-		ShowLayout(_propertyLayout);
-	case Stage::StreamStage:
-		ShowLayout(_streamLayout);
-	case Stage::DeviceStage:
-		ShowLayout(_deviceLayout);
-	case Stage::InterfaceStage:
-		ShowLayout(_interfaceLayout);
-	case Stage::LibStage:
-		ShowLayout(_libLayout);
-	case Stage::ConfigStage:
-		ShowLayout(_configLayout);
-	}
-
+	_stage >= Stage::ConfigStage ? ShowLayout(_configLayout) : HideLayout(_configLayout);
+	_stage >= Stage::LibStage ? ShowLayout(_libLayout) : HideLayout(_libLayout);
+	_stage >= Stage::InterfaceStage ? ShowLayout(_interfaceLayout) : HideLayout(_interfaceLayout);
+	_stage >= Stage::DeviceStage ? ShowLayout(_deviceLayout) : HideLayout(_deviceLayout);
+	_stage >= Stage::StreamStage ? ShowLayout(_streamLayout) : HideLayout(_streamLayout);
+	_stage >= Stage::PropertiesStage ? ShowLayout(_propertyLayout) : HideLayout(_propertyLayout);
+	_stage >= Stage::EditorStage ? ShowLayout(_editorLayout) : HideLayout(_editorLayout);
 }
 
 void CGigeConfiguratorDlg::HideAll()
@@ -292,6 +310,7 @@ void CGigeConfiguratorDlg::HideAll()
 	HideLayout(_deviceLayout);
 	HideLayout(_streamLayout);
 	HideLayout(_propertyLayout);
+	HideLayout(_editorLayout);
 }
 
 void CGigeConfiguratorDlg::HideLayout(const std::vector<CWnd*>& iLayout)
@@ -357,12 +376,16 @@ void CGigeConfiguratorDlg::GetProperties()
 	_propertyScroll.SetScrollRange(0, _properties.size() - 16);
 }
 
-void CGigeConfiguratorDlg::OnBnClickedStartConfig()
+void CGigeConfiguratorDlg::OpenEditor(size_t iPropertyIndex)
 {
-	_stage = LibStage;
+	const auto& prop = _properties[_propertyScroll.GetScrollPos() + iPropertyIndex];
+	
+	_editorPropertyName.SetWindowTextW(Convert::StringToLPCTSTR(prop._name));
+	_editorPropertyValue.SetWindowTextW(Convert::StringToLPCTSTR(prop._strValue));
+
+	_stage = Stage::EditorStage;
 	ShowConfigStage();
 }
-
 
 void CGigeConfiguratorDlg::OnBnClickedNoStartConfig()
 {
@@ -482,3 +505,27 @@ void CGigeConfiguratorDlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrol
 	FillProperties(_propertyScroll.GetScrollPos());
 	CDialogEx::OnHScroll(nSBCode, nPos, pScrollBar);
 }
+
+void CGigeConfiguratorDlg::OnBnClickedSave()
+{
+	// TODO: добавьте свой код обработчика уведомлений
+	CDialogEx::OnOK();
+}
+
+
+void CGigeConfiguratorDlg::OnSetfocusEdit0() { OpenEditor(0); }
+void CGigeConfiguratorDlg::OnSetfocusEdit1() { OpenEditor(1); }
+void CGigeConfiguratorDlg::OnSetfocusEdit2() { OpenEditor(2); }
+void CGigeConfiguratorDlg::OnSetfocusEdit3() { OpenEditor(3); }
+void CGigeConfiguratorDlg::OnSetfocusEdit4() { OpenEditor(4); }
+void CGigeConfiguratorDlg::OnSetfocusEdit5() { OpenEditor(5); }
+void CGigeConfiguratorDlg::OnSetfocusEdit6() { OpenEditor(6); }
+void CGigeConfiguratorDlg::OnSetfocusEdit7() { OpenEditor(7); }
+void CGigeConfiguratorDlg::OnSetfocusEdit8() { OpenEditor(8); }
+void CGigeConfiguratorDlg::OnSetfocusEdit9() { OpenEditor(9); }
+void CGigeConfiguratorDlg::OnSetfocusEdit10() { OpenEditor(10); }
+void CGigeConfiguratorDlg::OnSetfocusEdit11() { OpenEditor(11); }
+void CGigeConfiguratorDlg::OnSetfocusEdit12() { OpenEditor(12); }
+void CGigeConfiguratorDlg::OnSetfocusEdit13() { OpenEditor(13); }
+void CGigeConfiguratorDlg::OnSetfocusEdit14() { OpenEditor(14); }
+void CGigeConfiguratorDlg::OnSetfocusEdit15() { OpenEditor(15); }

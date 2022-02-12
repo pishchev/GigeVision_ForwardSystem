@@ -2,6 +2,7 @@
 // Включаемый файл, созданный в Microsoft Visual C++.
 // Используется GigeConfigurator.rc
 //
+#define IDOK2                           2
 #define IDM_ABOUTBOX                    0x0010
 #define IDD_ABOUTBOX                    100
 #define IDS_ABOUTBOX                    101
@@ -55,6 +56,11 @@
 #define IDC_EDIT31                      1058
 #define IDC_EDIT32                      1059
 #define IDC_EDIT33                      1060
+#define IDC_EDIT35                      1061
+#define EDITOR_MESSAGE                  1063
+#define IDC_EDIT34                      1064
+#define IDC_EDIT36                      1065
+#define _OUTPUTFILE_MESSAGE             1066
 
 // Next default values for new objects
 // 
@@ -62,7 +68,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        131
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1028
+#define _APS_NEXT_CONTROL_VALUE         1067
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif
