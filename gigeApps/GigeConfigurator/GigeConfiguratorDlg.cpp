@@ -73,38 +73,38 @@ void CGigeConfiguratorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_COMBO3, _streamsComboBox);
 	DDX_Control(pDX, IDC_BUTTON2, _applyStream);
 	DDX_Control(pDX, STREAM_MESSAGE, _streamsMessage);
-	DDX_Control(pDX, IDC_EDIT2, _properties[0]);
-	DDX_Control(pDX, IDC_EDIT3, _properties[1]);
-	DDX_Control(pDX, IDC_EDIT4, _properties[2]);
-	DDX_Control(pDX, IDC_EDIT5, _properties[3]);
-	DDX_Control(pDX, IDC_EDIT6, _properties[4]);
-	DDX_Control(pDX, IDC_EDIT7, _properties[5]);
-	DDX_Control(pDX, IDC_EDIT8, _properties[6]);
-	DDX_Control(pDX, IDC_EDIT9, _properties[7]);
-	DDX_Control(pDX, IDC_EDIT10, _properties[8]);
-	DDX_Control(pDX, IDC_EDIT11, _properties[9]);
-	DDX_Control(pDX, IDC_EDIT12, _properties[10]);
-	DDX_Control(pDX, IDC_EDIT13, _properties[11]);
-	DDX_Control(pDX, IDC_EDIT14, _properties[12]);
-	DDX_Control(pDX, IDC_EDIT15, _properties[13]);
-	DDX_Control(pDX, IDC_EDIT16, _properties[14]);
-	DDX_Control(pDX, IDC_EDIT17, _properties[15]);
-	DDX_Control(pDX, IDC_EDIT18, _values[0]);
-	DDX_Control(pDX, IDC_EDIT19, _values[1]);
-	DDX_Control(pDX, IDC_EDIT20, _values[2]);
-	DDX_Control(pDX, IDC_EDIT21, _values[3]);
-	DDX_Control(pDX, IDC_EDIT22, _values[4]);
-	DDX_Control(pDX, IDC_EDIT23, _values[5]);
-	DDX_Control(pDX, IDC_EDIT24, _values[6]);
-	DDX_Control(pDX, IDC_EDIT25, _values[7]);
-	DDX_Control(pDX, IDC_EDIT26, _values[8]);
-	DDX_Control(pDX, IDC_EDIT27, _values[9]);
-	DDX_Control(pDX, IDC_EDIT28, _values[10]);
-	DDX_Control(pDX, IDC_EDIT29, _values[11]);
-	DDX_Control(pDX, IDC_EDIT30, _values[12]);
-	DDX_Control(pDX, IDC_EDIT31, _values[13]);
-	DDX_Control(pDX, IDC_EDIT32, _values[14]);
-	DDX_Control(pDX, IDC_EDIT33, _values[15]);
+	DDX_Control(pDX, IDC_EDIT2, _propertyEdits[0]);
+	DDX_Control(pDX, IDC_EDIT3, _propertyEdits[1]);
+	DDX_Control(pDX, IDC_EDIT4, _propertyEdits[2]);
+	DDX_Control(pDX, IDC_EDIT5, _propertyEdits[3]);
+	DDX_Control(pDX, IDC_EDIT6, _propertyEdits[4]);
+	DDX_Control(pDX, IDC_EDIT7, _propertyEdits[5]);
+	DDX_Control(pDX, IDC_EDIT8, _propertyEdits[6]);
+	DDX_Control(pDX, IDC_EDIT9, _propertyEdits[7]);
+	DDX_Control(pDX, IDC_EDIT10, _propertyEdits[8]);
+	DDX_Control(pDX, IDC_EDIT11, _propertyEdits[9]);
+	DDX_Control(pDX, IDC_EDIT12, _propertyEdits[10]);
+	DDX_Control(pDX, IDC_EDIT13, _propertyEdits[11]);
+	DDX_Control(pDX, IDC_EDIT14, _propertyEdits[12]);
+	DDX_Control(pDX, IDC_EDIT15, _propertyEdits[13]);
+	DDX_Control(pDX, IDC_EDIT16, _propertyEdits[14]);
+	DDX_Control(pDX, IDC_EDIT17, _propertyEdits[15]);
+	DDX_Control(pDX, IDC_EDIT18, _valueEdits[0]);
+	DDX_Control(pDX, IDC_EDIT19, _valueEdits[1]);
+	DDX_Control(pDX, IDC_EDIT20, _valueEdits[2]);
+	DDX_Control(pDX, IDC_EDIT21, _valueEdits[3]);
+	DDX_Control(pDX, IDC_EDIT22, _valueEdits[4]);
+	DDX_Control(pDX, IDC_EDIT23, _valueEdits[5]);
+	DDX_Control(pDX, IDC_EDIT24, _valueEdits[6]);
+	DDX_Control(pDX, IDC_EDIT25, _valueEdits[7]);
+	DDX_Control(pDX, IDC_EDIT26, _valueEdits[8]);
+	DDX_Control(pDX, IDC_EDIT27, _valueEdits[9]);
+	DDX_Control(pDX, IDC_EDIT28, _valueEdits[10]);
+	DDX_Control(pDX, IDC_EDIT29, _valueEdits[11]);
+	DDX_Control(pDX, IDC_EDIT30, _valueEdits[12]);
+	DDX_Control(pDX, IDC_EDIT31, _valueEdits[13]);
+	DDX_Control(pDX, IDC_EDIT32, _valueEdits[14]);
+	DDX_Control(pDX, IDC_EDIT33, _valueEdits[15]);
 	DDX_Control(pDX, IDC_SCROLLBAR1, _propertyScroll);
 }
 
@@ -119,6 +119,7 @@ BEGIN_MESSAGE_MAP(CGigeConfiguratorDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUTTON1, &CGigeConfiguratorDlg::OnBnClickedDeviceApply)
 	ON_BN_CLICKED(IDC_BUTTON4, &CGigeConfiguratorDlg::OnBnClickedInterfaceApply)
 	ON_BN_CLICKED(IDC_BUTTON2, &CGigeConfiguratorDlg::OnBnClickedStreamApply)
+	ON_WM_VSCROLL()
 END_MESSAGE_MAP()
 
 
@@ -209,6 +210,21 @@ HCURSOR CGigeConfiguratorDlg::OnQueryDragIcon()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+std::string Convert::CStringToString(const CString& iCStr)
+{
+	return CT2A(iCStr.GetString());
+}
+
+LPCTSTR Convert::StringToLPCTSTR(const std::string& iStr)
+{
+	return CA2T(iStr.c_str());
+}
+
+std::string Convert::IntToString(const int& iInt)
+{
+	return std::to_string(iInt);
+}
+
 void CGigeConfiguratorDlg::InitConfigurator()
 {
 	SetTimer(1, 1000, 0);
@@ -236,8 +252,8 @@ void CGigeConfiguratorDlg::InitConfigurator()
 
 	for (size_t i = 0; i < 16; ++i)
 	{
-		_propertyLayout.push_back(&_properties[i]);
-		_propertyLayout.push_back(&_values[i]);
+		_propertyLayout.push_back(&_propertyEdits[i]);
+		_propertyLayout.push_back(&_valueEdits[i]);
 	}
 	_propertyLayout.push_back(&_propertyScroll);
 
@@ -290,6 +306,56 @@ void CGigeConfiguratorDlg::ShowLayout(const std::vector<CWnd*>& iLayout)
 		(*iLayout[i]).ShowWindow(SW_SHOW);
 }
 
+void CGigeConfiguratorDlg::FillProperties(size_t iStartIndex)
+{
+	for (size_t i = 0; i < 16; ++i)
+	{
+		size_t propIndex = i + iStartIndex;
+
+		_propertyEdits[i].SetWindowTextW(Convert::StringToLPCTSTR(_properties[propIndex]._name));
+		_valueEdits[i].SetWindowTextW(Convert::StringToLPCTSTR(_properties[propIndex]._strValue));
+	}
+}
+
+void CGigeConfiguratorDlg::UpdateProperties()
+{
+
+}
+
+void CGigeConfiguratorDlg::GetProperties()
+{
+	for (size_t i = 0; i < _gigeManager.GetNodesSize(); ++i)
+	{
+		Property prop;
+		prop._name = _gigeManager.GetNodeName(i);
+		switch (_gigeManager.GetNodeType(i))
+		{
+			case 2: 
+			{
+				prop._type = Property::Int;
+				int64_t intVal;
+				_gigeManager.GetIntNode(prop._name, intVal);
+				prop._strValue = Convert::IntToString(intVal);
+				break;
+			}
+			case 6: 
+			{
+				_gigeManager.GetStrNode(prop._name, prop._strValue);
+				prop._type = Property::Str;
+				break;
+			}
+			default: 
+			{
+				prop._strValue = "UnknownType";
+				prop._type = Property::Undefined;
+				prop._canBeChanged = false;
+			}
+		}
+		_properties.push_back(prop);
+	}
+
+	_propertyScroll.SetScrollRange(0, _properties.size() - 16);
+}
 
 void CGigeConfiguratorDlg::OnBnClickedStartConfig()
 {
@@ -316,14 +382,12 @@ void CGigeConfiguratorDlg::OnBnClickedLibFile()
 {
 	CString libFile;
 	_libFile.GetWindowTextW(libFile);
-
-	std::string libStr(CT2A(libFile.GetString()));
-	_gigeManager.UseLib(libStr);
+	_gigeManager.UseLib(Convert::CStringToString(libFile));
 
 	for (uint32_t i = 0; i < _gigeManager.GetIntefacesSize(); i++) 
 	{
 		std::string iface = _gigeManager.GetInterfaceName(i);
-		_interfacesComboBox.AddString(CA2T(iface.c_str()));
+		_interfacesComboBox.AddString(Convert::StringToLPCTSTR(iface));
 	}
 
 	if (_gigeManager.GetIntefacesSize() != 0)
@@ -342,7 +406,7 @@ void CGigeConfiguratorDlg::OnBnClickedDeviceApply()
 	for (uint32_t i = 0; i < _gigeManager.GetStreamsSize(); i++)
 	{
 		std::string stream = _gigeManager.GetStreamName(i);
-		_streamsComboBox.AddString(CA2T(stream.c_str()));
+		_streamsComboBox.AddString(Convert::StringToLPCTSTR(stream));
 	}
 
 	if (_gigeManager.GetStreamsSize() != 0)
@@ -361,7 +425,7 @@ void CGigeConfiguratorDlg::OnBnClickedInterfaceApply()
 	for (uint32_t i = 0; i < _gigeManager.GetDevicesSize(); i++)
 	{
 		std::string dev = _gigeManager.GetDeviceName(i);
-		_devicesComboBox.AddString(CA2T(dev.c_str()));
+		_devicesComboBox.AddString(Convert::StringToLPCTSTR(dev));
 	}
 
 	if (_gigeManager.GetDevicesSize() != 0)
@@ -377,6 +441,44 @@ void CGigeConfiguratorDlg::OnBnClickedStreamApply()
 	const auto index = _streamsComboBox.GetCurSel();
 	_gigeManager.UseStream(index);
 
+	_gigeManager.CameraInit();
+	GetProperties();
+	FillProperties(0);
+
 	_stage = Stage::PropertiesStage;
 	ShowConfigStage();
+}
+
+void CGigeConfiguratorDlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
+{
+	switch (nSBCode)
+	{
+		case SB_LINEUP: 
+		{
+			const auto newPos = _propertyScroll.GetScrollPos() - 1;
+			if (newPos >= 0)
+				_propertyScroll.SetScrollPos(newPos);
+			break;
+		}
+		case SB_LINEDOWN:
+		{
+			const auto newPos = _propertyScroll.GetScrollPos() + 1;
+			if (newPos <= _properties.size() - 16)
+				_propertyScroll.SetScrollPos(newPos);
+			break;
+		}
+		case SB_THUMBTRACK:
+		{
+			_propertyScroll.SetScrollPos(nPos);
+			break;
+		}
+		case SB_THUMBPOSITION:
+		{
+			_propertyScroll.SetScrollPos(nPos);
+			break;
+		}
+	}
+
+	FillProperties(_propertyScroll.GetScrollPos());
+	CDialogEx::OnHScroll(nSBCode, nPos, pScrollBar);
 }

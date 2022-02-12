@@ -5,6 +5,31 @@
 #pragma once
 #include "GigeManager.hpp"
 
+namespace Convert
+{
+	static std::string CStringToString(const CString& iCStr);
+	static LPCTSTR StringToLPCTSTR(const std::string& iStr);
+	static std::string IntToString(const int& iInt);
+}
+
+class Property
+{
+public:
+	enum Type { Undefined, Int, Str, Enum };
+	enum Visibility { Begginer, Expert, Guru, Invisible };
+	enum AccessMode { RW, RO, WO, NA, NI };
+
+	std::string _name;
+	std::string _strValue;
+
+	Type _type;
+	Visibility _visibility;
+	AccessMode _accessMode;
+
+	bool _isChanged = false;
+	bool _canBeChanged = true;
+};
+
 // Диалоговое окно CGigeConfiguratorDlg
 class CGigeConfiguratorDlg : public CDialogEx
 {
@@ -49,11 +74,13 @@ private:
 	void HideAll();
 	void HideLayout(const std::vector<CWnd*>& iLayout);
 	void ShowLayout(const std::vector<CWnd*>& iLayout);
+	void FillProperties(size_t iStartIndex);
+	void UpdateProperties();
+	void GetProperties();
 
 	GigeManager _gigeManager;
 
-	
-
+	std::vector<Property> _properties;
 	Stage _stage;
 	bool _useStartedConfig;
 
@@ -90,9 +117,9 @@ public:
 	CStatic _streamsMessage;
 	std::vector<CWnd*> _streamLayout;
 
-
-	CEdit _properties[16];
-	CEdit _values[16];
+	CEdit _propertyEdits[16];
+	CEdit _valueEdits[16];
 	CScrollBar _propertyScroll;
 	std::vector<CWnd*> _propertyLayout;
+	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 };
