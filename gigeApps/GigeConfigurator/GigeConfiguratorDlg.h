@@ -10,6 +10,7 @@ namespace Convert
 	static std::string CStringToString(const CString& iCStr);
 	static LPCTSTR StringToLPCTSTR(const std::string& iStr);
 	static std::string IntToString(const int& iInt);
+	static int StringToInt(const std::string& iStr);
 }
 
 class Property
@@ -151,4 +152,7 @@ public:
 	afx_msg void OnSetfocusEdit13();
 	afx_msg void OnSetfocusEdit14();
 	afx_msg void OnSetfocusEdit15();
+	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
+	afx_msg void OnBnClickedApplyEditor();
+	afx_msg void OnBnClickedOk3();
 };

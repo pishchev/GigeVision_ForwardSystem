@@ -142,6 +142,9 @@ BEGIN_MESSAGE_MAP(CGigeConfiguratorDlg, CDialogEx)
 	ON_EN_SETFOCUS(IDC_EDIT31, &CGigeConfiguratorDlg::OnSetfocusEdit13)
 	ON_EN_SETFOCUS(IDC_EDIT32, &CGigeConfiguratorDlg::OnSetfocusEdit14)
 	ON_EN_SETFOCUS(IDC_EDIT33, &CGigeConfiguratorDlg::OnSetfocusEdit15)
+	ON_WM_MOUSEWHEEL()
+	ON_BN_CLICKED(IDOK2, &CGigeConfiguratorDlg::OnBnClickedApplyEditor)
+	ON_BN_CLICKED(IDOK3, &CGigeConfiguratorDlg::OnBnClickedOk3)
 END_MESSAGE_MAP()
 
 
@@ -247,6 +250,11 @@ std::string Convert::IntToString(const int& iInt)
 	return std::to_string(iInt);
 }
 
+int Convert::StringToInt(const std::string& iStr)
+{
+	return std::stoi(iStr);
+}
+
 void CGigeConfiguratorDlg::InitConfigurator()
 {
 	SetTimer(1, 1000, 0);
@@ -333,6 +341,12 @@ void CGigeConfiguratorDlg::FillProperties(size_t iStartIndex)
 
 		_propertyEdits[i].SetWindowTextW(Convert::StringToLPCTSTR(_properties[propIndex]._name));
 		_valueEdits[i].SetWindowTextW(Convert::StringToLPCTSTR(_properties[propIndex]._strValue));
+
+		if (_properties[propIndex]._accessMode != Property::RW ||
+			!_properties[propIndex]._canBeChanged)
+			_valueEdits[i].SetReadOnly(1);
+		else
+			_valueEdits[i].SetReadOnly(0);
 	}
 }
 
@@ -343,6 +357,8 @@ void CGigeConfiguratorDlg::UpdateProperties()
 
 void CGigeConfiguratorDlg::GetProperties()
 {
+	_properties.clear();
+
 	for (size_t i = 0; i < _gigeManager.GetNodesSize(); ++i)
 	{
 		Property prop;
@@ -370,6 +386,12 @@ void CGigeConfiguratorDlg::GetProperties()
 				prop._canBeChanged = false;
 			}
 		}
+
+		if (_gigeManager.GetNodeAccess(i) == 4)
+			prop._accessMode = Property::RW;
+		else 
+			prop._accessMode = Property::RO;
+
 		_properties.push_back(prop);
 	}
 
@@ -380,10 +402,17 @@ void CGigeConfiguratorDlg::OpenEditor(size_t iPropertyIndex)
 {
 	const auto& prop = _properties[_propertyScroll.GetScrollPos() + iPropertyIndex];
 	
-	_editorPropertyName.SetWindowTextW(Convert::StringToLPCTSTR(prop._name));
-	_editorPropertyValue.SetWindowTextW(Convert::StringToLPCTSTR(prop._strValue));
+	if (prop._accessMode != Property::RW || !prop._canBeChanged)
+	{
+		_stage = Stage::PropertiesStage;
+	}
+	else
+	{
+		_editorPropertyName.SetWindowTextW(Convert::StringToLPCTSTR(prop._name));
+		_editorPropertyValue.SetWindowTextW(Convert::StringToLPCTSTR(prop._strValue));
 
-	_stage = Stage::EditorStage;
+		_stage = Stage::EditorStage;
+	}
 	ShowConfigStage();
 }
 
@@ -508,8 +537,15 @@ void CGigeConfiguratorDlg::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrol
 
 void CGigeConfiguratorDlg::OnBnClickedSave()
 {
-	// TODO: добавьте свой код обработчика уведомлений
-	CDialogEx::OnOK();
+	CString outputFile;
+	_outputFile.GetWindowTextW(outputFile);
+	const auto outputStr = Convert::CStringToString(outputFile);
+
+	if (outputStr.empty())
+		return;
+
+	_gigeManager.SaveConfig(outputStr);
+	PostQuitMessage(0);
 }
 
 
@@ -529,3 +565,54 @@ void CGigeConfiguratorDlg::OnSetfocusEdit12() { OpenEditor(12); }
 void CGigeConfiguratorDlg::OnSetfocusEdit13() { OpenEditor(13); }
 void CGigeConfiguratorDlg::OnSetfocusEdit14() { OpenEditor(14); }
 void CGigeConfiguratorDlg::OnSetfocusEdit15() { OpenEditor(15); }
+
+
+BOOL CGigeConfiguratorDlg::OnMouseWheel(UINT nFlags, short zDelta, CPoint pt)
+{
+	if (_stage >= Stage::PropertiesStage)
+	{
+		const auto scrollFlag = zDelta > 0 ? SB_LINEUP : SB_LINEDOWN;
+		OnVScroll(scrollFlag, 0, nullptr);
+	}
+
+	return CDialogEx::OnMouseWheel(nFlags, zDelta, pt);
+}
+
+
+void CGigeConfiguratorDlg::OnBnClickedApplyEditor()
+{
+	Property prop;
+
+	CString name, value;
+	_editorPropertyName.GetWindowTextW(name);
+	_editorPropertyValue.GetWindowTextW(value);
+
+	for (size_t i = 0; i < _properties.size(); ++i)
+	{
+		if (_properties[i]._name == Convert::CStringToString(name))
+		{
+			prop = _properties[i];
+			break;
+		}
+	}
+
+	if (prop._type == Property::Int)
+	{
+		const auto strVal = Convert::CStringToString(value);
+		if (strVal == prop._strValue)
+			return;
+
+		_gigeManager.SetIntNode(prop._name, Convert::StringToInt(strVal));
+	}
+
+	GetProperties();
+	FillProperties(_propertyScroll.GetScrollPos());
+	_stage = Stage::PropertiesStage;
+}
+
+
+
+void CGigeConfiguratorDlg::OnBnClickedOk3()
+{
+	PostQuitMessage(0);
+}

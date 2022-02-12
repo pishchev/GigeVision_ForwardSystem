@@ -3,6 +3,7 @@
 // Используется GigeConfigurator.rc
 //
 #define IDOK2                           2
+#define IDOK3                           3
 #define IDM_ABOUTBOX                    0x0010
 #define IDD_ABOUTBOX                    100
 #define IDS_ABOUTBOX                    101
