@@ -1,0 +1,35 @@
+﻿// GigeVisionDLL.idl: источник языка IDL для GigeVisionDLL
+//
+
+// Этот файл будет обработан средством MIDL для
+// создание библиотеки типов ($handlersafeidlname$.tlb) и кода маршалирования.
+
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(037fd175-0826-4a01-9b64-5b985c6bf5a3),
+	pointer_default(unique)
+]
+interface IGigeVision : IUnknown
+{
+	HRESULT TestMethod([out, size_is(100)] CHAR* oBuff);
+};
+[
+	uuid(07277cb7-d484-433a-a226-bc5cf676ff0a),
+	version(1.0),
+]
+library GigeVisionDLLLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(11c57dab-9a94-4dce-9ddf-507dd66b7ab4)
+	]
+	coclass GigeVision
+	{
+		[default] interface IGigeVision;
+	};
+};
+
+import "shobjidl.idl";
