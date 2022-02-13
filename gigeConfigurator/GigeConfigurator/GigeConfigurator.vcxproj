@@ -139,14 +139,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>D:\Repository\Gige\GigeForward\gigeApps\GigeConfigurator\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Repository\Gige\GigeForward\gigeConfigurator\GigeConfigurator\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>D:\Repository\Gige\GigeForward\gigeApps\GigeConfigurator\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Repository\Gige\GigeForward\gigeConfigurator\GigeConfigurator\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>CLAllSerial_MD_VC141_v3_3.lib;CLProtocol_MD_VC141_v3_3.lib;clsercom.lib;FirmwareUpdate_MD_VC141_v3_3.lib;GCBase_MD_VC141_v3_3.lib;GenApi_MD_VC141_v3_3.lib;GenCP_MD_VC141_v3_3.lib;Log_MD_VC141_v3_3.lib;log4cpp_MD_VC141_v3_3.lib;XmlParser_MD_VC141_v3_3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
@@ -169,14 +169,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <PrecompiledHeaderFile>pch.h</PrecompiledHeaderFile>
-      <AdditionalIncludeDirectories>D:\Repository\Gige\GigeForward\gigeApps\GigeConfigurator\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>D:\Repository\Gige\GigeForward\gigeConfigurator\GigeConfigurator\includes;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <LanguageStandard>stdcpp17</LanguageStandard>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>D:\Repository\Gige\GigeForward\gigeApps\GigeConfigurator\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Repository\Gige\GigeForward\gigeConfigurator\GigeConfigurator\libs;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>CLAllSerial_MD_VC141_v3_3.lib;CLProtocol_MD_VC141_v3_3.lib;clsercom.lib;FirmwareUpdate_MD_VC141_v3_3.lib;GCBase_MD_VC141_v3_3.lib;GenApi_MD_VC141_v3_3.lib;GenCP_MD_VC141_v3_3.lib;Log_MD_VC141_v3_3.lib;log4cpp_MD_VC141_v3_3.lib;XmlParser_MD_VC141_v3_3.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Midl>
