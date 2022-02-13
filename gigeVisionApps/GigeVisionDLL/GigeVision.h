@@ -62,6 +62,12 @@ public:
 
 
 	STDMETHOD(TestMethod)(CHAR* oBuff);
+	STDMETHOD(SetConfig)(CHAR* iFile);
+	STDMETHOD(PayloadSize)(LONG* oPayloadSize);
+	STDMETHOD(StartCapturing)();
+	STDMETHOD(GetImage)(BYTE* oImage, LONG iBufferSize);
+	STDMETHOD(GetWidth)(LONG* oWidth);
+	STDMETHOD(GetHeight)(LONG* oHeight);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(GigeVision), CGigeVision)

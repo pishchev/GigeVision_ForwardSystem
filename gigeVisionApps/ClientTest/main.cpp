@@ -24,9 +24,32 @@ int main()
     return 1;
   }
 
-  char test[] = "ttst";
-  gige->TestMethod(test);
-  std::cout << test << std::endl;
+  char file[] = "config.txt";
+  gige->SetConfig(file);
+
+  size_t payloadSize = 0;
+  gige->PayloadSize((LONG*)&payloadSize);
+  size_t width = 0;
+  gige->GetWidth((LONG*)&width);
+  size_t height = 0;
+  gige->GetHeight((LONG*)&height);
+
+  std::cout << "PayloadSize: " << payloadSize << "; Width: " << width << "; Height: " << height << std::endl;
+  gige->StartCapturing();
+
+  unsigned char* image = new unsigned char[payloadSize];
+
+  for (size_t i = 0; i < 10; ++i)
+  {
+    gige->GetImage(image, payloadSize);
+
+    for (size_t k = 0; k < payloadSize; ++k)
+    {
+      std::cout << (int)image[k] << ' ';
+    }
+    std::cout << std::endl << std::endl;
+  }
+
 
   return 0;
 }

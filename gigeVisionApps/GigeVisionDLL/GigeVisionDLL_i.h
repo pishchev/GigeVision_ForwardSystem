@@ -91,6 +91,24 @@ EXTERN_C const IID IID_IGigeVision;
         virtual HRESULT STDMETHODCALLTYPE TestMethod( 
             /* [size_is][out] */ CHAR *oBuff) = 0;
         
+        virtual HRESULT STDMETHODCALLTYPE SetConfig( 
+            /* [size_is][in] */ CHAR *iFile) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE PayloadSize( 
+            /* [out] */ LONG *oPayloadSize) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE StartCapturing( void) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetImage( 
+            /* [size_is][out] */ BYTE *oImage,
+            /* [in] */ LONG iBufferSize) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetWidth( 
+            /* [out] */ LONG *oWidth) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetHeight( 
+            /* [out] */ LONG *oHeight) = 0;
+        
     };
     
     
@@ -115,6 +133,30 @@ EXTERN_C const IID IID_IGigeVision;
         HRESULT ( STDMETHODCALLTYPE *TestMethod )( 
             IGigeVision * This,
             /* [size_is][out] */ CHAR *oBuff);
+        
+        HRESULT ( STDMETHODCALLTYPE *SetConfig )( 
+            IGigeVision * This,
+            /* [size_is][in] */ CHAR *iFile);
+        
+        HRESULT ( STDMETHODCALLTYPE *PayloadSize )( 
+            IGigeVision * This,
+            /* [out] */ LONG *oPayloadSize);
+        
+        HRESULT ( STDMETHODCALLTYPE *StartCapturing )( 
+            IGigeVision * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetImage )( 
+            IGigeVision * This,
+            /* [size_is][out] */ BYTE *oImage,
+            /* [in] */ LONG iBufferSize);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetWidth )( 
+            IGigeVision * This,
+            /* [out] */ LONG *oWidth);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetHeight )( 
+            IGigeVision * This,
+            /* [out] */ LONG *oHeight);
         
         END_INTERFACE
     } IGigeVisionVtbl;
@@ -141,6 +183,24 @@ EXTERN_C const IID IID_IGigeVision;
 
 #define IGigeVision_TestMethod(This,oBuff)	\
     ( (This)->lpVtbl -> TestMethod(This,oBuff) ) 
+
+#define IGigeVision_SetConfig(This,iFile)	\
+    ( (This)->lpVtbl -> SetConfig(This,iFile) ) 
+
+#define IGigeVision_PayloadSize(This,oPayloadSize)	\
+    ( (This)->lpVtbl -> PayloadSize(This,oPayloadSize) ) 
+
+#define IGigeVision_StartCapturing(This)	\
+    ( (This)->lpVtbl -> StartCapturing(This) ) 
+
+#define IGigeVision_GetImage(This,oImage,iBufferSize)	\
+    ( (This)->lpVtbl -> GetImage(This,oImage,iBufferSize) ) 
+
+#define IGigeVision_GetWidth(This,oWidth)	\
+    ( (This)->lpVtbl -> GetWidth(This,oWidth) ) 
+
+#define IGigeVision_GetHeight(This,oHeight)	\
+    ( (This)->lpVtbl -> GetHeight(This,oHeight) ) 
 
 #endif /* COBJMACROS */
 

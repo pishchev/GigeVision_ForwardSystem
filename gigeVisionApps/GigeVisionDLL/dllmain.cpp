@@ -19,3 +19,51 @@ extern "C" BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID lpRes
 	hInstance;
 	return _AtlModule.DllMain(dwReason, lpReserved);
 }
+
+
+STDMETHODIMP CGigeVisionDLLModule::SetConfig(CHAR* iFile)
+{
+	// TODO: Добавьте сюда код реализации
+
+	return S_OK;
+}
+
+
+STDMETHODIMP CGigeVisionDLLModule::PayloadSize(LONG* oPayloadSize)
+{
+	// TODO: Добавьте сюда код реализации
+
+	return S_OK;
+}
+
+
+STDMETHODIMP CGigeVisionDLLModule::StartCapturing()
+{
+	// TODO: Добавьте сюда код реализации
+
+	return S_OK;
+}
+
+
+STDMETHODIMP CGigeVisionDLLModule::GetImage(BYTE* oImage, LONG iBufferSize)
+{
+	// TODO: Добавьте сюда код реализации
+
+	return S_OK;
+}
+
+
+STDMETHODIMP CGigeVisionDLLModule::GetWidth(LONG* oWidth)
+{
+	// TODO: Добавьте сюда код реализации
+
+	return S_OK;
+}
+
+
+STDMETHODIMP CGigeVisionDLLModule::GetHeight(LONG* oHeight)
+{
+	// TODO: Добавьте сюда код реализации
+
+	return S_OK;
+}
