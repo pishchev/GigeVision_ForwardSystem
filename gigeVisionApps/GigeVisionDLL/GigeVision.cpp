@@ -36,6 +36,7 @@ STDMETHODIMP CGigeVision::StartCapturing()
 {
   _gigeManager.AcquirerPreparing();
   _gigeManager.StartAcquisition();
+  _gigeManager.WaitNext();
   return S_OK;
 }
 
@@ -43,6 +44,7 @@ STDMETHODIMP CGigeVision::StartCapturing()
 STDMETHODIMP CGigeVision::GetImage(BYTE* oImage, LONG iBufferSize)
 {
   _gigeManager.GetImage(oImage, iBufferSize);
+  _gigeManager.WaitNext();
   return S_OK;
 }
 

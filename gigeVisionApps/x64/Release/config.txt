@@ -1,6 +1,4 @@
-Lib TLSimu.cti
-Interface XX::InterfaceA
-Device TLSimuMono
-Stream DS0
-Height 8
-Width 8
+Lib bgapi2_gige.cti
+Interface {185643FB-0F51-4530-9D55-3ECD82B4AB6F}
+Device devicemoduldc_a5_01_32_4e_ac
+Stream Stream0
