@@ -453,8 +453,9 @@ void CGigeConfiguratorDlg::OnBnClickedLibFile()
 
 void CGigeConfiguratorDlg::OnBnClickedDeviceApply()
 {
-	const auto index = _devicesComboBox.GetCurSel();
-	_gigeManager.UseDevice(index);
+	CString device;
+	_devicesComboBox.GetLBText(_devicesComboBox.GetCurSel(), device);
+	_gigeManager.UseDevice(Convert::CStringToString(device));
 
 	for (uint32_t i = 0; i < _gigeManager.GetStreamsSize(); i++)
 	{
@@ -472,8 +473,9 @@ void CGigeConfiguratorDlg::OnBnClickedDeviceApply()
 
 void CGigeConfiguratorDlg::OnBnClickedInterfaceApply()
 {
-	const auto index = _interfacesComboBox.GetCurSel();
-	_gigeManager.UseInterface(index);
+	CString interfaceStr;
+	_interfacesComboBox.GetLBText(_interfacesComboBox.GetCurSel(), interfaceStr);
+	_gigeManager.UseInterface(Convert::CStringToString(interfaceStr));
 
 	for (uint32_t i = 0; i < _gigeManager.GetDevicesSize(); i++)
 	{
@@ -491,8 +493,9 @@ void CGigeConfiguratorDlg::OnBnClickedInterfaceApply()
 
 void CGigeConfiguratorDlg::OnBnClickedStreamApply()
 {
-	const auto index = _streamsComboBox.GetCurSel();
-	_gigeManager.UseStream(index);
+	CString stream;
+	_streamsComboBox.GetLBText(_streamsComboBox.GetCurSel(), stream);
+	_gigeManager.UseStream(Convert::CStringToString(stream));
 
 	_gigeManager.CameraInit();
 	GetProperties();

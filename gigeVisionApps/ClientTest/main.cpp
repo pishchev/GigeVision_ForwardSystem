@@ -41,7 +41,7 @@ int main()
 
   for (size_t i = 0; i < 10; ++i)
   {
-    gige->GetImage(image, payloadSize);
+    gige->GetImage(image, (LONG)payloadSize);
 
     for (size_t k = 0; k < payloadSize; ++k)
     {
