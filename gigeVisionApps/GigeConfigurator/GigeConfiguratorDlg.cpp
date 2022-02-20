@@ -273,7 +273,7 @@ void CGigeConfiguratorDlg::InitConfigurator()
 	_configLayout.push_back(&_startConfigButton);
 	_configLayout.push_back(&_noStartConfigButton);
 
-	_libFile.SetWindowTextW(_T("TLSimu.cti"));
+	_libFile.SetWindowTextW(_T("bgapi2_gige.cti"));
 	_libLayout.push_back(&_libMessage);
 	_libLayout.push_back(&_libFile);
 	_libLayout.push_back(&_applyLib);
@@ -451,8 +451,8 @@ void CGigeConfiguratorDlg::OpenEditor(size_t iPropertyIndex)
 	}
 	else
 	{
-		for (size_t i = 0; i <= _editorComboBox.GetCount(); ++i)
-			_editorComboBox.DeleteString(0);
+		for (int i = _editorComboBox.GetCount(); i >= 0; --i)
+			_editorComboBox.DeleteString(i);
 
 		_editorPropertyName.SetWindowTextW(Convert::StringToLPCTSTR(prop._name));
 

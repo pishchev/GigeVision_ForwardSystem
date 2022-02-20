@@ -51,7 +51,7 @@ void NoConfig(GigeManager& gige)
 }
 void UseConfig(GigeManager& gige)
 {
-	std::string config = "testConfig.txt";
+	std::string config = "config.txt";
 	//std::cout << "Configurator: ";
 	//std::cin >> config;
 	gige.UseConfigurator(config);
@@ -121,7 +121,7 @@ void ShowNodes(GigeManager& gige)
 void TestShowConfig()
 {
 	Configurator conf;
-	conf.ReadConfig("config1.txt");
+	conf.ReadConfig("config.txt");
 	conf.PrintConfig();
 }
 void GettingImage(GigeManager& gige)
