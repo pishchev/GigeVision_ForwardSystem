@@ -4,7 +4,16 @@
 #include <map>
 #include <fstream>
 
-typedef std::map<std::string, int64_t> IntNodes;
+struct Parameter
+{
+  Parameter() = default;
+  Parameter(const std::string& iType, const std::string& iValue) : type(iType), value(iValue) {};
+
+  std::string type;
+  std::string value;
+};
+
+typedef std::map<std::string, Parameter> NodeParameters;
 
 class Configurator
 {
@@ -29,9 +38,11 @@ public:
       else if (word == "Stream")
         fd >> _stream;
       else {
-        std::string param;
-        fd >> param;
-        _parameters[word] = std::stoi(param);
+        std::string type, value;
+        fd >> type;
+        fd >> value;
+        _parameters[word].type = type;
+        _parameters[word].value = value;
       }
     }
 
@@ -50,7 +61,7 @@ public:
     std::cout << "Stream: " << _stream << std::endl;
 
     for (auto it = _parameters.begin(); it != _parameters.end(); ++it)
-      std::cout << it->first << ": " << it->second << std::endl;
+      std::cout << it->first << ": " << it->second.type << " " << it->second.value << std::endl;
   }
 
   void SaveConfig(std::string iFileName)
@@ -64,7 +75,7 @@ public:
     fd << "Stream " << _stream << std::endl;
 
     for (auto it = _parameters.begin(); it != _parameters.end(); ++it)
-      fd << it->first << " " << it->second << std::endl;
+      fd << it->first << " " << it->second.type << " " << it->second.value << std::endl;
 
     fd.close();
   }
@@ -74,5 +85,5 @@ public:
   std::string _device;
   std::string _stream;
 
-  IntNodes _parameters;
+  NodeParameters _parameters;
 };

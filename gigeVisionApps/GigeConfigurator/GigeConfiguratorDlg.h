@@ -10,13 +10,14 @@ namespace Convert
 	static std::string CStringToString(const CString& iCStr);
 	static LPCTSTR StringToLPCTSTR(const std::string& iStr);
 	static std::string IntToString(const int& iInt);
+	static std::string DoubleToString(const double& iDouble);
 	static int StringToInt(const std::string& iStr);
 }
 
 class Property
 {
 public:
-	enum Type { Undefined, Int, Str, Enum };
+	enum Type { Undefined, Int, Bool, Command, Float, Str, Enum };
 	enum Visibility { Begginer, Expert, Guru, Invisible };
 	enum AccessMode { RW, RO, WO, NA, NI };
 

@@ -29,6 +29,16 @@ class GigeManager
 {
 public:
 
+	enum NodeTypes 
+	{
+		Int = 2,
+		Bool = 3,
+		Float = 5,
+		Command = 4,
+		String = 6,
+		Enumeration = 9
+	};
+
 	GigeManager(){}
 	~GigeManager()
 	{
@@ -51,7 +61,14 @@ public:
 		CameraInit();
 
 		for (auto param = _config._parameters.begin(); param != _config._parameters.end(); ++param)
-			SetIntNode(param->first, param->second);
+		{
+			if (param->second.type == "int")
+				SetIntNode(param->first, std::stoi(param->second.value));
+			if (param->second.type == "float")
+				SetFloatNode(param->first, std::stof(param->second.value));
+			if (param->second.type == "bool")
+				SetBoolNode(param->first, param->second.value == "1" ? true : false);
+		}
 	}
 
 
@@ -172,14 +189,40 @@ public:
 		return _camera.GetNodeType(iIndex);
 	}
 
+	bool GetCommandNode(std::string iNode, bool& oValue)
+	{
+		return _camera.GetCommandNode(iNode, oValue);
+	}
+	bool ExecuteCommand(std::string iNode)
+	{
+		return _camera.ExecuteCommand(iNode);
+	}
 	bool GetIntNode(std::string iNode, int64_t& oValue)
 	{
 		return _camera.GetIntNode(iNode, oValue);
 	}
 	bool SetIntNode(std::string iNode, int64_t iValue)
 	{
-		_config._parameters[iNode] = iValue;
+		_config._parameters[iNode] = Parameter("int", std::to_string(iValue));
 		return _camera.SetIntNode(iNode, iValue);
+	}
+	bool GetFloatNode(std::string iNode, double& oValue)
+	{
+		return _camera.GetFloatNode(iNode, oValue);
+	}
+	bool SetFloatNode(std::string iNode, double iValue)
+	{
+		_config._parameters[iNode] = Parameter("float", std::to_string(iValue));
+		return _camera.SetFloatNode(iNode, iValue);
+	}
+	bool GetBoolNode(std::string iNode, bool& oValue)
+	{
+		return _camera.GetBoolNode(iNode, oValue);
+	}
+	bool SetBoolNode(std::string iNode, bool iValue)
+	{
+		_config._parameters[iNode] = Parameter("bool", iValue? "1":"0");
+		return _camera.SetBoolNode(iNode, iValue);
 	}
 	bool GetEnumStrNode(std::string iNode, std::string& oValue)
 	{

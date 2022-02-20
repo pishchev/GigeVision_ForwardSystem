@@ -250,6 +250,11 @@ std::string Convert::IntToString(const int& iInt)
 	return std::to_string(iInt);
 }
 
+std::string Convert::DoubleToString(const double& iDouble)
+{
+	return std::to_string(iDouble);
+}
+
 int Convert::StringToInt(const std::string& iStr)
 {
 	return std::stoi(iStr);
@@ -262,7 +267,7 @@ void CGigeConfiguratorDlg::InitConfigurator()
 	_configLayout.push_back(&_startConfigButton);
 	_configLayout.push_back(&_noStartConfigButton);
 
-	_libFile.SetWindowTextW(_T("TLSimu.cti"));
+	_libFile.SetWindowTextW(_T("bgapi2_gige.cti"));
 	_libLayout.push_back(&_libMessage);
 	_libLayout.push_back(&_libFile);
 	_libLayout.push_back(&_applyLib);
@@ -365,7 +370,7 @@ void CGigeConfiguratorDlg::GetProperties()
 		prop._name = _gigeManager.GetNodeName(i);
 		switch (_gigeManager.GetNodeType(i))
 		{
-			case 2: 
+			case GigeManager::Int: 
 			{
 				prop._type = Property::Int;
 				int64_t intVal;
@@ -373,10 +378,41 @@ void CGigeConfiguratorDlg::GetProperties()
 				prop._strValue = Convert::IntToString((int)intVal);
 				break;
 			}
-			case 6: 
+			case GigeManager::Bool:
 			{
-				_gigeManager.GetStrNode(prop._name, prop._strValue);
+				prop._type = Property::Bool;
+				bool val;
+				_gigeManager.GetBoolNode(prop._name, val);
+				prop._strValue = val ? "1" : "0";
+				break;
+			}
+			case GigeManager::Command:
+			{
+				prop._type = Property::Command;
+				bool val;
+				_gigeManager.GetCommandNode(prop._name, val);
+				prop._strValue = val ? "1" : "0";
+				break;
+			}
+			case GigeManager::Float:
+			{
+				prop._type = Property::Float;
+				double val;
+				_gigeManager.GetFloatNode(prop._name, val);
+				prop._strValue = Convert::DoubleToString(val);
+				break;
+			}
+			case GigeManager::String:
+			{
 				prop._type = Property::Str;
+				_gigeManager.GetStrNode(prop._name, prop._strValue);
+				prop._canBeChanged = false;
+				break;
+			}
+			case GigeManager::Enumeration:
+			{
+				prop._type = Property::Enum;
+				_gigeManager.GetEnumStrNode(prop._name, prop._strValue);
 				break;
 			}
 			default: 

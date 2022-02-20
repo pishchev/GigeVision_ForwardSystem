@@ -27,16 +27,12 @@ public:
 
 	void StartAcquisition()
 	{
-		CCommandPtr ptrAcquisitionStart = _camera._GetNode("AcquisitionStart");
-		if (IsWritable(ptrAcquisitionStart))
-			ptrAcquisitionStart->Execute();
+		ExecuteCommand("AcquisitionStart");
 	}
 
 	void StopAcquisition()
 	{
-		CCommandPtr ptrAcquisitionStop = _camera._GetNode("AcquisitionStop");
-		if (IsWritable(ptrAcquisitionStop))
-			ptrAcquisitionStop->Execute();
+		ExecuteCommand("AcquisitionStop");
 	}
 
 	void GetNodes()
@@ -75,6 +71,27 @@ public:
 		return _nodes[iIndex]->GetPrincipalInterfaceType();
 	}
 
+	bool ExecuteCommand(std::string iNode)
+	{
+		CCommandPtr ptrCommand = _camera._GetNode(iNode.data());
+		if (IsWritable(ptrCommand)) 
+		{
+			ptrCommand->Execute();
+			return true;
+		}
+		return false;
+	}
+	bool GetCommandNode(std::string iNode, bool& oValue)
+	{
+		CCommandPtr ptrCommand = _camera._GetNode(iNode.data());
+		if (IsReadable(ptrCommand)) 
+		{
+			oValue = ptrCommand->IsDone();
+			return true;
+		}
+		return false;
+	}
+
 	bool SetIntNode(std::string iNode, int64_t iValue)
 	{
 		CIntegerPtr ptrNode = _camera._GetNode(iNode.data());
@@ -85,10 +102,51 @@ public:
 		}
 		return false;
 	}
-
 	bool GetIntNode(std::string iNode, int64_t& oValue)
 	{
 		CIntegerPtr ptrNode = _camera._GetNode(iNode.data());
+		if (IsReadable(ptrNode))
+		{
+			oValue = ptrNode->GetValue();
+			return true;
+		}
+		return false;
+	}
+
+	bool SetFloatNode(std::string iNode, double iValue)
+	{
+		CFloatPtr ptrNode = _camera._GetNode(iNode.data());
+		if (IsWritable(ptrNode))
+		{
+			*ptrNode = iValue;
+			return true;
+		}
+		return false;
+	}
+	bool GetFloatNode(std::string iNode, double& oValue)
+	{
+		CFloatPtr ptrNode = _camera._GetNode(iNode.data());
+		if (IsReadable(ptrNode))
+		{
+			oValue = ptrNode->GetValue();
+			return true;
+		}
+		return false;
+	}
+
+	bool SetBoolNode(std::string iNode, bool iValue)
+	{
+		CBooleanPtr ptrNode = _camera._GetNode(iNode.data());
+		if (IsWritable(ptrNode))
+		{
+			*ptrNode = iValue;
+			return true;
+		}
+		return false;
+	}
+	bool GetBoolNode(std::string iNode, bool& oValue)
+	{
+		CBooleanPtr ptrNode = _camera._GetNode(iNode.data());
 		if (IsReadable(ptrNode))
 		{
 			oValue = ptrNode->GetValue();

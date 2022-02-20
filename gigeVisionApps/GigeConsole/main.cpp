@@ -51,7 +51,7 @@ void NoConfig(GigeManager& gige)
 }
 void UseConfig(GigeManager& gige)
 {
-	std::string config = "config.txt";
+	std::string config = "config1.txt";
 	//std::cout << "Configurator: ";
 	//std::cin >> config;
 	gige.UseConfigurator(config);
@@ -68,37 +68,60 @@ void ShowNodes(GigeManager& gige)
 
 	for (uint32_t i = 0; i < nodesSize; i++)
 	{
+		const auto nodeType = gige.GetNodeType(i);
+
+		//if (nodeType == 8 || nodeType == 10 || nodeType == 11)
+		//	continue;
+
 		std::cout << std::setw(3) << std::right << i << ")" << std::setw(50) << std::left << gige.GetNodeName(i)
 			<< std::setw(5) << std::left << gige.GetNodeVisibility(i)
 			<< std::setw(5) << std::left << gige.GetNodeAccess(i)
 			<< std::setw(5) << std::left << gige.GetNodeType(i);
 
-		if (gige.GetNodeType(i) == 2)
+		if (nodeType == 2)
 		{
 			int64_t val;
 			gige.GetIntNode(gige.GetNodeName(i), val);
 			std::cout << val;
 		}
-		else if (gige.GetNodeType(i) == 9 && 0)
+		else if (nodeType == 3)
 		{
-			std::string val;
-			gige.GetEnumStrNode(gige.GetNodeName(i), val);
+			bool val;
+			gige.GetBoolNode(gige.GetNodeName(i), val);
+			std::cout << int(val ? 1 : 0);
+		}
+		else if (nodeType == 4)
+		{
+			bool val;
+			gige.GetCommandNode(gige.GetNodeName(i), val);
+			std::cout << int(val? 1:0);
+		}
+		else if (nodeType == 5)
+		{
+			double val;
+			gige.GetFloatNode(gige.GetNodeName(i), val);
 			std::cout << val;
 		}
-		else if (gige.GetNodeType(i) == 6)
+		else if (nodeType == 6)
 		{
 			std::string val;
 			gige.GetStrNode(gige.GetNodeName(i), val);
 			std::cout << val;
 		}
-
+		else if (nodeType == 9)
+		{
+			std::string val;
+			gige.GetEnumStrNode(gige.GetNodeName(i), val);
+			std::cout << val;
+		}
+		
 		std::cout << std::endl;
 	}
 }
 void TestShowConfig()
 {
 	Configurator conf;
-	conf.ReadConfig("config.txt");
+	conf.ReadConfig("config1.txt");
 	conf.PrintConfig();
 }
 void GettingImage(GigeManager& gige)
