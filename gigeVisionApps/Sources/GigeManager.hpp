@@ -68,6 +68,8 @@ public:
 				SetFloatNode(param->first, std::stof(param->second.value));
 			if (param->second.type == "bool")
 				SetBoolNode(param->first, param->second.value == "1" ? true : false);
+			if (param->second.type == "enum")
+				SetEnumStrNode(param->first, param->second.value);
 		}
 	}
 
@@ -227,6 +229,23 @@ public:
 	bool GetEnumStrNode(std::string iNode, std::string& oValue)
 	{
 		return _camera.GetEnumStrNode(iNode, oValue);
+	}
+	bool GetEnumNodeName(std::string iNode, std::string& oValue)
+	{
+		return _camera.GetEnumNodeName(iNode, oValue);
+	}
+	size_t GetEnumStrEntrySize(std::string iNode)
+	{
+		return _camera.GetEnumStrEntrySize(iNode);
+	}
+	std::string GetEnumStrEntryName(std::string iNode, size_t iIndex)
+	{
+		return _camera.GetEnumStrEntryName(iNode, iIndex);
+	}
+	bool SetEnumStrNode(std::string iNode, std::string iValue)
+	{
+		_config._parameters[iNode] = Parameter("enum", iValue);
+		return _camera.SetEnumStrNode(iNode, iValue);
 	}
 	bool GetStrNode(std::string iNode, std::string& oValue)
 	{

@@ -165,6 +165,61 @@ public:
 		}
 		return false;
 	}
+	bool GetEnumNodeName(std::string iNode, std::string& oValue)
+	{
+		CEnumerationPtr ptrNode = _camera._GetNode(iNode.data());
+		if (IsReadable(ptrNode))
+		{
+			oValue = ptrNode->GetCurrentEntry()->GetNode()->GetName();
+			return true;
+		}
+		return false;
+	}
+	size_t GetEnumStrEntrySize(std::string iNode)
+	{
+		CEnumerationPtr ptrNode = _camera._GetNode(iNode.data());
+		if (IsReadable(ptrNode))
+		{
+			NodeList_t list;
+			ptrNode->GetEntries(list);
+			return list.size();
+		}
+		return 0;
+	}
+	std::string GetEnumStrEntryName(std::string iNode, size_t iIndex)
+	{
+		CEnumerationPtr ptrNode = _camera._GetNode(iNode.data());
+		if (IsReadable(ptrNode))
+		{
+			NodeList_t list;
+			ptrNode->GetEntries(list);
+			return std::string(list[iIndex]->GetName());
+		}
+		return "";
+	}
+	bool SetEnumStrNode(std::string iNode, std::string iValue)
+	{
+		CEnumerationPtr ptrNode = _camera._GetNode(iNode.data());
+		if (IsReadable(ptrNode))
+		{
+			NodeList_t list;
+			ptrNode->GetEntries(list);
+
+			for (size_t i = 0; i < list.size(); ++i) 
+			{
+				if (std::string(list[i]->GetName()) == iValue)
+				{
+					gcstring val, attr;
+					list[i]->GetProperty("Value", val, attr);
+
+					ptrNode->SetIntValue(std::stoi(std::string(val)));
+					return true;
+				}
+
+			}
+		}
+		return 0;
+	}
 
 	bool GetStrNode(std::string iNode, std::string& oValue)
 	{

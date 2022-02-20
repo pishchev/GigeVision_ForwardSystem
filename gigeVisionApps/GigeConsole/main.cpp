@@ -51,7 +51,7 @@ void NoConfig(GigeManager& gige)
 }
 void UseConfig(GigeManager& gige)
 {
-	std::string config = "config1.txt";
+	std::string config = "testConfig.txt";
 	//std::cout << "Configurator: ";
 	//std::cin >> config;
 	gige.UseConfigurator(config);

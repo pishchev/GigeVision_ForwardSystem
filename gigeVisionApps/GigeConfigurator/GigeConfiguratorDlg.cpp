@@ -112,6 +112,7 @@ void CGigeConfiguratorDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, _OUTPUTFILE_MESSAGE, _outputFileMessage);
 	DDX_Control(pDX, IDC_EDIT35, _outputFile);
 	DDX_Control(pDX, IDOK, _saveConfigButton);
+	DDX_Control(pDX, IDC_COMBO4, _editorComboBox);
 }
 
 BEGIN_MESSAGE_MAP(CGigeConfiguratorDlg, CDialogEx)
@@ -260,6 +261,11 @@ int Convert::StringToInt(const std::string& iStr)
 	return std::stoi(iStr);
 }
 
+double Convert::StringToDouble(const std::string& iStr)
+{
+	return std::stof(iStr);
+}
+
 void CGigeConfiguratorDlg::InitConfigurator()
 {
 	SetTimer(1, 1000, 0);
@@ -267,7 +273,7 @@ void CGigeConfiguratorDlg::InitConfigurator()
 	_configLayout.push_back(&_startConfigButton);
 	_configLayout.push_back(&_noStartConfigButton);
 
-	_libFile.SetWindowTextW(_T("bgapi2_gige.cti"));
+	_libFile.SetWindowTextW(_T("TLSimu.cti"));
 	_libLayout.push_back(&_libMessage);
 	_libLayout.push_back(&_libFile);
 	_libLayout.push_back(&_applyLib);
@@ -298,6 +304,7 @@ void CGigeConfiguratorDlg::InitConfigurator()
 	_editorLayout.push_back(&_editorMessage);
 	_editorLayout.push_back(&_editorPropertyName);
 	_editorLayout.push_back(&_editorPropertyValue);
+	_editorLayout.push_back(&_editorComboBox);
 	_editorLayout.push_back(&_applyEditor);
 
 	_stage = Stage::ConfigStage;
@@ -417,9 +424,7 @@ void CGigeConfiguratorDlg::GetProperties()
 			}
 			default: 
 			{
-				prop._strValue = "UnknownType";
-				prop._type = Property::Undefined;
-				prop._canBeChanged = false;
+				continue;
 			}
 		}
 
@@ -442,15 +447,43 @@ void CGigeConfiguratorDlg::OpenEditor(size_t iPropertyIndex)
 	if (prop._accessMode != Property::RW || !prop._canBeChanged)
 	{
 		_stage = Stage::PropertiesStage;
+		ShowConfigStage();
 	}
 	else
 	{
+		for (size_t i = 0; i <= _editorComboBox.GetCount(); ++i)
+			_editorComboBox.DeleteString(0);
+
 		_editorPropertyName.SetWindowTextW(Convert::StringToLPCTSTR(prop._name));
-		_editorPropertyValue.SetWindowTextW(Convert::StringToLPCTSTR(prop._strValue));
 
 		_stage = Stage::EditorStage;
+		ShowConfigStage();
+
+		if (prop._type == Property::Enum)
+		{
+			std::string curName;
+			_gigeManager.GetEnumNodeName(prop._name, curName);
+			
+			for (uint32_t i = 0; i < _gigeManager.GetEnumStrEntrySize(prop._name); i++)
+			{
+				_editorComboBox.AddString(Convert::StringToLPCTSTR(_gigeManager.GetEnumStrEntryName(prop._name, i)));
+			}
+			for (uint32_t i = 0; i < _gigeManager.GetEnumStrEntrySize(prop._name); i++)
+			{
+				CString name;
+				_editorComboBox.GetLBText(i, name);
+				if (Convert::CStringToString(name) == curName)
+					_editorComboBox.SetCurSel(i);
+			}
+
+			_editorPropertyValue.ShowWindow(SW_HIDE);
+		}
+		else 
+		{
+			_editorPropertyValue.SetWindowTextW(Convert::StringToLPCTSTR(prop._strValue));
+			_editorComboBox.ShowWindow(SW_HIDE);
+		}
 	}
-	ShowConfigStage();
 }
 
 void CGigeConfiguratorDlg::OnBnClickedNoStartConfig()
@@ -624,9 +657,8 @@ void CGigeConfiguratorDlg::OnBnClickedApplyEditor()
 	Property prop;
 
 	CString name, value;
-	_editorPropertyName.GetWindowTextW(name);
-	_editorPropertyValue.GetWindowTextW(value);
 
+	_editorPropertyName.GetWindowTextW(name);
 	for (size_t i = 0; i < _properties.size(); ++i)
 	{
 		if (_properties[i]._name == Convert::CStringToString(name))
@@ -636,13 +668,29 @@ void CGigeConfiguratorDlg::OnBnClickedApplyEditor()
 		}
 	}
 
+	if (prop._type == Property::Enum)
+		_editorComboBox.GetLBText(_editorComboBox.GetCurSel(), value);
+	else
+		_editorPropertyValue.GetWindowTextW(value);
+
+	const auto strVal = Convert::CStringToString(value);		
+	if (strVal == prop._strValue)
+		return;
 	if (prop._type == Property::Int)
 	{
-		const auto strVal = Convert::CStringToString(value);
-		if (strVal == prop._strValue)
-			return;
-
 		_gigeManager.SetIntNode(prop._name, Convert::StringToInt(strVal));
+	}
+	else if (prop._type == Property::Float)
+	{
+		_gigeManager.SetFloatNode(prop._name, Convert::StringToDouble(strVal));
+	}
+	else if (prop._type == Property::Bool)
+	{
+		_gigeManager.SetBoolNode(prop._name, strVal == "1" ? true : false);
+	}
+	else if (prop._type == Property::Enum)
+	{
+		_gigeManager.SetEnumStrNode(prop._name, strVal);
 	}
 
 	GetProperties();

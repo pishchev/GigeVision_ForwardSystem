@@ -12,6 +12,7 @@ namespace Convert
 	static std::string IntToString(const int& iInt);
 	static std::string DoubleToString(const double& iDouble);
 	static int StringToInt(const std::string& iStr);
+	static double StringToDouble(const std::string& iStr);
 }
 
 class Property
@@ -156,4 +157,5 @@ public:
 	afx_msg BOOL OnMouseWheel(UINT nFlags, short zDelta, CPoint pt);
 	afx_msg void OnBnClickedApplyEditor();
 	afx_msg void OnBnClickedOk3();
+	CComboBox _editorComboBox;
 };

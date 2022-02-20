@@ -62,6 +62,7 @@
 #define IDC_EDIT34                      1064
 #define IDC_EDIT36                      1065
 #define _OUTPUTFILE_MESSAGE             1066
+#define IDC_COMBO4                      1067
 
 // Next default values for new objects
 // 
@@ -69,7 +70,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        131
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1067
+#define _APS_NEXT_CONTROL_VALUE         1068
 #define _APS_NEXT_SYMED_VALUE           101
 #endif
 #endif

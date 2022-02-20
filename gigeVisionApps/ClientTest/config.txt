@@ -1,6 +1,0 @@
-Lib TLSimu.cti
-Interface XX::InterfaceA
-Device TLSimuMono
-Stream DS0
-Height 8
-Width 8
