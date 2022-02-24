@@ -233,7 +233,7 @@ void CGigePreviewDlg::ShowImage()
 
 	HDC hdc = winDC->GetSafeHdc();
 	_gige->GetImage(_image, (LONG)_payloadSize);
-	SetDIBitsToDevice(hdc, 0, 0, _width, _height, 0, 0, 0, _width, _image, &bitmapInfo, DIB_RGB_COLORS);
+	SetDIBitsToDevice(hdc, 0, 0, _width, _height, 0, 0, 0, _height, _image, &bitmapInfo, DIB_RGB_COLORS);
 }
 
 void CGigePreviewDlg::OnTimer(UINT_PTR nIDEvent)
