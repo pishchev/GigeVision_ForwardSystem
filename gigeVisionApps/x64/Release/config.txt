@@ -1,7 +1,4 @@
-Lib bgapi2_gige.cti
-Interface {185643FB-0F51-4530-9D55-3ECD82B4AB6F}
-Device devicemoduldc_a5_01_32_4e_ac
-Stream Stream0
-Contrast int 50
-Gain float 3.500000
-PixelFormat enum EnumEntry_PixelFormat_BayerRG8
+Lib CrevisTL40.cti
+Interface GIGE::Interface_GigEVision
+Device MG-A040K-280_SN_239121B0037
+Stream DS0

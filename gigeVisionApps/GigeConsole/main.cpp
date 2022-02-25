@@ -5,7 +5,7 @@
 void NoConfig(GigeManager& gige) 
 {
 	//выбираем динамическую библиотеку
-	std::string lib = "TLSimu.cti";
+	std::string lib = "CrevisTL40.cti";
 	//std::cout << "Lib: ";
 	//std::cin >> lib;
 	gige.UseLib(lib);
@@ -42,12 +42,12 @@ void NoConfig(GigeManager& gige)
 	int64_t height = 8;
 	//std::cout << "Height: ";
 	//std::cin >> height;
-	gige.SetIntNode("Height", height);
+	//gige.SetIntNode("Height", height);
 	
 	int64_t width = 8;
 	//std::cout << "Width: ";
 	//std::cin >> width;
-	gige.SetIntNode("Width", width);
+	//gige.SetIntNode("Width", width);
 }
 void UseConfig(GigeManager& gige)
 {
@@ -130,12 +130,13 @@ void GettingImage(GigeManager& gige)
 	gige.AcquirerPreparing();
 	gige.StartAcquisition();
 
-	int64_t payloadSize;
-	gige.GetIntNode("PayloadSize", payloadSize);
+	int64_t payloadSize = gige.ImageSize();
+	std::cout << "PayloadSize: " << payloadSize << std::endl;
+
 	Buffer img(payloadSize);
 	unsigned char* image = img.Convert<unsigned char>();
 
-	for (size_t i = 0; i < 5; ++i)
+	for (size_t i = 0; i < 100; ++i)
 	{
 		gige.WaitNext();
 		if (gige.GetImage(img.Convert<unsigned char>(), payloadSize))
@@ -161,7 +162,7 @@ int main()
 	std::cin >> iUseConfig;
 
 	iUseConfig ? UseConfig(gige) : NoConfig(gige);
-	ShowNodes(gige);
+	//ShowNodes(gige);
 
 	gige.SaveConfig("config.txt");
 	TestShowConfig();

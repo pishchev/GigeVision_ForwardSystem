@@ -12,9 +12,12 @@ public:
 	{
 		int type = 1;
 		Buffer numBuffers(20);
-		elog(DSGetInfo(iStream, GenTL::STREAM_INFO_BUF_ANNOUNCE_MIN, &type, numBuffers.Convert<char>(), numBuffers.Size()), "DSGetInfo");
+		auto const err = DSGetInfo(iStream, GenTL::STREAM_INFO_BUF_ANNOUNCE_MIN, &type, numBuffers.Convert<char>(), numBuffers.Size());
 
-		_buffers = std::vector<GenTL::BUFFER_HANDLE>(*(numBuffers.Convert<size_t>()), nullptr);
+		if (err!=0)
+			_buffers = std::vector<GenTL::BUFFER_HANDLE>(1, nullptr);
+		else
+			_buffers = std::vector<GenTL::BUFFER_HANDLE>(*(numBuffers.Convert<size_t>()), nullptr);
 
 		for (auto it = _buffers.begin(); it != _buffers.end(); ++it)
 			elog(DSAllocAndAnnounceBuffer(iStream, iPayloadSize, nullptr, &(*it)), "DSAllocAndAnnounceBuffer");
