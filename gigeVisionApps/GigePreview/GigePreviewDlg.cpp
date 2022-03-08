@@ -7,6 +7,7 @@
 #include "GigePreview.h"
 #include "GigePreviewDlg.h"
 #include "afxdialogex.h"
+#include "BayerConverter.hpp"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -208,9 +209,10 @@ void CGigePreviewDlg::OnBnClickedApplyConfig()
 	_gige->PayloadSize((LONG*)&_payloadSize);
 	_gige->GetWidth((LONG*)&_width);
 	_gige->GetHeight((LONG*)&_height);
-	_bitsPerPixel = _payloadSize / (_width * _height);
+	_bitsPerPixel = 3;
 
-	_image = new BYTE[(int)_payloadSize];
+	_buffer = new BYTE[(int)_payloadSize];
+	_image = new BYTE[(int)(_payloadSize * 3)];
 	_started = true;
 
 	_gige->StartCapturing();
@@ -218,10 +220,13 @@ void CGigePreviewDlg::OnBnClickedApplyConfig()
 
 void CGigePreviewDlg::ShowImage()
 {
+	RGBTRIPLE* rgb = new RGBTRIPLE[_width * _height];
+	
+
 	CDC* winDC = GetDC();
 	BITMAPINFO bitmapInfo;
 	bitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER); // используется для проверки версии структуры
-	bitmapInfo.bmiHeader.biBitCount = (WORD)_bitsPerPixel * 8;           // количество бит на пиксель
+	bitmapInfo.bmiHeader.biBitCount = (WORD)(_bitsPerPixel * 8);           // количество бит на пиксель
 	bitmapInfo.bmiHeader.biClrUsed = 0;              // в 24 битных изображениях не нужно
 	bitmapInfo.bmiHeader.biClrImportant = 0;      // аналогично
 	bitmapInfo.bmiHeader.biPlanes = 1;               // всегда 1 вроде как. Многоплановых bmp ни разу не видел
@@ -232,8 +237,19 @@ void CGigePreviewDlg::ShowImage()
 	bitmapInfo.bmiHeader.biWidth = _width;
 
 	HDC hdc = winDC->GetSafeHdc();
-	_gige->GetImage(_image, (LONG)_payloadSize);
-	SetDIBitsToDevice(hdc, 0, 0, _width, _height, 0, 0, 0, _height, _image, &bitmapInfo, DIB_RGB_COLORS);
+	_gige->GetImage(_buffer, (LONG)_payloadSize);
+	BayerConverter converter(_buffer, _width, _height);
+	converter.ConvertToRGB(_image);
+
+	for (size_t h = 0; h < _height; ++h)
+		for (size_t w = 0; w < _width; ++w) {
+			rgb[h * _width + w].rgbtRed = _image[h * _width * 3 + w * 3];
+			rgb[h * _width + w].rgbtGreen = _image[h * _width * 3 + w * 3 + 1];
+			rgb[h * _width + w].rgbtBlue = _image[h * _width * 3 + w * 3 + 2];
+		}
+
+	SetDIBitsToDevice(hdc, 0, 0, _width, _height, 0, 0, 0, _height, rgb, &bitmapInfo, DIB_RGB_COLORS);
+	delete[] rgb;
 }
 
 void CGigePreviewDlg::OnTimer(UINT_PTR nIDEvent)

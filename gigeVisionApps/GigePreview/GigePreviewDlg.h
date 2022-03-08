@@ -48,6 +48,7 @@ protected:
 	size_t _width;
 	size_t _height;
 	size_t _bitsPerPixel;
+	unsigned char* _buffer;
 	unsigned char* _image;
 	bool _started;
 

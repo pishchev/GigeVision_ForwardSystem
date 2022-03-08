@@ -5,7 +5,7 @@
 void NoConfig(GigeManager& gige) 
 {
 	//выбираем динамическую библиотеку
-	std::string lib = "CrevisTL40.cti";
+	std::string lib = "bgapi2_gige.cti";
 	//std::cout << "Lib: ";
 	//std::cin >> lib;
 	gige.UseLib(lib);
@@ -136,6 +136,9 @@ void GettingImage(GigeManager& gige)
 	Buffer img(payloadSize);
 	unsigned char* image = img.Convert<unsigned char>();
 
+	std::fstream file;
+	file.open("pic.txt", 'w');
+
 	for (size_t i = 0; i < 100; ++i)
 	{
 		gige.WaitNext();
@@ -143,8 +146,9 @@ void GettingImage(GigeManager& gige)
 		{
 			for (int i = 0; i < payloadSize; i++)
 			{
-				std::cout << ' ' << (int)image[i];
+				file << ' ' << (int)image[i];
 			}
+			file.close();
 		}
 		std::cout << std::endl;
 		system("pause");
@@ -162,7 +166,7 @@ int main()
 	std::cin >> iUseConfig;
 
 	iUseConfig ? UseConfig(gige) : NoConfig(gige);
-	//ShowNodes(gige);
+	ShowNodes(gige);
 
 	gige.SaveConfig("config.txt");
 	TestShowConfig();

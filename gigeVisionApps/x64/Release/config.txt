@@ -1,4 +1,0 @@
-Lib CrevisTL40.cti
-Interface GIGE::Interface_GigEVision
-Device MG-A040K-280_SN_239121B0037
-Stream DS0
