@@ -212,7 +212,14 @@ void CGigePreviewDlg::OnBnClickedApplyConfig()
 	_bitsPerPixel = 3;
 
 	_buffer = new BYTE[(int)_payloadSize];
-	_image = new BYTE[(int)(_payloadSize * 3)];
+
+	if (_width * _height == _payloadSize) {
+		_useConvertToRGB = true;
+		_image = new BYTE[(int)(_payloadSize * 3)];
+	}
+	else
+		_useConvertToRGB = false;
+	
 	_started = true;
 
 	_gige->StartCapturing();
@@ -220,9 +227,6 @@ void CGigePreviewDlg::OnBnClickedApplyConfig()
 
 void CGigePreviewDlg::ShowImage()
 {
-	RGBTRIPLE* rgb = new RGBTRIPLE[_width * _height];
-	
-
 	CDC* winDC = GetDC();
 	BITMAPINFO bitmapInfo;
 	bitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER); // используется для проверки версии структуры
@@ -238,18 +242,22 @@ void CGigePreviewDlg::ShowImage()
 
 	HDC hdc = winDC->GetSafeHdc();
 	_gige->GetImage(_buffer, (LONG)_payloadSize);
-	BayerConverter converter(_buffer, _width, _height);
-	converter.ConvertToRGB(_image);
 
-	for (size_t h = 0; h < _height; ++h)
-		for (size_t w = 0; w < _width; ++w) {
-			rgb[h * _width + w].rgbtRed = _image[h * _width * 3 + w * 3];
-			rgb[h * _width + w].rgbtGreen = _image[h * _width * 3 + w * 3 + 1];
-			rgb[h * _width + w].rgbtBlue = _image[h * _width * 3 + w * 3 + 2];
-		}
-
-	SetDIBitsToDevice(hdc, 0, 0, _width, _height, 0, 0, 0, _height, rgb, &bitmapInfo, DIB_RGB_COLORS);
-	delete[] rgb;
+	if (_useConvertToRGB) {
+		RGBTRIPLE* rgb = new RGBTRIPLE[_width * _height];
+		BayerConverter converter(_buffer, _width, _height);
+		converter.ConvertToRGB(_image);
+		for (size_t h = 0; h < _height; ++h)
+			for (size_t w = 0; w < _width; ++w) {
+				rgb[h * _width + w].rgbtRed = _image[h * _width * 3 + w * 3];
+				rgb[h * _width + w].rgbtGreen = _image[h * _width * 3 + w * 3 + 1];
+				rgb[h * _width + w].rgbtBlue = _image[h * _width * 3 + w * 3 + 2];
+			}
+		SetDIBitsToDevice(hdc, 0, 0, _width, _height, 0, 0, 0, _height, rgb, &bitmapInfo, DIB_RGB_COLORS);
+		delete[] rgb;
+	}
+	else
+		SetDIBitsToDevice(hdc, 0, 0, _width, _height, 0, 0, 0, _height, _buffer, &bitmapInfo, DIB_RGB_COLORS);
 }
 
 void CGigePreviewDlg::OnTimer(UINT_PTR nIDEvent)

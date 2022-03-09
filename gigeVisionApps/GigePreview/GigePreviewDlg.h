@@ -50,6 +50,7 @@ protected:
 	size_t _bitsPerPixel;
 	unsigned char* _buffer;
 	unsigned char* _image;
+	bool _useConvertToRGB;
 	bool _started;
 
 	// Созданные функции схемы сообщений
