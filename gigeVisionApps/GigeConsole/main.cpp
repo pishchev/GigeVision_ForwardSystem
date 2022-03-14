@@ -51,7 +51,7 @@ void NoConfig(GigeManager& gige)
 }
 void UseConfig(GigeManager& gige)
 {
-	std::string config = "config.txt";
+	std::string config = "configH.txt";
 	//std::cout << "Configurator: ";
 	//std::cin >> config;
 	gige.UseConfigurator(config);
@@ -135,23 +135,22 @@ void GettingImage(GigeManager& gige)
 
 	Buffer img(payloadSize);
 	unsigned char* image = img.Convert<unsigned char>();
+	uint64_t timestamp = 0;
 
-	std::fstream file;
-	file.open("pic.txt", 'w');
-
-	for (size_t i = 0; i < 100; ++i)
+	int i = 0;
+	while (i < 500)
 	{
-		gige.WaitNext();
-		if (gige.GetImage(img.Convert<unsigned char>(), payloadSize))
+		size_t min, max;
+		gige.GetBufferInfo(min, max);
+		std::cout << "Min: " << min << " Max:" << max << std::endl;
+		if (gige.GetImage(i, img.Convert<unsigned char>()))
 		{
-			for (int i = 0; i < payloadSize; i++)
-			{
-				file << ' ' << (int)image[i];
-			}
-			file.close();
+			gige.GetTimestamp(i, timestamp);
+			std::cout << "Got image! Timestamp: " << timestamp << std::endl;
+
+			i++;
 		}
-		std::cout << std::endl;
-		system("pause");
+		std::cout << "i: " << i << std::endl;
 	}
 
 	gige.StopAcquisition();
@@ -166,11 +165,12 @@ int main()
 	std::cin >> iUseConfig;
 
 	iUseConfig ? UseConfig(gige) : NoConfig(gige);
-	ShowNodes(gige);
+	//ShowNodes(gige);
 
 	gige.SaveConfig("config.txt");
 	TestShowConfig();
 
 	GettingImage(gige);
+	system("pause");
 	return 0;
 } 

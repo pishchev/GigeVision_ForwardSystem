@@ -163,6 +163,7 @@
     <ClInclude Include="..\Sources\Camera.hpp" />
     <ClInclude Include="..\Sources\Configurator.hpp" />
     <ClInclude Include="..\Sources\Device.hpp" />
+    <ClInclude Include="..\Sources\Fifo.hpp" />
     <ClInclude Include="..\Sources\GenTL.h" />
     <ClInclude Include="..\Sources\GigeManager.hpp" />
     <ClInclude Include="..\Sources\ImageAcquirer.hpp" />

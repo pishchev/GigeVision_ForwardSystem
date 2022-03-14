@@ -56,5 +56,8 @@
     <ClInclude Include="..\Sources\TransportLayer.hpp">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="..\Sources\Fifo.hpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

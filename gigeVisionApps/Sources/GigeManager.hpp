@@ -20,6 +20,7 @@
 #include "Device.hpp"
 #include "Camera.hpp"
 #include "Configurator.hpp"
+#include "Fifo.hpp"
 
 #include "GenTL.h"
 #include "GenICam.h"
@@ -40,6 +41,7 @@ public:
 	};
 
 	GigeManager(){}
+
 	~GigeManager()
 	{
 		//StopAcquisition();
@@ -260,7 +262,8 @@ public:
 	void AcquirerPreparing()
 	{
 		_payloadSize = _camera.PayloadSize();
-		_image = Buffer(_payloadSize);
+		_fifoImage = new FIFO(_payloadSize, 50);
+		_fifoTimestamps = new FIFO(sizeof(uint64_t), 50);
 		_imageAcquirer.AnnounceBuffers(_stream, _payloadSize);
 		_imageAcquirer.StartAcquisition(_stream);
 		_buffers = _imageAcquirer.GetBuffers();
@@ -281,17 +284,25 @@ public:
 	{
 		return _payloadSize;
 	}
-	bool GetImage(unsigned char* oBuffer , size_t iSize)
+	bool GetImage(size_t iImageIndex, unsigned char* oBuffer)
 	{
-		if (!(_payloadSize >=static_cast<int64_t>(iSize)) || !_isReady)
+		if (!_isReady)
 			return false;
 
-		memcpy(oBuffer, _image.Convert<void>(), sizeof(unsigned char) * iSize);
-		return true;
+		return _fifoImage->GetBuffer(iImageIndex, oBuffer);
 	}
-	void WaitNext()
+
+	bool GetTimestamp(size_t iImageIndex, size_t& oTimestamp)
 	{
-		_next = true;
+		if (!_isReady)
+			return false;
+
+		return _fifoTimestamps->GetBuffer(iImageIndex, (unsigned char*)&oTimestamp);
+	}
+
+	void GetBufferInfo(size_t& oMin, size_t& oMax)
+	{
+		_fifoImage->GetInfo(oMin, oMax);
 	}
 
 private:
@@ -304,28 +315,42 @@ private:
 	static void AsyncCapture(GigeManager& iManager)
 	{
 		int type = GenTL::INFO_DATATYPE_STRING;
-		Buffer bufferInfo(20);
+		Buffer imageBuffer(64);
+		Buffer timestamp(64);
 		Buffer dataBuffer(64);
 		while (true)
 		{
 			if (iManager._stopAcquire) break;
-			if (!iManager._next) continue;
 			auto err = EventGetData(iManager._event, dataBuffer.Convert<void>(), dataBuffer.Size(), 10000);
 			if (err == 0)
 			{
-				DSGetBufferInfo(iManager._stream, *dataBuffer.Convert<void**>(), GenTL::BUFFER_INFO_BASE, &type, bufferInfo.Convert<void>(), bufferInfo.Size());
-				unsigned char* buf = *bufferInfo.Convert<unsigned char*>();
-				memcpy(iManager._image.Convert<void>(), buf, sizeof(unsigned char) * iManager._payloadSize);
-				elog(DSQueueBuffer(iManager._stream, *dataBuffer.Convert<void**>()), "DSQueueBuffer");
+				const auto dataBufferPtr = *dataBuffer.Convert<void**>();
+
+				elog(DSGetBufferInfo(iManager._stream, dataBufferPtr, GenTL::BUFFER_INFO_BASE, &type, imageBuffer.Convert<void>(), imageBuffer.Size()), "IMAGEBUFER");
+				iManager.AddImageToBuffer(*imageBuffer.Convert<unsigned char*>());
+
+				const auto err = DSGetBufferInfo(iManager._stream, dataBufferPtr, GenTL::BUFFER_INFO_TIMESTAMP, &type, timestamp.Convert<void>(), timestamp.Size());
+				if (err == 0) iManager.AddTimestampToBuffer(timestamp.Convert<unsigned char>());
+
+				elog(DSQueueBuffer(iManager._stream, dataBufferPtr), "DSQueueBuffer");
 
 				iManager._isReady = true;
-				iManager._next = false;
 			}
 			else if (err != GenTL::GC_ERR_TIMEOUT)
 			{
 				elog(err, "ArqFunction");
 			}
 		}
+	}
+
+	void AddImageToBuffer(unsigned char* iImage) 
+	{
+		_fifoImage->PushBack(iImage);
+	}
+
+	void AddTimestampToBuffer(unsigned char* iTimestamp)
+	{
+		_fifoTimestamps->PushBack(iTimestamp);
 	}
 
 	Configurator _config;
@@ -339,10 +364,11 @@ private:
 
 	std::vector<GenTL::BUFFER_HANDLE> _buffers;
 
-	bool _next = false;
 	bool _isReady = false;
 	bool _stopAcquire = false;
-	Buffer _image;
+
+	FIFO* _fifoImage;
+	FIFO* _fifoTimestamps;
 
 	GenTL::EVENT_HANDLE _event = nullptr;
 	GenTL::DS_HANDLE _stream = nullptr;
