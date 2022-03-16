@@ -38,23 +38,10 @@ void NoConfig(GigeManager& gige)
 	gige.UseStream(stream);
 
 	gige.CameraInit();
-
-	int64_t height = 8;
-	//std::cout << "Height: ";
-	//std::cin >> height;
-	//gige.SetIntNode("Height", height);
-	
-	int64_t width = 8;
-	//std::cout << "Width: ";
-	//std::cin >> width;
-	//gige.SetIntNode("Width", width);
 }
 void UseConfig(GigeManager& gige)
 {
-	std::string config = "configH.txt";
-	//std::cout << "Configurator: ";
-	//std::cin >> config;
-	gige.UseConfigurator(config);
+	gige.UseConfigurator("configS.txt");
 }
 void ShowNodes(GigeManager& gige)
 {
@@ -130,7 +117,7 @@ void GettingImage(GigeManager& gige)
 	gige.AcquirerPreparing();
 	gige.StartAcquisition();
 
-	int64_t payloadSize = gige.ImageSize();
+	int64_t payloadSize = gige.PayloadSize();
 	std::cout << "PayloadSize: " << payloadSize << std::endl;
 
 	Buffer img(payloadSize);
@@ -138,11 +125,15 @@ void GettingImage(GigeManager& gige)
 	uint64_t timestamp = 0;
 
 	int i = 0;
-	while (i < 500)
+	while (i < 200)
 	{
 		size_t min, max;
 		gige.GetBufferInfo(min, max);
 		std::cout << "Min: " << min << " Max:" << max << std::endl;
+
+		if (i < min + 2)
+			i = (int)min + 2;
+
 		if (gige.GetImage(i, img.Convert<unsigned char>()))
 		{
 			gige.GetTimestamp(i, timestamp);

@@ -88,9 +88,6 @@ EXTERN_C const IID IID_IGigeVision;
     IGigeVision : public IUnknown
     {
     public:
-        virtual HRESULT STDMETHODCALLTYPE TestMethod( 
-            /* [size_is][out] */ CHAR *oBuff) = 0;
-        
         virtual HRESULT STDMETHODCALLTYPE SetConfig( 
             /* [size_is][in] */ CHAR *iFile) = 0;
         
@@ -100,14 +97,23 @@ EXTERN_C const IID IID_IGigeVision;
         virtual HRESULT STDMETHODCALLTYPE StartCapturing( void) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE GetImage( 
+            /* [in] */ LONG *iImageIndex,
             /* [size_is][out] */ BYTE *oImage,
-            /* [in] */ LONG iBufferSize) = 0;
+            /* [in] */ LONG *iBufferSize) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE GetWidth( 
             /* [out] */ LONG *oWidth) = 0;
         
         virtual HRESULT STDMETHODCALLTYPE GetHeight( 
             /* [out] */ LONG *oHeight) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetBufferInfo( 
+            /* [out] */ LONG *oMinIndex,
+            /* [out] */ LONG *oMaxIndex) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetTimestamp( 
+            /* [in] */ LONG *iIndexTimestamp,
+            /* [out] */ LONG *oTimestamp) = 0;
         
     };
     
@@ -130,10 +136,6 @@ EXTERN_C const IID IID_IGigeVision;
         ULONG ( STDMETHODCALLTYPE *Release )( 
             IGigeVision * This);
         
-        HRESULT ( STDMETHODCALLTYPE *TestMethod )( 
-            IGigeVision * This,
-            /* [size_is][out] */ CHAR *oBuff);
-        
         HRESULT ( STDMETHODCALLTYPE *SetConfig )( 
             IGigeVision * This,
             /* [size_is][in] */ CHAR *iFile);
@@ -147,8 +149,9 @@ EXTERN_C const IID IID_IGigeVision;
         
         HRESULT ( STDMETHODCALLTYPE *GetImage )( 
             IGigeVision * This,
+            /* [in] */ LONG *iImageIndex,
             /* [size_is][out] */ BYTE *oImage,
-            /* [in] */ LONG iBufferSize);
+            /* [in] */ LONG *iBufferSize);
         
         HRESULT ( STDMETHODCALLTYPE *GetWidth )( 
             IGigeVision * This,
@@ -157,6 +160,16 @@ EXTERN_C const IID IID_IGigeVision;
         HRESULT ( STDMETHODCALLTYPE *GetHeight )( 
             IGigeVision * This,
             /* [out] */ LONG *oHeight);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetBufferInfo )( 
+            IGigeVision * This,
+            /* [out] */ LONG *oMinIndex,
+            /* [out] */ LONG *oMaxIndex);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetTimestamp )( 
+            IGigeVision * This,
+            /* [in] */ LONG *iIndexTimestamp,
+            /* [out] */ LONG *oTimestamp);
         
         END_INTERFACE
     } IGigeVisionVtbl;
@@ -181,9 +194,6 @@ EXTERN_C const IID IID_IGigeVision;
     ( (This)->lpVtbl -> Release(This) ) 
 
 
-#define IGigeVision_TestMethod(This,oBuff)	\
-    ( (This)->lpVtbl -> TestMethod(This,oBuff) ) 
-
 #define IGigeVision_SetConfig(This,iFile)	\
     ( (This)->lpVtbl -> SetConfig(This,iFile) ) 
 
@@ -193,14 +203,20 @@ EXTERN_C const IID IID_IGigeVision;
 #define IGigeVision_StartCapturing(This)	\
     ( (This)->lpVtbl -> StartCapturing(This) ) 
 
-#define IGigeVision_GetImage(This,oImage,iBufferSize)	\
-    ( (This)->lpVtbl -> GetImage(This,oImage,iBufferSize) ) 
+#define IGigeVision_GetImage(This,iImageIndex,oImage,iBufferSize)	\
+    ( (This)->lpVtbl -> GetImage(This,iImageIndex,oImage,iBufferSize) ) 
 
 #define IGigeVision_GetWidth(This,oWidth)	\
     ( (This)->lpVtbl -> GetWidth(This,oWidth) ) 
 
 #define IGigeVision_GetHeight(This,oHeight)	\
     ( (This)->lpVtbl -> GetHeight(This,oHeight) ) 
+
+#define IGigeVision_GetBufferInfo(This,oMinIndex,oMaxIndex)	\
+    ( (This)->lpVtbl -> GetBufferInfo(This,oMinIndex,oMaxIndex) ) 
+
+#define IGigeVision_GetTimestamp(This,iIndexTimestamp,oTimestamp)	\
+    ( (This)->lpVtbl -> GetTimestamp(This,iIndexTimestamp,oTimestamp) ) 
 
 #endif /* COBJMACROS */
 

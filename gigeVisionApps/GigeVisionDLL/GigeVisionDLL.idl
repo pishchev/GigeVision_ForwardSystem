@@ -14,13 +14,14 @@ import "ocidl.idl";
 ]
 interface IGigeVision : IUnknown
 {
-	HRESULT TestMethod([out, size_is(100)] CHAR* oBuff);
 	HRESULT SetConfig([in, size_is(50)] CHAR* iFile);
 	HRESULT PayloadSize([out] LONG* oPayloadSize);
 	HRESULT StartCapturing();
-	HRESULT GetImage([out, size_is(iBufferSize)] BYTE* oImage, [in] LONG iBufferSize);
+	HRESULT GetImage([in] LONG* iImageIndex, [out, size_is(*iBufferSize)] BYTE* oImage, [in] LONG* iBufferSize);
 	HRESULT GetWidth([out] LONG* oWidth);
 	HRESULT GetHeight([out] LONG* oHeight);
+	HRESULT GetBufferInfo([out] LONG* oMinIndex, [out] LONG* oMaxIndex);
+	HRESULT GetTimestamp([in] LONG* iIndexTimestamp, [out] LONG* oTimestamp);
 };
 [
 	uuid(07277cb7-d484-433a-a226-bc5cf676ff0a),

@@ -7,7 +7,6 @@
 #include "GigePreview.h"
 #include "GigePreviewDlg.h"
 #include "afxdialogex.h"
-#include "BayerConverter.hpp"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -186,7 +185,7 @@ void CGigePreviewDlg::InitGigeDLL()
 void CGigePreviewDlg::InitDialogComponents()
 {
 	_configMessage.SetWindowTextW(_T("Config file:"));
-	_configFile.SetWindowTextW(_T("config.txt"));
+	_configFile.SetWindowTextW(_T("configH.txt"));
 }
 
 void CGigePreviewDlg::HideDialogComponents()
@@ -209,17 +208,8 @@ void CGigePreviewDlg::OnBnClickedApplyConfig()
 	_gige->PayloadSize((LONG*)&_payloadSize);
 	_gige->GetWidth((LONG*)&_width);
 	_gige->GetHeight((LONG*)&_height);
-	_bitsPerPixel = 3;
 
-	_buffer = new BYTE[(int)_payloadSize];
-
-	if (_width * _height == _payloadSize) {
-		_useConvertToRGB = true;
-		_image = new BYTE[(int)(_payloadSize * 3)];
-	}
-	else
-		_useConvertToRGB = false;
-	
+	_image = new BYTE[(int)_payloadSize];
 	_started = true;
 
 	_gige->StartCapturing();
@@ -230,34 +220,27 @@ void CGigePreviewDlg::ShowImage()
 	CDC* winDC = GetDC();
 	BITMAPINFO bitmapInfo;
 	bitmapInfo.bmiHeader.biSize = sizeof(BITMAPINFOHEADER); // используется для проверки версии структуры
-	bitmapInfo.bmiHeader.biBitCount = (WORD)(_bitsPerPixel * 8);           // количество бит на пиксель
+	bitmapInfo.bmiHeader.biBitCount = (WORD)(3 * 8);           // количество бит на пиксель
 	bitmapInfo.bmiHeader.biClrUsed = 0;              // в 24 битных изображениях не нужно
 	bitmapInfo.bmiHeader.biClrImportant = 0;      // аналогично
 	bitmapInfo.bmiHeader.biPlanes = 1;               // всегда 1 вроде как. Многоплановых bmp ни разу не видел
 	bitmapInfo.bmiHeader.biCompression = BI_RGB; // без компрессии
 	bitmapInfo.bmiHeader.biSizeImage = 0;         // для 24 бит, можем указать ноль, так как размер
 																																 //изображения легко высчитывается. Обычно используется для компрессированных данных
-	bitmapInfo.bmiHeader.biHeight = _height; // ширина и высота изображения.
-	bitmapInfo.bmiHeader.biWidth = _width;
+	bitmapInfo.bmiHeader.biHeight = (LONG)_height; // ширина и высота изображения.
+	bitmapInfo.bmiHeader.biWidth = (LONG)_width;
 
 	HDC hdc = winDC->GetSafeHdc();
-	_gige->GetImage(_buffer, (LONG)_payloadSize);
 
-	if (_useConvertToRGB) {
-		RGBTRIPLE* rgb = new RGBTRIPLE[_width * _height];
-		BayerConverter converter(_buffer, _width, _height);
-		converter.ConvertToRGB(_image);
-		for (size_t h = 0; h < _height; ++h)
-			for (size_t w = 0; w < _width; ++w) {
-				rgb[h * _width + w].rgbtRed = _image[h * _width * 3 + w * 3];
-				rgb[h * _width + w].rgbtGreen = _image[h * _width * 3 + w * 3 + 1];
-				rgb[h * _width + w].rgbtBlue = _image[h * _width * 3 + w * 3 + 2];
-			}
-		SetDIBitsToDevice(hdc, 0, 0, _width, _height, 0, 0, 0, _height, rgb, &bitmapInfo, DIB_RGB_COLORS);
-		delete[] rgb;
-	}
-	else
-		SetDIBitsToDevice(hdc, 0, 0, _width, _height, 0, 0, 0, _height, _buffer, &bitmapInfo, DIB_RGB_COLORS);
+	_gige->GetBufferInfo(&_min, &_max);
+
+	if (_curIndex < (size_t)_min + 2)
+		_curIndex = (size_t)_max;
+
+	_gige->GetImage((LONG*)&_curIndex, _image, (LONG*)&_payloadSize);
+	_curIndex++;
+
+	SetDIBitsToDevice(hdc, 0, 0, (DWORD)_width, (DWORD)_height, 0, 0, 0, (UINT)_height, _image, &bitmapInfo, DIB_RGB_COLORS);
 }
 
 void CGigePreviewDlg::OnTimer(UINT_PTR nIDEvent)

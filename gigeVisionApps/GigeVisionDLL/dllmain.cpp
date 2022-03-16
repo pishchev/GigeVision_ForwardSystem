@@ -67,3 +67,19 @@ STDMETHODIMP CGigeVisionDLLModule::GetHeight(LONG* oHeight)
 
 	return S_OK;
 }
+
+
+STDMETHODIMP CGigeVisionDLLModule::GetBufferInfo(LONG* oMinIndex, LONG* oMaxIndex)
+{
+	// TODO: Добавьте сюда код реализации
+
+	return S_OK;
+}
+
+
+STDMETHODIMP CGigeVisionDLLModule::GetTimestamp(LONG* iIndexTimestamp, LONG* oTimestamp)
+{
+	// TODO: Добавьте сюда код реализации
+
+	return S_OK;
+}

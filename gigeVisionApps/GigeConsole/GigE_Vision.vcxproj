@@ -159,6 +159,7 @@
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Sources\BayerConverter.hpp" />
     <ClInclude Include="..\Sources\Buffer.hpp" />
     <ClInclude Include="..\Sources\Camera.hpp" />
     <ClInclude Include="..\Sources\Configurator.hpp" />

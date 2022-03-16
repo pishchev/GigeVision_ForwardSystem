@@ -6,16 +6,6 @@
 
 // CGigeVision
 
-
-
-STDMETHODIMP CGigeVision::TestMethod(CHAR* oBuff)
-{
-  oBuff[1] = 'e';
-
-  return S_OK;
-}
-
-
 STDMETHODIMP CGigeVision::SetConfig(CHAR* iFile)
 {
   _gigeManager.UseConfigurator(iFile);
@@ -25,9 +15,7 @@ STDMETHODIMP CGigeVision::SetConfig(CHAR* iFile)
 
 STDMETHODIMP CGigeVision::PayloadSize(LONG* oPayloadSize)
 {
-  int64_t payloadSize = 0;
-  _gigeManager.GetIntNode("PayloadSize", payloadSize);
-  *oPayloadSize = (LONG)payloadSize;
+  *oPayloadSize = (LONG)_gigeManager.PayloadSize();
   return S_OK;
 }
 
@@ -36,16 +24,13 @@ STDMETHODIMP CGigeVision::StartCapturing()
 {
   _gigeManager.AcquirerPreparing();
   _gigeManager.StartAcquisition();
-  _gigeManager.WaitNext();
   return S_OK;
 }
 
 
-STDMETHODIMP CGigeVision::GetImage(BYTE* oImage, LONG iBufferSize)
+STDMETHODIMP CGigeVision::GetImage(LONG* iImageIndex, BYTE* oImage, LONG* iBufferSize)
 {
-  _gigeManager.GetImage(oImage, iBufferSize);
-  _gigeManager.WaitNext();
-  return S_OK;
+  return _gigeManager.GetImage((size_t)*iImageIndex, oImage) ? S_OK : S_FALSE;
 }
 
 
@@ -63,5 +48,25 @@ STDMETHODIMP CGigeVision::GetHeight(LONG* oHeight)
   int64_t height = 0;
   _gigeManager.GetIntNode("Height", height);
   *oHeight = (LONG)height;
+  return S_OK;
+}
+
+
+STDMETHODIMP CGigeVision::GetBufferInfo(LONG* oMinIndex, LONG* oMaxIndex)
+{
+  size_t min, max;
+  _gigeManager.GetBufferInfo(min, max);
+  *oMinIndex = (LONG)min;
+  *oMaxIndex = (LONG)max;
+  return S_OK;
+}
+
+
+STDMETHODIMP CGigeVision::GetTimestamp(LONG* iIndexTimestamp, LONG* oTimestamp)
+{
+  size_t time;
+  _gigeManager.GetTimestamp((size_t)*iIndexTimestamp, time);
+  *oTimestamp = (LONG)time;
+
   return S_OK;
 }

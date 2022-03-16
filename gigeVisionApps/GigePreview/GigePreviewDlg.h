@@ -41,17 +41,16 @@ protected:
 	void HideDialogComponents();
 	void ShowImage();
 	
-	
-
 	IGigeVision* _gige;
 	size_t _payloadSize;
 	size_t _width;
 	size_t _height;
-	size_t _bitsPerPixel;
-	unsigned char* _buffer;
+	size_t _curIndex = 0;
 	unsigned char* _image;
-	bool _useConvertToRGB;
 	bool _started;
+
+	LONG _min = 0;
+	LONG _max = 0;
 
 	// Созданные функции схемы сообщений
 	virtual BOOL OnInitDialog();

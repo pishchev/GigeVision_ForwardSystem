@@ -21,6 +21,7 @@
 #include "Camera.hpp"
 #include "Configurator.hpp"
 #include "Fifo.hpp"
+#include "BayerConverter.hpp"
 
 #include "GenTL.h"
 #include "GenICam.h"
@@ -38,6 +39,10 @@ public:
 		Command = 4,
 		String = 6,
 		Enumeration = 9
+	};
+	enum ConverterType 
+	{ 
+		RGBInt 
 	};
 
 	GigeManager(){}
@@ -74,8 +79,6 @@ public:
 				SetEnumStrNode(param->first, param->second.value);
 		}
 	}
-
-
 	void UseLib(std::string iCti)
 	{
 		_config._lib = iCti;
@@ -259,9 +262,31 @@ public:
 		_config.SaveConfig(iFileName);
 	}
 
+	int64_t PayloadSize()
+	{
+		GetIntNode("PayloadSize", _payloadSize);
+		GetIntNode("Width", _width);
+		GetIntNode("Height", _height);
+
+		if (_width * _height == _payloadSize)
+			return _payloadSize * 3;
+		return _payloadSize;
+	}
+
 	void AcquirerPreparing()
 	{
-		_payloadSize = _camera.PayloadSize();
+		GetIntNode("PayloadSize", _payloadSize);
+		GetIntNode("Width", _width);
+		GetIntNode("Height", _height);
+
+		if (_width * _height == _payloadSize && !_converter)
+			SetConverter(RGBInt);
+
+		if (_converter) {
+			_converter->_height = _height;
+			_converter->_width = _width;
+		}
+
 		_fifoImage = new FIFO(_payloadSize, 50);
 		_fifoTimestamps = new FIFO(sizeof(uint64_t), 50);
 		_imageAcquirer.AnnounceBuffers(_stream, _payloadSize);
@@ -280,18 +305,23 @@ public:
 		_camera.StopAcquisition();
 	}
 
-	size_t ImageSize()
-	{
-		return _payloadSize;
-	}
 	bool GetImage(size_t iImageIndex, unsigned char* oBuffer)
 	{
 		if (!_isReady)
 			return false;
 
-		return _fifoImage->GetBuffer(iImageIndex, oBuffer);
-	}
+		if (_converter) {
+			const auto bayerBuffer = _fifoImage->GetBufferPtr(iImageIndex);
+			if (!bayerBuffer)
+				return false;
 
+			_converter->_buffer = bayerBuffer;
+			_converter->Convert(oBuffer);
+			return true;
+		}
+		else
+			return _fifoImage->GetBuffer(iImageIndex, oBuffer);
+	}
 	bool GetTimestamp(size_t iImageIndex, size_t& oTimestamp)
 	{
 		if (!_isReady)
@@ -299,10 +329,14 @@ public:
 
 		return _fifoTimestamps->GetBuffer(iImageIndex, (unsigned char*)&oTimestamp);
 	}
-
 	void GetBufferInfo(size_t& oMin, size_t& oMax)
 	{
 		_fifoImage->GetInfo(oMin, oMax);
+	}
+
+	void SetConverter(ConverterType iType) {
+		if (iType == RGBInt)
+			_converter = RGBIntPtr(new BayerConverterRGBInterpolated);
 	}
 
 private:
@@ -347,7 +381,6 @@ private:
 	{
 		_fifoImage->PushBack(iImage);
 	}
-
 	void AddTimestampToBuffer(unsigned char* iTimestamp)
 	{
 		_fifoTimestamps->PushBack(iTimestamp);
@@ -373,5 +406,9 @@ private:
 	GenTL::EVENT_HANDLE _event = nullptr;
 	GenTL::DS_HANDLE _stream = nullptr;
 
+	int64_t _width = 0;
+	int64_t _height = 0;
 	int64_t _payloadSize = 0;
+
+	ConverterPtr _converter;
 };

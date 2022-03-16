@@ -24,7 +24,7 @@ int main()
     return 1;
   }
 
-  char file[] = "config.txt";
+  char file[] = "configH.txt";
   gige->SetConfig(file);
 
   size_t payloadSize = 0;
@@ -39,17 +39,26 @@ int main()
 
   unsigned char* image = new unsigned char[payloadSize];
 
-  for (size_t i = 0; i < 10; ++i)
-  {
-    gige->GetImage(image, (LONG)payloadSize);
+  size_t i = 0;
+  size_t min = 0;
+  size_t max = 0;
 
-    for (size_t k = 0; k < payloadSize; ++k)
-    {
-      std::cout << (int)image[k] << ' ';
+  while (i < 200) {
+    
+    gige->GetBufferInfo((LONG*)&min, (LONG*)&max);
+
+    std::cout << min << "-" << max << std::endl;
+
+    if (i < min + 2) {
+      std::cout << "SLOW " << i << "->" << i + 2 << std::endl;
+      i = min + 2;
     }
-    std::cout << std::endl << std::endl;
-  }
 
+    if (gige->GetImage((LONG*)&i, image, (LONG*)&payloadSize) == S_OK) {
+      std::cout << "Image " << i << std::endl;
+      i++;
+    }
+  }
 
   return 0;
 }

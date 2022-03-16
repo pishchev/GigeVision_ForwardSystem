@@ -11,6 +11,8 @@ public :
 	STDMETHOD(GetImage)(BYTE* oImage, LONG iBufferSize);
 	STDMETHOD(GetWidth)(LONG* oWidth);
 	STDMETHOD(GetHeight)(LONG* oHeight);
+	STDMETHOD(GetBufferInfo)(LONG* oMinIndex, LONG* oMaxIndex);
+	STDMETHOD(GetTimestamp)(LONG* iIndexTimestamp, LONG* oTimestamp);
 };
 
 extern class CGigeVisionDLLModule _AtlModule;

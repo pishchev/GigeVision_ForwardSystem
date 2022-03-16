@@ -8,6 +8,7 @@ public:
   {
     _min = 0;
     _max = 0;
+    _cur = 0;
     _fifo = new unsigned char[iBufferSize * iCount];
   }
 
@@ -40,6 +41,14 @@ public:
 
     memcpy(oBuffer, _fifo + iIndex % _count * _bufferSize, _bufferSize);
     return true;
+  }
+
+  unsigned char* GetBufferPtr(size_t iIndex)
+  {
+    if (iIndex >= _max || iIndex < _min)
+      return nullptr;
+
+    return _fifo + iIndex % _count * _bufferSize;
   }
 
 private:
