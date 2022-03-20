@@ -674,8 +674,8 @@ void CGigeConfiguratorDlg::OnBnClickedApplyEditor()
 		_editorPropertyValue.GetWindowTextW(value);
 
 	const auto strVal = Convert::CStringToString(value);		
-	if (strVal == prop._strValue)
-		return;
+	//if (strVal == prop._strValue)
+	//	return;
 	if (prop._type == Property::Int)
 	{
 		_gigeManager.SetIntNode(prop._name, Convert::StringToInt(strVal));

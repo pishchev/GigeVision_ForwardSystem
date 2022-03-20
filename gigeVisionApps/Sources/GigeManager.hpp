@@ -42,7 +42,8 @@ public:
 	};
 	enum ConverterType 
 	{ 
-		RGBInt 
+		RGBInt,
+		RGBNoInt
 	};
 
 	GigeManager(){}
@@ -280,7 +281,7 @@ public:
 		GetIntNode("Height", _height);
 
 		if (_width * _height == _payloadSize && !_converter)
-			SetConverter(RGBInt);
+			SetConverter(RGBNoInt);
 
 		if (_converter) {
 			_converter->_height = _height;
@@ -337,6 +338,8 @@ public:
 	void SetConverter(ConverterType iType) {
 		if (iType == RGBInt)
 			_converter = RGBIntPtr(new BayerConverterRGBInterpolated);
+		else if (iType == RGBNoInt)
+			_converter = RGBNoIntPtr(new BayerConverterRGBNoInterpolated);
 	}
 
 private:
