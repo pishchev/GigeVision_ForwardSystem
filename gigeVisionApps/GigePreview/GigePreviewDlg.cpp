@@ -7,6 +7,7 @@
 #include "GigePreview.h"
 #include "GigePreviewDlg.h"
 #include "afxdialogex.h"
+#include "MmSystem.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -164,7 +165,8 @@ HCURSOR CGigePreviewDlg::OnQueryDragIcon()
 void CGigePreviewDlg::Init()
 {
 	_exitButton.ShowWindow(HIDE_WINDOW);
-	SetTimer(100, 100, 0);
+	timeBeginPeriod(1);
+	SetTimer(100, 1, 0);
 	InitDialogComponents();
 	InitGigeDLL();
 }
@@ -185,7 +187,7 @@ void CGigePreviewDlg::InitGigeDLL()
 void CGigePreviewDlg::InitDialogComponents()
 {
 	_configMessage.SetWindowTextW(_T("Config file:"));
-	_configFile.SetWindowTextW(_T("configH.txt"));
+	_configFile.SetWindowTextW(_T("configHS.txt"));
 }
 
 void CGigePreviewDlg::HideDialogComponents()
@@ -201,18 +203,17 @@ void CGigePreviewDlg::OnBnClickedApplyConfig()
 	CString configFile;
 	_configFile.GetWindowTextW(configFile);
 
-	std::string config = CT2A(configFile.GetString());
+	wchar_t* config = configFile.GetBuffer();
 	HideDialogComponents();
 
-	_gige->SetConfig(config.data());
-	_gige->PayloadSize((LONG*)&_payloadSize);
-	_gige->GetWidth((LONG*)&_width);
-	_gige->GetHeight((LONG*)&_height);
+	_gige->SetConfig(config);
+	_gige->GetImageInfo((LONG*)&_width, (LONG*)&_height);
+	_payloadSize = _width * _height * 3;
 
 	_image = new BYTE[(int)_payloadSize];
 	_started = true;
 
-	_gige->StartCapturing();
+	_gige->Start();
 }
 
 void CGigePreviewDlg::ShowImage()
@@ -232,15 +233,16 @@ void CGigePreviewDlg::ShowImage()
 
 	HDC hdc = winDC->GetSafeHdc();
 
-	_gige->GetBufferInfo(&_min, &_max);
+	_gige->GetFifoInfo(&_min, &_max);
 
 	if (_curIndex < (size_t)_min + 2)
 		_curIndex = (size_t)_max;
 
-	_gige->GetImage((LONG*)&_curIndex, _image, (LONG*)&_payloadSize);
-	_curIndex++;
-
-	SetDIBitsToDevice(hdc, 0, 0, (DWORD)_width, (DWORD)_height, 0, 0, 0, (UINT)_height, _image, &bitmapInfo, DIB_RGB_COLORS);
+	if (_gige->GetImage((LONG)_curIndex, eImagePixelFormat::eIP_RGB24_FINE, _image, (LONG)_payloadSize, (LONG*)&_timestamp) == S_OK) {
+		char str[156];  sprintf_s(str, "Frame=%d [%d..%d]\n", _curIndex, _min, _max); OutputDebugStringA(str);
+		_curIndex++;
+		SetDIBitsToDevice(hdc, 0, 0, (DWORD)_width, (DWORD)_height, 0, 0, 0, (UINT)_height, _image, &bitmapInfo, DIB_RGB_COLORS);
+	}
 }
 
 void CGigePreviewDlg::OnTimer(UINT_PTR nIDEvent)

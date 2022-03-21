@@ -5,4 +5,6 @@ Stream Stream0
 AcquisitionFrameRate enum EnumEntry_AcquisitionFrameRate_Super
 ExposureTime float 10000.000000
 Height int 480
+OffsetX int 320
+OffsetY int 272
 Width int 640

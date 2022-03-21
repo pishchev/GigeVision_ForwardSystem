@@ -73,6 +73,24 @@ extern "C"{
 #endif 
 
 
+/* interface __MIDL_itf_GigeVisionDLL_0000_0000 */
+/* [local] */ 
+
+typedef /* [v1_enum] */ 
+enum eImagePixelFormat
+    {
+        eIP_RAW	= 0,
+        eIP_RGB24_FAST	= ( eIP_RAW + 1 ) ,
+        eIP_RGB24_FINE	= ( eIP_RGB24_FAST + 1 ) ,
+        eIP_UYVY_FAST	= ( eIP_RGB24_FINE + 1 ) ,
+        eIP_UYVY_FINE	= ( eIP_UYVY_FAST + 1 ) 
+    } 	eImagePixelFormat;
+
+
+
+extern RPC_IF_HANDLE __MIDL_itf_GigeVisionDLL_0000_0000_v0_0_c_ifspec;
+extern RPC_IF_HANDLE __MIDL_itf_GigeVisionDLL_0000_0000_v0_0_s_ifspec;
+
 #ifndef __IGigeVision_INTERFACE_DEFINED__
 #define __IGigeVision_INTERFACE_DEFINED__
 
@@ -89,31 +107,26 @@ EXTERN_C const IID IID_IGigeVision;
     {
     public:
         virtual HRESULT STDMETHODCALLTYPE SetConfig( 
-            /* [size_is][in] */ CHAR *iFile) = 0;
+            /* [in] */ BSTR bstrFileName) = 0;
         
-        virtual HRESULT STDMETHODCALLTYPE PayloadSize( 
-            /* [out] */ LONG *oPayloadSize) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE StartCapturing( void) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetImage( 
-            /* [in] */ LONG *iImageIndex,
-            /* [size_is][out] */ BYTE *oImage,
-            /* [in] */ LONG *iBufferSize) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetWidth( 
-            /* [out] */ LONG *oWidth) = 0;
-        
-        virtual HRESULT STDMETHODCALLTYPE GetHeight( 
+        virtual HRESULT STDMETHODCALLTYPE GetImageInfo( 
+            /* [out] */ LONG *oWidth,
             /* [out] */ LONG *oHeight) = 0;
         
-        virtual HRESULT STDMETHODCALLTYPE GetBufferInfo( 
+        virtual HRESULT STDMETHODCALLTYPE Start( void) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE GetFifoInfo( 
             /* [out] */ LONG *oMinIndex,
             /* [out] */ LONG *oMaxIndex) = 0;
         
-        virtual HRESULT STDMETHODCALLTYPE GetTimestamp( 
-            /* [in] */ LONG *iIndexTimestamp,
-            /* [out] */ LONG *oTimestamp) = 0;
+        virtual HRESULT STDMETHODCALLTYPE GetImage( 
+            /* [in] */ LONG iImageIndex,
+            /* [in] */ eImagePixelFormat iFormat,
+            /* [size_is][out] */ BYTE *oImage,
+            /* [in] */ LONG iImageSize,
+            /* [out] */ LONG *oImageTimestamp) = 0;
+        
+        virtual HRESULT STDMETHODCALLTYPE Stop( void) = 0;
         
     };
     
@@ -138,38 +151,31 @@ EXTERN_C const IID IID_IGigeVision;
         
         HRESULT ( STDMETHODCALLTYPE *SetConfig )( 
             IGigeVision * This,
-            /* [size_is][in] */ CHAR *iFile);
+            /* [in] */ BSTR bstrFileName);
         
-        HRESULT ( STDMETHODCALLTYPE *PayloadSize )( 
+        HRESULT ( STDMETHODCALLTYPE *GetImageInfo )( 
             IGigeVision * This,
-            /* [out] */ LONG *oPayloadSize);
-        
-        HRESULT ( STDMETHODCALLTYPE *StartCapturing )( 
-            IGigeVision * This);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetImage )( 
-            IGigeVision * This,
-            /* [in] */ LONG *iImageIndex,
-            /* [size_is][out] */ BYTE *oImage,
-            /* [in] */ LONG *iBufferSize);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetWidth )( 
-            IGigeVision * This,
-            /* [out] */ LONG *oWidth);
-        
-        HRESULT ( STDMETHODCALLTYPE *GetHeight )( 
-            IGigeVision * This,
+            /* [out] */ LONG *oWidth,
             /* [out] */ LONG *oHeight);
         
-        HRESULT ( STDMETHODCALLTYPE *GetBufferInfo )( 
+        HRESULT ( STDMETHODCALLTYPE *Start )( 
+            IGigeVision * This);
+        
+        HRESULT ( STDMETHODCALLTYPE *GetFifoInfo )( 
             IGigeVision * This,
             /* [out] */ LONG *oMinIndex,
             /* [out] */ LONG *oMaxIndex);
         
-        HRESULT ( STDMETHODCALLTYPE *GetTimestamp )( 
+        HRESULT ( STDMETHODCALLTYPE *GetImage )( 
             IGigeVision * This,
-            /* [in] */ LONG *iIndexTimestamp,
-            /* [out] */ LONG *oTimestamp);
+            /* [in] */ LONG iImageIndex,
+            /* [in] */ eImagePixelFormat iFormat,
+            /* [size_is][out] */ BYTE *oImage,
+            /* [in] */ LONG iImageSize,
+            /* [out] */ LONG *oImageTimestamp);
+        
+        HRESULT ( STDMETHODCALLTYPE *Stop )( 
+            IGigeVision * This);
         
         END_INTERFACE
     } IGigeVisionVtbl;
@@ -194,29 +200,23 @@ EXTERN_C const IID IID_IGigeVision;
     ( (This)->lpVtbl -> Release(This) ) 
 
 
-#define IGigeVision_SetConfig(This,iFile)	\
-    ( (This)->lpVtbl -> SetConfig(This,iFile) ) 
+#define IGigeVision_SetConfig(This,bstrFileName)	\
+    ( (This)->lpVtbl -> SetConfig(This,bstrFileName) ) 
 
-#define IGigeVision_PayloadSize(This,oPayloadSize)	\
-    ( (This)->lpVtbl -> PayloadSize(This,oPayloadSize) ) 
+#define IGigeVision_GetImageInfo(This,oWidth,oHeight)	\
+    ( (This)->lpVtbl -> GetImageInfo(This,oWidth,oHeight) ) 
 
-#define IGigeVision_StartCapturing(This)	\
-    ( (This)->lpVtbl -> StartCapturing(This) ) 
+#define IGigeVision_Start(This)	\
+    ( (This)->lpVtbl -> Start(This) ) 
 
-#define IGigeVision_GetImage(This,iImageIndex,oImage,iBufferSize)	\
-    ( (This)->lpVtbl -> GetImage(This,iImageIndex,oImage,iBufferSize) ) 
+#define IGigeVision_GetFifoInfo(This,oMinIndex,oMaxIndex)	\
+    ( (This)->lpVtbl -> GetFifoInfo(This,oMinIndex,oMaxIndex) ) 
 
-#define IGigeVision_GetWidth(This,oWidth)	\
-    ( (This)->lpVtbl -> GetWidth(This,oWidth) ) 
+#define IGigeVision_GetImage(This,iImageIndex,iFormat,oImage,iImageSize,oImageTimestamp)	\
+    ( (This)->lpVtbl -> GetImage(This,iImageIndex,iFormat,oImage,iImageSize,oImageTimestamp) ) 
 
-#define IGigeVision_GetHeight(This,oHeight)	\
-    ( (This)->lpVtbl -> GetHeight(This,oHeight) ) 
-
-#define IGigeVision_GetBufferInfo(This,oMinIndex,oMaxIndex)	\
-    ( (This)->lpVtbl -> GetBufferInfo(This,oMinIndex,oMaxIndex) ) 
-
-#define IGigeVision_GetTimestamp(This,iIndexTimestamp,oTimestamp)	\
-    ( (This)->lpVtbl -> GetTimestamp(This,iIndexTimestamp,oTimestamp) ) 
+#define IGigeVision_Stop(This)	\
+    ( (This)->lpVtbl -> Stop(This) ) 
 
 #endif /* COBJMACROS */
 
@@ -249,6 +249,16 @@ GigeVision;
 #endif /* __GigeVisionDLLLib_LIBRARY_DEFINED__ */
 
 /* Additional Prototypes for ALL interfaces */
+
+unsigned long             __RPC_USER  BSTR_UserSize(     unsigned long *, unsigned long            , BSTR * ); 
+unsigned char * __RPC_USER  BSTR_UserMarshal(  unsigned long *, unsigned char *, BSTR * ); 
+unsigned char * __RPC_USER  BSTR_UserUnmarshal(unsigned long *, unsigned char *, BSTR * ); 
+void                      __RPC_USER  BSTR_UserFree(     unsigned long *, BSTR * ); 
+
+unsigned long             __RPC_USER  BSTR_UserSize64(     unsigned long *, unsigned long            , BSTR * ); 
+unsigned char * __RPC_USER  BSTR_UserMarshal64(  unsigned long *, unsigned char *, BSTR * ); 
+unsigned char * __RPC_USER  BSTR_UserUnmarshal64(unsigned long *, unsigned char *, BSTR * ); 
+void                      __RPC_USER  BSTR_UserFree64(     unsigned long *, BSTR * ); 
 
 /* end of Additional Prototypes */
 

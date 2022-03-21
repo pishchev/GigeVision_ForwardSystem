@@ -4,6 +4,7 @@
 #include <comdef.h>
 #include <string>
 #include <chrono>
+#include <atlbase.h>
 
 #include "../GigeVisionDLL/GigeVisionDLL_i.h"
 #include "../GigeVisionDLL/GigeVisionDLL_i.c"
@@ -25,68 +26,47 @@ int main()
     return 1;
   }
 
-  char file[] = "configHS.txt";
-  gige->SetConfig(file);
+  wchar_t file[] = L"configHS.txt";
+  gige->SetConfig(CComBSTR(file));
 
-  size_t payloadSize = 0;
-  gige->PayloadSize((LONG*)&payloadSize);
   size_t width = 0;
-  gige->GetWidth((LONG*)&width);
   size_t height = 0;
-  gige->GetHeight((LONG*)&height);
+  gige->GetImageInfo((LONG*)&width, (LONG*)&height);
+  size_t payloadSize = width * height * 3;
 
   std::cout << "PayloadSize: " << payloadSize << "; Width: " << width << "; Height: " << height << std::endl;
-  gige->StartCapturing();
+  gige->Start();
 
   unsigned char* image = new unsigned char[payloadSize];
 
   size_t i = 0;
   size_t min = 0;
   size_t max = 0;
-  size_t lastMax = 0;
   LONG timestamp = 0;
+  LONG lastTimestamp = 0;
   auto chrono = std::chrono::steady_clock::now();
-  auto lastCh = chrono;
-
+  
   while (i < 200) {
     
-    gige->GetBufferInfo((LONG*)&min, (LONG*)&max);
+    gige->GetFifoInfo((LONG*)&min, (LONG*)&max);
 
     if (i < min + 2) {
       std::cout << "SLOW " << i << "->" << i + 2 << std::endl;
       i = min + 2;
     }
 
-    if (0) {
-      lastCh = std::chrono::steady_clock::now();
-      if (gige->GetImage((LONG*)&i, image, (LONG*)&payloadSize) == S_OK) {
-
-        std::cout << min << "-" << max << std::endl;
-        LONG lastTs = timestamp;
-
-        gige->GetTimestamp((LONG*)&i, &timestamp);
-        std::cout << "Image " << i
-          //<< "; Timestamp: " << (uint64_t)timestamp 
-          << "; DeltaTimestamp: " << (int)(timestamp - lastTs)
-          << "; DeltaChrono: " << std::chrono::duration_cast<std::chrono::microseconds>(lastCh - chrono).count()
-          << std::endl;
-
-        chrono = std::chrono::steady_clock::now();
-
-        i++;
-      }
+    if (gige->GetImage((LONG)i, eImagePixelFormat::eIP_RGB24_FAST, image, (LONG)payloadSize, &timestamp) == S_OK) {
+      const auto lastChrono = chrono;
+      chrono = std::chrono::steady_clock::now();
+      std::cout << "Image[" << i
+        << "] " << min << "-" << max
+        << "; DeltaTimestamp: " << (int)(timestamp - lastTimestamp)
+        << "; DeltaChrono: " << std::chrono::duration_cast<std::chrono::microseconds>(chrono - lastChrono).count()
+        << std::endl;
+      i++;
+      lastTimestamp = timestamp;
     }
-    else if (1) {
-
-      lastCh = std::chrono::steady_clock::now();
-      if (lastMax != max) {
-        std::cout << "DeltaChrono: " << std::chrono::duration_cast<std::chrono::microseconds>(lastCh - chrono).count() << std::endl;
-
-        lastMax = max;
-        i = max;
-        chrono = std::chrono::steady_clock::now();
-      }
-    }
+    else Sleep(1);
   }
 
   return 0;

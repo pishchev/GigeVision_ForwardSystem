@@ -46,6 +46,7 @@ protected:
 	size_t _width;
 	size_t _height;
 	size_t _curIndex = 0;
+	size_t _timestamp = 0;
 	unsigned char* _image;
 	bool _started;
 

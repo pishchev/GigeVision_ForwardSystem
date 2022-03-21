@@ -60,14 +60,12 @@ public:
 	
 	GigeManager _gigeManager;
 
-	STDMETHOD(SetConfig)(CHAR* iFile);
-	STDMETHOD(PayloadSize)(LONG* oPayloadSize);
-	STDMETHOD(StartCapturing)();
-	STDMETHOD(GetImage)(LONG* iImageIndex, BYTE* oImage, LONG* iBufferSize);
-	STDMETHOD(GetWidth)(LONG* oWidth);
-	STDMETHOD(GetHeight)(LONG* oHeight);
-	STDMETHOD(GetBufferInfo)(LONG* oMinIndex, LONG* oMaxIndex);
-	STDMETHOD(GetTimestamp)(LONG* iIndexTimestamp, LONG* oTimestamp);
+	STDMETHOD(SetConfig)(BSTR bstrFileName);
+	STDMETHOD(Stop)();
+	STDMETHOD(Start)();
+	STDMETHOD(GetImage)(LONG iImageIndex, eImagePixelFormat iFormat, BYTE* oImage, LONG iImageSize, LONG* oImageTimestamp);
+	STDMETHOD(GetImageInfo)(LONG* oWidth, LONG* oHeight);
+	STDMETHOD(GetFifoInfo)(LONG* oMinIndex, LONG* oMaxIndex);
 };
 
 OBJECT_ENTRY_AUTO(__uuidof(GigeVision), CGigeVision)

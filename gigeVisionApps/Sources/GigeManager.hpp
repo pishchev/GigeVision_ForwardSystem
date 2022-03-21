@@ -40,11 +40,6 @@ public:
 		String = 6,
 		Enumeration = 9
 	};
-	enum ConverterType 
-	{ 
-		RGBInt,
-		RGBNoInt
-	};
 
 	GigeManager(){}
 
@@ -263,30 +258,30 @@ public:
 		_config.SaveConfig(iFileName);
 	}
 
+	int64_t Width()
+	{
+		GetIntNode("Width", _width);
+		return _width;
+	}
+	int64_t Height()
+	{
+		GetIntNode("Height", _height);
+		return _height;
+	}
 	int64_t PayloadSize()
 	{
 		GetIntNode("PayloadSize", _payloadSize);
-		GetIntNode("Width", _width);
-		GetIntNode("Height", _height);
-
-		if (_width * _height == _payloadSize)
-			return _payloadSize * 3;
 		return _payloadSize;
 	}
 
 	void AcquirerPreparing()
 	{
 		GetIntNode("PayloadSize", _payloadSize);
-		GetIntNode("Width", _width);
 		GetIntNode("Height", _height);
+		GetIntNode("Width", _width);
 
-		if (_width * _height == _payloadSize && !_converter)
-			SetConverter(RGBNoInt);
-
-		if (_converter) {
-			_converter->_height = _height;
-			_converter->_width = _width;
-		}
+		if (!_converter)
+			SetConverter(ConverterType::Raw);
 
 		_fifoImage = new FIFO(_payloadSize, 50);
 		_fifoTimestamps = new FIFO(sizeof(uint64_t), 50);
@@ -311,17 +306,13 @@ public:
 		if (!_isReady)
 			return false;
 
-		if (_converter) {
-			const auto bayerBuffer = _fifoImage->GetBufferPtr(iImageIndex);
-			if (!bayerBuffer)
-				return false;
+		const auto bayerBuffer = _fifoImage->GetBufferPtr(iImageIndex);
+		if (!bayerBuffer)
+			return false;
 
-			_converter->_buffer = bayerBuffer;
-			_converter->Convert(oBuffer);
-			return true;
-		}
-		else
-			return _fifoImage->GetBuffer(iImageIndex, oBuffer);
+		_converter->_buffer = bayerBuffer;
+		_converter->Convert(oBuffer);
+		return true;
 	}
 	bool GetTimestamp(size_t iImageIndex, size_t& oTimestamp)
 	{
@@ -336,10 +327,19 @@ public:
 	}
 
 	void SetConverter(ConverterType iType) {
-		if (iType == RGBInt)
-			_converter = RGBIntPtr(new BayerConverterRGBInterpolated);
-		else if (iType == RGBNoInt)
-			_converter = RGBNoIntPtr(new BayerConverterRGBNoInterpolated);
+
+		if (_converter && iType == _converter->GetType())
+			return;
+
+		if (iType == ConverterType::Bayer_RGB24_Int)
+			_converter = Bayer_RGB24_InterpolatedPtr(new Bayer_RGB24_Interpolated);
+		else if (iType == ConverterType::Bayer_RGB24_NoInt)
+			_converter = Bayer_RGB24_NoInterpolatedPtr(new Bayer_RGB24_NoInterpolated);
+		else
+			_converter = RawPtr(new Raw);
+
+		_converter->_width = _width;
+		_converter->_height = _height;
 	}
 
 private:
@@ -351,15 +351,18 @@ private:
 	}
 	static void AsyncCapture(GigeManager& iManager)
 	{
+		::SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_TIME_CRITICAL);
+		//::SetThreadPriority(GetCurrentThread(), THREAD_PRIORITY_HIGHEST);
 		int type = GenTL::INFO_DATATYPE_STRING;
 		Buffer imageBuffer(64);
 		Buffer timestamp(64);
 		Buffer dataBuffer(64);
+		uint64_t noTimestamp = 0;
 		while (true)
 		{
 			if (iManager._stopAcquire) break;
-			auto err = EventGetData(iManager._event, dataBuffer.Convert<void>(), dataBuffer.Size(), 10000);
-			if (err == 0)
+			auto err = EventGetData(iManager._event, dataBuffer.Convert<void>(), dataBuffer.Size(), 0);
+			if (err == GenTL::GC_ERR_SUCCESS)
 			{
 				const auto dataBufferPtr = *dataBuffer.Convert<void**>();
 
@@ -367,16 +370,19 @@ private:
 				iManager.AddImageToBuffer(*imageBuffer.Convert<unsigned char*>());
 
 				const auto err = DSGetBufferInfo(iManager._stream, dataBufferPtr, GenTL::BUFFER_INFO_TIMESTAMP, &type, timestamp.Convert<void>(), timestamp.Size());
-				if (err == 0) iManager.AddTimestampToBuffer(timestamp.Convert<unsigned char>());
+				if (err == GenTL::GC_ERR_SUCCESS) 
+					iManager.AddTimestampToBuffer(timestamp.Convert<unsigned char>());
+				else
+					iManager.AddTimestampToBuffer((unsigned char*)&noTimestamp);
 
 				elog(DSQueueBuffer(iManager._stream, dataBufferPtr), "DSQueueBuffer");
 
 				iManager._isReady = true;
 			}
-			else if (err != GenTL::GC_ERR_TIMEOUT)
-			{
+			else if (err == GenTL::GC_ERR_TIMEOUT)
+				Sleep(1);
+			else
 				elog(err, "ArqFunction");
-			}
 		}
 	}
 

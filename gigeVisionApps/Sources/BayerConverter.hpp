@@ -2,15 +2,23 @@
 #include <vector>
 #include <memory>
 
-class BayerConverter;
-class BayerConverterRGBInterpolated;
-class BayerConverterRGBNoInterpolated;
+class Converter;
+class Raw;
+class Bayer_RGB24_Interpolated;
+class Bayer_RGB24_NoInterpolated;
 
-typedef std::shared_ptr<BayerConverter> ConverterPtr;
-typedef std::shared_ptr<BayerConverterRGBInterpolated> RGBIntPtr;
-typedef std::shared_ptr<BayerConverterRGBNoInterpolated> RGBNoIntPtr;
+typedef std::shared_ptr<Converter> ConverterPtr;
+typedef std::shared_ptr<Raw> RawPtr;
+typedef std::shared_ptr<Bayer_RGB24_Interpolated> Bayer_RGB24_InterpolatedPtr;
+typedef std::shared_ptr<Bayer_RGB24_NoInterpolated> Bayer_RGB24_NoInterpolatedPtr;
 
-class BayerConverter {
+enum class ConverterType {
+  Raw,
+  Bayer_RGB24_Int,
+  Bayer_RGB24_NoInt
+};
+
+class Converter {
 public:
   unsigned char GetRawPixel(int h, int w) {
     if (h < 0 || h >= static_cast<int>(_height) || w < 0 || w >= static_cast<int>(_width))
@@ -19,20 +27,32 @@ public:
   }
 
   virtual void Convert(unsigned char* oBuffer) = 0;
+  virtual ConverterType GetType() = 0;
 
   size_t _width;
   size_t _height;
   unsigned char* _buffer;
 };
 
-class BayerConverterRGB : public BayerConverter {
+class Raw : public Converter {
+public:
+  void Convert(unsigned char* oBuffer) override {
+    memcpy(oBuffer, _buffer, _width * _height);
+  }
+
+  ConverterType GetType() override {
+    return ConverterType::Raw;
+  }
+};
+
+class BayerConverterRGB : public Converter {
 public:
   enum PixType {
     R, G, B
   };
 };
 
-class BayerConverterRGBInterpolated : public BayerConverterRGB {
+class Bayer_RGB24_Interpolated : public BayerConverterRGB {
 public:
   unsigned char Interpolate(int h, int w, PixType t) {
 
@@ -76,9 +96,13 @@ public:
       oBuffer[h * _width*3 + w*3 + 2] = Interpolate((int)h, (int)w, B);
       }
   }
+
+  ConverterType GetType() override {
+    return ConverterType::Bayer_RGB24_Int;
+  }
 };
 
-class BayerConverterRGBNoInterpolated : public BayerConverterRGB {
+class Bayer_RGB24_NoInterpolated : public BayerConverterRGB {
 public:
   unsigned char GetPixel(int h, int w, PixType t) {
 
@@ -127,5 +151,9 @@ public:
         oBuffer[h * _width * 3 + w * 3 + 1] = GetPixel((int)h, (int)w, G);
         oBuffer[h * _width * 3 + w * 3 + 2] = GetPixel((int)h, (int)w, B);
       }
+  }
+
+  ConverterType GetType() override {
+    return ConverterType::Bayer_RGB24_NoInt;
   }
 };
