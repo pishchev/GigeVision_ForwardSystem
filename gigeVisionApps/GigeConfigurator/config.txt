@@ -1,0 +1,6 @@
+Lib TLSimu.cti
+Interface XX::InterfaceA
+Device TLSimuColor
+Stream DS0
+Height int 8
+Width int 8

@@ -1,1 +1,0 @@
-D:\source\repos\C++\directshow\baseclasses\x64\Release\strmbase.lib

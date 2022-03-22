@@ -1,0 +1,10 @@
+Lib bgapi2_gige.cti
+Interface {185643FB-0F51-4530-9D55-3ECD82B4AB6F}
+Device devicemoduldc_a5_01_32_4e_ac
+Stream Stream0
+AcquisitionFrameRate enum EnumEntry_AcquisitionFrameRate_Super
+ExposureTime float 10000.000000
+Height int 480
+OffsetX int 320
+OffsetY int 272
+Width int 640

@@ -1,0 +1,7 @@
+2  - integer
+3  - boollean
+5  - float
+6  - string
+9  - enumeration
+8  - category
+11 - port
