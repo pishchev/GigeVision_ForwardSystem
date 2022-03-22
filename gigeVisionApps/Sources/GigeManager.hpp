@@ -335,6 +335,10 @@ public:
 			_converter = Bayer_RGB24_InterpolatedPtr(new Bayer_RGB24_Interpolated);
 		else if (iType == ConverterType::Bayer_RGB24_NoInt)
 			_converter = Bayer_RGB24_NoInterpolatedPtr(new Bayer_RGB24_NoInterpolated);
+		else if (iType == ConverterType::Bayer_UYVY_Int)
+			_converter = Bayer_UYVY_InterpolatedPtr(new Bayer_UYVY_Interpolated);
+		else if (iType == ConverterType::Bayer_UYVY_NoInt)
+			_converter = Bayer_UYVY_NoInterpolatedPtr(new Bayer_UYVY_NoInterpolated);
 		else
 			_converter = RawPtr(new Raw);
 

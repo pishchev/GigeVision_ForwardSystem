@@ -43,6 +43,12 @@ STDMETHODIMP CGigeVision::GetImage(LONG iImageIndex, eImagePixelFormat iFormat, 
   case eImagePixelFormat::eIP_RGB24_FINE:
     _gigeManager.SetConverter(ConverterType::Bayer_RGB24_Int);
     break;
+  case eImagePixelFormat::eIP_UYVY_FAST:
+    _gigeManager.SetConverter(ConverterType::Bayer_UYVY_NoInt);
+    break;
+  case eImagePixelFormat::eIP_UYVY_FINE:
+    _gigeManager.SetConverter(ConverterType::Bayer_UYVY_Int);
+    break;
   }
 
   const auto res = _gigeManager.GetImage((size_t)iImageIndex, oImage) ? S_OK : S_FALSE;

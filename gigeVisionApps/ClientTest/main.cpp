@@ -32,7 +32,7 @@ int main()
   size_t width = 0;
   size_t height = 0;
   gige->GetImageInfo((LONG*)&width, (LONG*)&height);
-  size_t payloadSize = width * height * 3;
+  size_t payloadSize = width * height * 2;
 
   std::cout << "PayloadSize: " << payloadSize << "; Width: " << width << "; Height: " << height << std::endl;
   gige->Start();
@@ -55,7 +55,7 @@ int main()
       i = min + 2;
     }
 
-    if (gige->GetImage((LONG)i, eImagePixelFormat::eIP_RGB24_FAST, image, (LONG)payloadSize, &timestamp) == S_OK) {
+    if (gige->GetImage((LONG)i, eImagePixelFormat::eIP_UYVY_FAST, image, (LONG)payloadSize, &timestamp) == S_OK) {
       const auto lastChrono = chrono;
       chrono = std::chrono::steady_clock::now();
       std::cout << "Image[" << i
